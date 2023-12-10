@@ -11,63 +11,61 @@ class Code :
     def __init__(self, aList=[]):
         size= len(aList)
         if size == 0 :
-            self.Bmcode= cc.newBmCode( c_uint(0) )
+            self._ccode= cc.newBmCode( c_uint(0) )
         else :
-            self.Bmcode= cc.newBmCode_numbers(
+            self._ccode= cc.newBmCode_numbers(
                 c_uint(size),
                 clib.uintArrayAs( size, aList )
             )
         
 
     def __del__(self):
-        cc.deleteBmCode( self.Bmcode )
+        cc.deleteBmCode( self._ccode )
 
     # initialize:
     def initialize(self, aList):
         size= len(aList)
-        cc.BmCode_initialize_numbers(
-            self.Bmcode, c_uint(size),
-            clib.uintArrayAs( size, aList )
-        )
+        cc.BmCode_reinit( self._ccode, c_uint(size) )
+        cc.BmCode_setNumbers( self._ccode, clib.uintArrayAs( size, aList ) )
         return self
     
     def copy(self):
         cpy= Code()
-        cc.BmCode_copy( cpy.Bmcode, self.Bmcode )
+        cc.BmCode_copy( cpy._ccode, self._ccode )
         return cpy
 
     # Accessor
     def dimention(self):
-        return (int)(cc.BmCode_dimention( self.Bmcode ) )
+        return (int)(cc.BmCode_dimention( self._ccode ) )
 
     def at(self, i):
         assert( 0 < i and i <= self.dimention() )
-        return (int)(cc.BmCode_at( self.Bmcode, (c_uint)(i) ) )    
+        return (int)(cc.BmCode_at( self._ccode, (c_uint)(i) ) )    
 
     def list(self):
-        return clib.readUintLst( self.dimention(), cc.BmCode_numbers(self.Bmcode) )
+        return clib.readUintLst( self.dimention(), cc.BmCode_numbers(self._ccode) )
 
     # comparizon:
     def __eq__(a, b):
-        return (int)( cc.BmCode_isEqualTo(a.Bmcode, b.Bmcode) ) != 0
+        return (int)( cc.BmCode_isEqualTo(a._ccode, b._ccode) ) != 0
     def __ne__(a, b):
-        return (int)( cc.BmCode_isEqualTo(a.Bmcode, b.Bmcode) ) == 0
+        return (int)( cc.BmCode_isEqualTo(a._ccode, b._ccode) ) == 0
     def __lt__(a, b):
-        return (int)( cc.BmCode_isLighterThan(a.Bmcode, b.Bmcode) ) != 0
+        return (int)( cc.BmCode_isSmallerThan(a._ccode, b._ccode) ) != 0
     def __gt__(a, b):
-        return (int)( cc.BmCode_isGreaterThan(a.Bmcode, b.Bmcode) ) != 0
+        return (int)( cc.BmCode_isGreaterThan(a._ccode, b._ccode) ) != 0
     def __le__(a, b):
-        return (int)( cc.BmCode_isGreaterThan(a.Bmcode, b.Bmcode) ) == 0
+        return (int)( cc.BmCode_isGreaterThan(a._ccode, b._ccode) ) == 0
     def __ge__(a, b):
-        return (int)( cc.BmCode_isLighterThan(a.Bmcode, b.Bmcode) ) == 0
+        return (int)( cc.BmCode_isSmallerThan(a._ccode, b._ccode) ) == 0
 
     # Modification
     def resize(self, size):
-        cc.BmCode_resize(self.Bmcode, c_uint(size))
+        cc.BmCode_redimention(self._ccode, c_uint(size))
     
     def at_set(self, i, value):
         assert( 0 < i and i <= self.dimention() )
-        cc.BmCode_at_set(self.Bmcode, c_uint(i), c_uint(value) )
+        cc.BmCode_at_set(self._ccode, c_uint(i), c_uint(value) )
 
     # Iterate
     def __iter__(self):
@@ -87,9 +85,9 @@ class IterCode :
         return self
     
     def __next__(self):
-        if cc.BmCode_isIncluding( self.range.Bmcode, self.conf.Bmcode ) :
+        if cc.BmCode_isIncluding( self.range._ccode, self.conf._ccode ) :
             lst= self.conf.list()
-            cc.BmCode_nextCode( self.range.Bmcode, self.conf.Bmcode )
+            cc.BmCode_nextCode( self.range._ccode, self.conf._ccode )
             return lst
         else:
             raise StopIteration

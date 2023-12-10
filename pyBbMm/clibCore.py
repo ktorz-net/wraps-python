@@ -10,6 +10,7 @@ from ctypes import c_int, c_uint, c_ulong, c_double, c_void_p
 #        /!\ ANY MODIFICATION IN THIS FILE WILL BE ERASED /!\
 # ------------------------------------------------------------------------ #
 
+
 # BmCode* newBmCode( uint size );
 newBmCode= core.newBmCode
 newBmCode.restype= c_void_p
@@ -29,16 +30,6 @@ newBmCode_all.argtypes= [c_uint, c_uint]
 newBmCodeAs= core.newBmCodeAs
 newBmCodeAs.restype= c_void_p
 newBmCodeAs.argtypes= [c_void_p]
-
-# BmCode* newBmCode_list( uint size, uint number1, ... );
-newBmCode_list= core.newBmCode_list
-newBmCode_list.restype= c_void_p
-newBmCode_list.argtypes= [c_uint, c_uint]
-
-# BmCode* newBmCodeMergeList( uint numberOfCodes, BmCode* code1, ... );
-newBmCodeMergeList= core.newBmCodeMergeList
-newBmCodeMergeList.restype= c_void_p
-newBmCodeMergeList.argtypes= [c_uint, c_void_p]
 
 # BmCode* BmCode_create( BmCode* self, uint size );
 BmCode_create= core.BmCode_create
@@ -109,11 +100,6 @@ BmCode_product.argtypes= [c_void_p]
 BmCode_reinit= core.BmCode_reinit
 BmCode_reinit.restype= c_void_p
 BmCode_reinit.argtypes= [c_void_p, c_uint]
-
-# BmCode* BmCode_reinit_list( BmCode* self, uint newSize, uint number1, ... );
-BmCode_reinit_list= core.BmCode_reinit_list
-BmCode_reinit_list.restype= c_void_p
-BmCode_reinit_list.argtypes= [c_void_p, c_uint, c_uint]
 
 # BmCode* BmCode_copy( BmCode* self, BmCode* model );
 BmCode_copy= core.BmCode_copy
@@ -245,30 +231,25 @@ BmCode_print= core.BmCode_print
 BmCode_print.restype= c_void_p
 BmCode_print.argtypes= [c_void_p, c_void_p]
 
-# BmVector* newBmVectorBasic( uint size );
-newBmVectorBasic= core.newBmVectorBasic
-newBmVectorBasic.restype= c_void_p
-newBmVectorBasic.argtypes= [c_uint]
+# BmVector* newBmVector( uint size );
+newBmVector= core.newBmVector
+newBmVector.restype= c_void_p
+newBmVector.argtypes= [c_uint]
 
 # BmVector* newBmVector_values( uint size, double* values );
 newBmVector_values= core.newBmVector_values
 newBmVector_values.restype= c_void_p
 newBmVector_values.argtypes= [c_uint, c_void_p]
 
-# BmVector* newBmVector_list( uint size, double val1, ... );
-newBmVector_list= core.newBmVector_list
-newBmVector_list.restype= c_void_p
-newBmVector_list.argtypes= [c_uint, c_double]
-
 # BmVector* newBmVector_all( uint size, double value );
 newBmVector_all= core.newBmVector_all
 newBmVector_all.restype= c_void_p
 newBmVector_all.argtypes= [c_uint, c_double]
 
-# BmVector* BmVector_createBasic( BmVector* self, uint size );
-BmVector_createBasic= core.BmVector_createBasic
-BmVector_createBasic.restype= c_void_p
-BmVector_createBasic.argtypes= [c_void_p, c_uint]
+# BmVector* BmVector_create( BmVector* self, uint size );
+BmVector_create= core.BmVector_create
+BmVector_create.restype= c_void_p
+BmVector_create.argtypes= [c_void_p, c_uint]
 
 # BmVector* BmVector_create_values( BmVector* self, uint size, double* values );
 BmVector_create_values= core.BmVector_create_values
@@ -290,6 +271,16 @@ deleteBmVector= core.deleteBmVector
 deleteBmVector.restype= c_void_p
 deleteBmVector.argtypes= [c_void_p]
 
+# BmVector* BmVector_reinit( BmVector* self, uint newSize );
+BmVector_reinit= core.BmVector_reinit
+BmVector_reinit.restype= c_void_p
+BmVector_reinit.argtypes= [c_void_p, c_uint]
+
+# BmVector* BmVector_copy( BmVector* self, BmVector* model );
+BmVector_copy= core.BmVector_copy
+BmVector_copy.restype= c_void_p
+BmVector_copy.argtypes= [c_void_p, c_void_p]
+
 # uint BmVector_dimention( BmVector* self );
 BmVector_dimention= core.BmVector_dimention
 BmVector_dimention.restype= c_uint
@@ -300,10 +291,25 @@ BmVector_at= core.BmVector_at
 BmVector_at.restype= c_double
 BmVector_at.argtypes= [c_void_p, c_uint]
 
+# double* BmVector_values( BmVector* self );
+BmVector_values= core.BmVector_values
+BmVector_values.restype= c_void_p
+BmVector_values.argtypes= [c_void_p]
+
+# BmVector* BmVector_redimention( BmVector* self, uint size );
+BmVector_redimention= core.BmVector_redimention
+BmVector_redimention.restype= c_void_p
+BmVector_redimention.argtypes= [c_void_p, c_uint]
+
 # double BmVector_at_set( BmVector* self, uint i, double value );
 BmVector_at_set= core.BmVector_at_set
 BmVector_at_set.restype= c_double
 BmVector_at_set.argtypes= [c_void_p, c_uint, c_double]
+
+# BmVector* BmVector_setValues( BmVector* self, double* values );
+BmVector_setValues= core.BmVector_setValues
+BmVector_setValues.restype= c_void_p
+BmVector_setValues.argtypes= [c_void_p, c_void_p]
 
 # double BmVector_sum( BmVector* self );
 BmVector_sum= core.BmVector_sum
@@ -314,6 +320,21 @@ BmVector_sum.argtypes= [c_void_p]
 BmVector_product= core.BmVector_product
 BmVector_product.restype= c_double
 BmVector_product.argtypes= [c_void_p]
+
+# bool BmVector_isEqualTo( BmVector* self, BmVector* another );
+BmVector_isEqualTo= core.BmVector_isEqualTo
+BmVector_isEqualTo.restype= c_int
+BmVector_isEqualTo.argtypes= [c_void_p, c_void_p]
+
+# bool BmVector_isGreaterThan( BmVector* self, BmVector* another );
+BmVector_isGreaterThan= core.BmVector_isGreaterThan
+BmVector_isGreaterThan.restype= c_int
+BmVector_isGreaterThan.argtypes= [c_void_p, c_void_p]
+
+# bool BmVector_isSmallerThan( BmVector* self, BmVector* another );
+BmVector_isSmallerThan= core.BmVector_isSmallerThan
+BmVector_isSmallerThan.restype= c_int
+BmVector_isSmallerThan.argtypes= [c_void_p, c_void_p]
 
 # char* BmVector_print( BmVector* self, char* output );
 BmVector_print= core.BmVector_print
@@ -425,10 +446,10 @@ BmBench_switch= core.BmBench_switch
 BmBench_switch.restype= c_void_p
 BmBench_switch.argtypes= [c_void_p, c_void_p]
 
-# void BmBench_add_reducted( BmBench *self, BmBench *another, BmCode* mask );
+# void BmBench_add_reducted( BmBench* self, BmBench* another, BmCode* mask );
 BmBench_add_reducted= core.BmBench_add_reducted
 BmBench_add_reducted.restype= c_void_p
-BmBench_add_reducted.argtypes= [c_void_p, c_void_p]
+BmBench_add_reducted.argtypes= [c_void_p, c_void_p, c_void_p]
 
 # uint BmBench_sort( BmBench* self, fctptr_BmBench_compare compare );
 BmBench_sort= core.BmBench_sort

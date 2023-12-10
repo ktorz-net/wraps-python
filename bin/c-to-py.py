@@ -20,7 +20,7 @@ typeDico= {
     "bool": "c_int",
 }
 
-header= r"""from .libbbmm import core
+header= r"""from .clib import core
 from ctypes import c_int, c_uint, c_ulong, c_double, c_void_p
 
 # ------------------------------------------------------------------------ #
@@ -54,6 +54,7 @@ def convertFct( fpy, fctName, returnType, parameterStr ):
     parameterStr= parameterStr.strip()
     parameters= []
     pyParamType= []
+    isOk= True
     if parameterStr != '' :
         parameters= [ p.strip() for p in parameterStr.split(',') ]
         for p in parameters :
@@ -63,11 +64,13 @@ def convertFct( fpy, fctName, returnType, parameterStr ):
             else :
                 print( f"ERROR: format on : {fctName}({parameterStr})")
                 pyParamType.append( "ERROR" )
+                isOk= False
 
-    fpy.write( f"\n# {returnType} {fctName}( {', '.join(parameters)} );\n")
-    fpy.write( f"{fctName}= core.{fctName}\n")
-    fpy.write( f"{fctName}.restype= {pythonType(returnType)}\n")
-    fpy.write( f"{fctName}.argtypes= ["+ ", ".join(pyParamType) +"]\n")
+    if isOk :
+        fpy.write( f"\n# {returnType} {fctName}( {', '.join(parameters)} );\n")
+        fpy.write( f"{fctName}= core.{fctName}\n")
+        fpy.write( f"{fctName}.restype= {pythonType(returnType)}\n")
+        fpy.write( f"{fctName}.argtypes= ["+ ", ".join(pyParamType) +"]\n")
 
 def pythonType( cType ):
     pytype= "c_void_p"

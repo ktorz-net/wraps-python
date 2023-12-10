@@ -1,4 +1,5 @@
-import code
+from . import bmCode, bmVector
 
 # Module Classes
-Code= code.Code
+Code= bmCode.Code
+Vector= bmVector.Vector
