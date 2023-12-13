@@ -396,6 +396,11 @@ BmBench_size= core.BmBench_size
 BmBench_size.restype= c_uint
 BmBench_size.argtypes= [c_void_p]
 
+# uint BmBench_capacity( BmBench* self );
+BmBench_capacity= core.BmBench_capacity
+BmBench_capacity.restype= c_uint
+BmBench_capacity.argtypes= [c_void_p]
+
 # BmCode* BmBench_at_code( BmBench* self, uint i );
 BmBench_at_code= core.BmBench_at_code
 BmBench_at_code.restype= c_void_p
