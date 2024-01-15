@@ -4,9 +4,9 @@
  * 
  *   STRUCTURE MODULE:
  *       - BmCode         : a fixed size list of digit (unsigned integers)
+ *       - BmVector       : a fixed size list of values (doubles)
  *       - BmBench        : a dynamic-size collection of BmCode with and value (i -> code and value )
  *       - BmTree         : a tree based BmCode (code -> output and value )
- *       - BmVector       : a fixed size list of values (doubles)
  * 
  *   FUNCTION MODULE:
  *       - BmCondition    : Define a Bayesian Node (conditional probabilities over variable affectations)

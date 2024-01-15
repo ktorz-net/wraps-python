@@ -8,19 +8,25 @@ from . import clib, clibCore as cc
 class Code :
 
     # Construction destruction:
-    def __init__(self, aList=[]):
-        size= len(aList)
-        if size == 0 :
-            self._ccode= cc.newBmCode( c_uint(0) )
-        else :
-            self._ccode= cc.newBmCode_numbers(
-                c_uint(size),
-                clib.uintArrayAs( size, aList )
-            )
+    def __init__(self, aList=[], ccode= None):
         
+        if ccode is None :
+            size= len(aList)
+            if size == 0 :
+                self._ccode= cc.newBmCode( c_uint(0) )
+            else :
+                self._ccode= cc.newBmCode_numbers(
+                    c_uint(size),
+                    clib.uintArrayAs( size, aList )
+                )
+            self._cmaster= True
+        else : 
+            self._ccode= ccode
+            self._cmaster= False
 
     def __del__(self):
-        cc.deleteBmCode( self._ccode )
+        if self._cmaster :
+            cc.deleteBmCode( self._ccode )
 
     # initialize:
     def initialize(self, aList):
@@ -71,6 +77,16 @@ class Code :
     def __iter__(self):
         self.a = 1
         return IterCode(self)
+    
+    # Print 
+    def __str__(self):
+        size= self.dimention()
+        if size == 0 :
+            return "[]"
+        s= "["+ str( self.at(1) )
+        for i in range(2, size+1) :
+            s+= ", "+ str( self.at(i) )
+        return s+"]"
 
 class IterCode :
 

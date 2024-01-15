@@ -1,8 +1,10 @@
 import sys
 sys.path.insert( 1, __file__.split('tests')[0] )
+
 # ------------------------------------------------------------------------ #
 #                 T E S T   p y B b M m  : :  V E C T O R                  #
 # ------------------------------------------------------------------------ #
+
 import pyBbMm as bm
 
 def test_BbMmVector_init():

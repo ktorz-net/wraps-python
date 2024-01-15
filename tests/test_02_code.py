@@ -79,5 +79,8 @@ def test_BbMmCode_iterate():
         count+= 1
     assert count == 2*3*2
 
+def test_BbMmCode_print():
+    assert str( bm.Code([1, 2, 3]) ) == "[1, 2, 3]"
+
 if __name__ == '__main__':
     test_BbMmCode_iterate()

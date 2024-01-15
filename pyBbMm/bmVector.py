@@ -8,19 +8,25 @@ from . import clib, clibCore as cc
 class Vector :
 
     # Construction destruction:
-    def __init__(self, aList=[]):
-        size= len(aList)
-        if size == 0 :
-            self._cvector= cc.newBmVector( c_uint(0) )
-        else :
-            self._cvector= cc.newBmVector_values(
-                c_uint(size),
-                clib.doubleArrayAs( size, aList )
-            )
-        
+    def __init__(self, aList=[], cvector= None ):
+        if cvector is None :
+            size= len(aList)
+            if size == 0 :
+                self._cvector= cc.newBmVector( c_uint(0) )
+            else :
+                self._cvector= cc.newBmVector_values(
+                    c_uint(size),
+                    clib.doubleArrayAs( size, aList )
+                )
+            self._cmaster= True
+        else : 
+            self._cvector= cvector
+            self._cmaster= False
+
 
     def __del__(self):
-        cc.deleteBmVector( self._cvector )
+        if self._cmaster :
+            cc.deleteBmVector( self._cvector )
 
     # initialize:
     def initialize(self, aList):
