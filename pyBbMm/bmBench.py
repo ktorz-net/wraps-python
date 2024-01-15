@@ -8,10 +8,17 @@ from .bmCode import Code
 # BmBench wrap:
 class Bench :
     # Construction destruction:
-    def __init__(self, capacity= 16):
-        self._cbench= cc.newBmBench( c_uint(capacity) )
-        self._cmaster= True
-
+    def __init__(self, aListOfList=[], capacity= 16, cbench= None):
+        if cbench is None :
+            capacity= max( capacity, len(aListOfList) )
+            self._cbench= cc.newBmBench( c_uint(capacity) )
+            for codeList in aListOfList :
+                self.attachLast( Code( codeList ), 0.0 )
+            self._cmaster= True
+        else: 
+            self._cbench= cbench
+            self._cmaster= False
+    
     def __del__(self):
         if self._cmaster :
             cc.deleteBmBench( self._cbench )

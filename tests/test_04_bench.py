@@ -12,12 +12,12 @@ def test_BbMmBench_init():
     assert bench.size() == 0
 
 def test_BbMmBench_init2():
-    bench= bm.Bench(24)
+    bench= bm.Bench(capacity=24)
     assert bench.size() == 0
     assert bench.capacity() == 24
 
 def test_BbMmBench_attach():
-    bench= bm.Bench(24)
+    bench= bm.Bench(capacity=24)
     c1= bm.Code([1])
     bench.attachLast( c1, 1.0 )
     c2= bench.at_code( 1 )
@@ -41,3 +41,6 @@ def test_BbMmBench_attach():
     c= bench.detachFirst()
     assert str(c) == "[0, 0]"
     
+def test_BbMmBench_initFull():
+    bench= bm.Bench( [[0, 0], [1], [1, 2], [2, 4]] )
+    assert str(bench) == "[[0, 0]:0.0, [1]:0.0, [1, 2]:0.0, [2, 4]:0.0]"
