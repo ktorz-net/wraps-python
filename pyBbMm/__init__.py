@@ -1,12 +1,13 @@
 # STRUCTURE MODULE:
-from . import bmCode, bmVector, bmBench
+from . import bmCode, bmVector, bmBench, bmTree
 Code= bmCode.Code
 Vector= bmVector.Vector
 Bench= bmBench.Bench
-#Tree= bmTree.Tree
+Tree= bmTree.Tree
 
 # FUNCTION MODULE:
-#BmCondition
+from . import bmCondition, bmInferer, bmEvaluator
+Condition= bmCondition.Condition
 #BmInferer 
 #BmEvaluator
 

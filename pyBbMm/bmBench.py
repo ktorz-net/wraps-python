@@ -8,12 +8,12 @@ from .bmCode import Code
 # BmBench wrap:
 class Bench :
     # Construction destruction:
-    def __init__(self, aListOfList=[], capacity= 16, cbench= None):
+    def __init__(self, aListOfTuples=[], capacity= 16, cbench= None):
         if cbench is None :
-            capacity= max( capacity, len(aListOfList) )
+            capacity= max( capacity, len(aListOfTuples) )
             self._cbench= cc.newBmBench( c_uint(capacity) )
-            for codeList in aListOfList :
-                self.attachLast( Code( codeList ), 0.0 )
+            for codeList, value in aListOfTuples :
+                self.attachLast( Code( codeList ), value )
             self._cmaster= True
         else: 
             self._cbench= cbench
@@ -36,6 +36,13 @@ class Bench :
     def at_value( self, i ):
         return cc.BmBench_at_value( self._cbench, c_uint(i) )
 
+    def range(self):
+        return range(1, self.size()+1)
+    
+    def list( self ):
+        return [ (self.at_code(i).list(), self.at_value(i)) for i in self.range() ]
+        
+    
     # Construction
     def attachLast( self, newCode, value ):
         assert newCode._cmaster 

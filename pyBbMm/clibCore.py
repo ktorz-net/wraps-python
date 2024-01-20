@@ -526,15 +526,15 @@ deleteBmTree= core.deleteBmTree
 deleteBmTree.restype= c_void_p
 deleteBmTree.argtypes= [c_void_p]
 
-# BmTree* BmTree_reinitWhith_on( BmTree* self, uint index, int defaultOption );
+# BmTree* BmTree_reinitWhith_on( BmTree* self, uint index, uint defaultOption );
 BmTree_reinitWhith_on= core.BmTree_reinitWhith_on
 BmTree_reinitWhith_on.restype= c_void_p
-BmTree_reinitWhith_on.argtypes= [c_void_p, c_uint, c_int]
+BmTree_reinitWhith_on.argtypes= [c_void_p, c_uint, c_uint]
 
-# BmTree* BmTree_reinitOn( BmTree* self, int defaultOption );
+# BmTree* BmTree_reinitOn( BmTree* self, uint defaultOption );
 BmTree_reinitOn= core.BmTree_reinitOn
 BmTree_reinitOn.restype= c_void_p
-BmTree_reinitOn.argtypes= [c_void_p, c_int]
+BmTree_reinitOn.argtypes= [c_void_p, c_uint]
 
 # uint BmTree_outputSize( BmTree* self );
 BmTree_outputSize= core.BmTree_outputSize
@@ -550,21 +550,6 @@ BmTree_at.argtypes= [c_void_p, c_void_p]
 BmTree_at_value= core.BmTree_at_value
 BmTree_at_value.restype= c_double
 BmTree_at_value.argtypes= [c_void_p, c_void_p]
-
-# uint BmTree_branchSize( BmTree* self, uint branch );
-BmTree_branchSize= core.BmTree_branchSize
-BmTree_branchSize.restype= c_uint
-BmTree_branchSize.argtypes= [c_void_p, c_uint]
-
-# uint BmTree_branchVariable( BmTree* self, uint iBranch );
-BmTree_branchVariable= core.BmTree_branchVariable
-BmTree_branchVariable.restype= c_uint
-BmTree_branchVariable.argtypes= [c_void_p, c_uint]
-
-# uint BmTree_deepOf( BmTree* self, BmCode* code );
-BmTree_deepOf= core.BmTree_deepOf
-BmTree_deepOf.restype= c_uint
-BmTree_deepOf.argtypes= [c_void_p, c_void_p]
 
 # void BmTree_reziseCapacity( BmTree* self, uint newCapacity );
 BmTree_reziseCapacity= core.BmTree_reziseCapacity
@@ -611,10 +596,10 @@ BmTree_deepOf= core.BmTree_deepOf
 BmTree_deepOf.restype= c_uint
 BmTree_deepOf.argtypes= [c_void_p, c_void_p]
 
-# uint BmTree_newBranch( BmTree* self, uint iVariable, int defaultOption );
+# uint BmTree_newBranch( BmTree* self, uint iVariable, uint defaultOption );
 BmTree_newBranch= core.BmTree_newBranch
 BmTree_newBranch.restype= c_uint
-BmTree_newBranch.argtypes= [c_void_p, c_uint, c_int]
+BmTree_newBranch.argtypes= [c_void_p, c_uint, c_uint]
 
 # void BmTree_branch_state_connect( BmTree* self, uint branchA, uint stateA, uint branchB );
 BmTree_branch_state_connect= core.BmTree_branch_state_connect
