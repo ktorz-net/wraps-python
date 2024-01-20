@@ -656,22 +656,22 @@ BmTree_printInside= core.BmTree_printInside
 BmTree_printInside.restype= c_void_p
 BmTree_printInside.argtypes= [c_void_p, c_void_p]
 
-# BmCondition* newBmConditionBasic( uint outputSize );
+# BmCondition* newBmConditionBasic( uint domain );
 newBmConditionBasic= core.newBmConditionBasic
 newBmConditionBasic.restype= c_void_p
 newBmConditionBasic.argtypes= [c_uint]
 
-# BmCondition* newBmConditionWith( uint domainSize, BmCode* newParentRanges, BmBench* newDefaultDistrib );
+# BmCondition* newBmConditionWith( uint domain, BmCode* newParentRanges, BmBench* newDefaultDistrib );
 newBmConditionWith= core.newBmConditionWith
 newBmConditionWith.restype= c_void_p
 newBmConditionWith.argtypes= [c_uint, c_void_p, c_void_p]
 
-# BmCondition* BmCondition_createBasic( BmCondition* self, uint outputSize );
+# BmCondition* BmCondition_createBasic( BmCondition* self, uint domain );
 BmCondition_createBasic= core.BmCondition_createBasic
 BmCondition_createBasic.restype= c_void_p
 BmCondition_createBasic.argtypes= [c_void_p, c_uint]
 
-# BmCondition* BmCondition_createWith( BmCondition* self, uint domainSize, BmCode* newParentRanges, BmBench* newDefaultDistrib );
+# BmCondition* BmCondition_createWith( BmCondition* self, uint domain, BmCode* newParentRanges, BmBench* newDefaultDistrib );
 BmCondition_createWith= core.BmCondition_createWith
 BmCondition_createWith.restype= c_void_p
 BmCondition_createWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
@@ -686,7 +686,7 @@ deleteBmCondition= core.deleteBmCondition
 deleteBmCondition.restype= c_void_p
 deleteBmCondition.argtypes= [c_void_p]
 
-# uint BmCondition_reinitWith( BmCondition* self, uint outputSize, BmCode* newParents, BmBench* newDistrib );
+# uint BmCondition_reinitWith( BmCondition* self, uint domain, BmCode* newParents, BmBench* newDistrib );
 BmCondition_reinitWith= core.BmCondition_reinitWith
 BmCondition_reinitWith.restype= c_uint
 BmCondition_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
@@ -696,10 +696,10 @@ BmCondition_reinitDistributionsWith= core.BmCondition_reinitDistributionsWith
 BmCondition_reinitDistributionsWith.restype= c_uint
 BmCondition_reinitDistributionsWith.argtypes= [c_void_p, c_void_p]
 
-# uint BmCondition_output( BmCondition* self );
-BmCondition_output= core.BmCondition_output
-BmCondition_output.restype= c_uint
-BmCondition_output.argtypes= [c_void_p]
+# uint BmCondition_domain( BmCondition* self );
+BmCondition_domain= core.BmCondition_domain
+BmCondition_domain.restype= c_uint
+BmCondition_domain.argtypes= [c_void_p]
 
 # BmCode* BmCondition_parents( BmCondition* self );
 BmCondition_parents= core.BmCondition_parents

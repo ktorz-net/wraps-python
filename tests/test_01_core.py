@@ -34,7 +34,7 @@ def test_ccTree_init():
 
 def test_ccCondition_init():
     cCondition= cc.newBmConditionBasic(4)
-    assert cc.BmCondition_output(cCondition) == 4
+    assert cc.BmCondition_domain(cCondition) == 4
     cc.deleteBmCondition(cCondition)
 
 def test_ccInferer_init():

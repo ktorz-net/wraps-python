@@ -27,3 +27,19 @@ class Condition:
     def __del__(self):
         if self._cmaster :
             cc.deleteBmCondition( self._ccondition )
+
+    # Accessor
+    def domain( self ):
+        return cc.BmCondition_domain( self._ccondition )
+    
+    def parentSpace( self ):
+        return Code( ccode= cc.BmCondition_parents( self._ccondition ) )
+
+    def atCode( self, configuration ):
+        return Bench( cbench=cc.BmCondition_at(
+            self._ccondition,
+            configuration._ccode )
+        )
+    
+    def at( self, configurationList ):
+        return self.atCode( Code( configurationList ) )
