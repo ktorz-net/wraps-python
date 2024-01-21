@@ -47,7 +47,7 @@ def test_BbMmInferer_construction():
     assert( trans.parents(4).list() == [2, 3] )
     assert( trans.node(4).parentSpace().list() == [3, 4] )
 
-def test_BbMmInferer_infers():
+def test_BbMmInferer_process():
     trans= bm.Inferer( [6, 3, 4, 6], 2, 1 )
     condition= trans.variable_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
     condition.fromList_set( [1], [(1, 1.0)] )
@@ -60,8 +60,7 @@ def test_BbMmInferer_infers():
     bench= trans.distribution()
     assert bench.list() == []
     assert( trans.inputDimention() == 2 )
-    trans.processFrom( [1, 1] )
-    bench= trans.distribution()
+    bench= trans.processFrom( [1, 1] )
     assert bench.list() == [([1], 1.0)]
     trans.processFrom( [4, 2] )
     assert bench.list() == [([1], 0.25), ([2], 0.25), ([3], 0.25), ([4], 0.25)]

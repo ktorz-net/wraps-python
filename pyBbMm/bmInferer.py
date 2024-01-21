@@ -75,10 +75,11 @@ class Inferer:
     
     # Processing
     def processBench( self, inputDistribution ):
-        return cc.BmInferer_process(
+        cc.BmInferer_process(
             self._cinferer,
             inputDistribution._cbench
         )
+        return self.distribution()
     
     def processFrom( self, inputList ):
         return self.processBench( Bench( [(inputList, 1.0)] ) )
