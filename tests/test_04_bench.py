@@ -20,11 +20,11 @@ def test_BbMmBench_attach():
     bench= bm.Bench(capacity=24)
     c1= bm.Code([1])
     bench.attachLast( c1, 1.0 )
-    c2= bench.at_code( 1 )
+    c2= bench.at( 1 )
     assert c1._ccode == c2._ccode 
     assert c2.dimention() == 1 
     assert c2.at(1) == 1
-    assert bench.at_value( 1 ) == 1.0
+    assert bench.valueAt( 1 ) == 1.0
     assert str(bench) == "[[1]:1.0]"
 
     bench.attachLast( bm.Code([1, 2]), 1.2 )

@@ -8,9 +8,10 @@ from .bmBench import Bench
 
 class Condition:
     # Construction destruction:
-    def __init__(self, domainSize=1, parentSpace=[1], defaultDistrib=[([1],1.0)], ccondition= None):
+    def __init__(self, domainSize=1, parentSpace=[1], defaultDistrib=[(1,1.0)], ccondition= None):
         if ccondition is None :
             codeParentSpace= Code( parentSpace )
+            defaultDistrib= [ ([int(output)], value) for output, value in defaultDistrib ]
             benchDefaultDistrib= Bench( defaultDistrib )
             self._ccondition= cc.newBmConditionWith(
                 c_uint(domainSize),
@@ -35,11 +36,26 @@ class Condition:
     def parentSpace( self ):
         return Code( ccode= cc.BmCondition_parents( self._ccondition ) )
 
-    def atCode( self, configuration ):
-        return Bench( cbench=cc.BmCondition_at(
+    def fromCode( self, configuration ):
+        return Bench( cbench=cc.BmCondition_from(
             self._ccondition,
             configuration._ccode )
         )
     
-    def at( self, configurationList ):
-        return self.atCode( Code( configurationList ) )
+    def fromList( self, configurationList ):
+        bench= self.fromCode( Code( configurationList ) )
+        distrib= [ (output[0], value)
+            for output, value in bench.list() ]
+        return distrib
+
+    def distributionSize( self ):
+        return cc.BmCondition_distributionSize(self._ccondition)
+    
+    def distributionAt( self, iDistribution ):
+        return Bench(
+            cbench= cc.BmCondition_distributionAt(
+                self._ccondition,
+                c_uint(iDistribution)
+            )
+        )
+    

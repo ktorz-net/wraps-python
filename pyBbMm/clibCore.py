@@ -401,15 +401,20 @@ BmBench_capacity= core.BmBench_capacity
 BmBench_capacity.restype= c_uint
 BmBench_capacity.argtypes= [c_void_p]
 
-# BmCode* BmBench_at_code( BmBench* self, uint i );
-BmBench_at_code= core.BmBench_at_code
-BmBench_at_code.restype= c_void_p
-BmBench_at_code.argtypes= [c_void_p, c_uint]
+# BmCode* BmBench_at( BmBench* self, uint i );
+BmBench_at= core.BmBench_at
+BmBench_at.restype= c_void_p
+BmBench_at.argtypes= [c_void_p, c_uint]
 
-# double BmBench_at_value( BmBench* self, uint i );
-BmBench_at_value= core.BmBench_at_value
-BmBench_at_value.restype= c_double
-BmBench_at_value.argtypes= [c_void_p, c_uint]
+# double BmBench_valueAt( BmBench* self, uint i );
+BmBench_valueAt= core.BmBench_valueAt
+BmBench_valueAt.restype= c_double
+BmBench_valueAt.argtypes= [c_void_p, c_uint]
+
+# uint BmBench_dimention( BmBench* self );
+BmBench_dimention= core.BmBench_dimention
+BmBench_dimention.restype= c_uint
+BmBench_dimention.argtypes= [c_void_p]
 
 # void BmBench_resizeCapacity( BmBench* self, uint newCapacity );
 BmBench_resizeCapacity= core.BmBench_resizeCapacity
@@ -706,25 +711,30 @@ BmCondition_parents= core.BmCondition_parents
 BmCondition_parents.restype= c_void_p
 BmCondition_parents.argtypes= [c_void_p]
 
-# BmBench* BmCondition_at( BmCondition* self, BmCode* configuration );
-BmCondition_at= core.BmCondition_at
-BmCondition_at.restype= c_void_p
-BmCondition_at.argtypes= [c_void_p, c_void_p]
+# BmBench* BmCondition_from( BmCondition* self, BmCode* configuration );
+BmCondition_from= core.BmCondition_from
+BmCondition_from.restype= c_void_p
+BmCondition_from.argtypes= [c_void_p, c_void_p]
 
-# BmBench* BmCondition_atKey( BmCondition* self, uint configKey );
-BmCondition_atKey= core.BmCondition_atKey
-BmCondition_atKey.restype= c_void_p
-BmCondition_atKey.argtypes= [c_void_p, c_uint]
+# BmBench* BmCondition_fromKey( BmCondition* self, uint configKey );
+BmCondition_fromKey= core.BmCondition_fromKey
+BmCondition_fromKey.restype= c_void_p
+BmCondition_fromKey.argtypes= [c_void_p, c_uint]
 
-# BmBench* BmCondition_distribution( BmCondition* self, uint iDistrib );
-BmCondition_distribution= core.BmCondition_distribution
-BmCondition_distribution.restype= c_void_p
-BmCondition_distribution.argtypes= [c_void_p, c_uint]
+# uint BmCondition_distributionSize( BmCondition* self );
+BmCondition_distributionSize= core.BmCondition_distributionSize
+BmCondition_distributionSize.restype= c_uint
+BmCondition_distributionSize.argtypes= [c_void_p]
 
-# uint BmCondition_at_attach( BmCondition* self, BmCode* configuration, BmBench* distribution );
-BmCondition_at_attach= core.BmCondition_at_attach
-BmCondition_at_attach.restype= c_uint
-BmCondition_at_attach.argtypes= [c_void_p, c_void_p, c_void_p]
+# BmBench* BmCondition_distributionAt( BmCondition* self, uint iDistrib );
+BmCondition_distributionAt= core.BmCondition_distributionAt
+BmCondition_distributionAt.restype= c_void_p
+BmCondition_distributionAt.argtypes= [c_void_p, c_uint]
+
+# uint BmCondition_from_attach( BmCondition* self, BmCode* configuration, BmBench* distribution );
+BmCondition_from_attach= core.BmCondition_from_attach
+BmCondition_from_attach.restype= c_uint
+BmCondition_from_attach.argtypes= [c_void_p, c_void_p, c_void_p]
 
 # void BmCondition_switch( BmCondition* self, BmCondition* doppelganger );
 BmCondition_switch= core.BmCondition_switch

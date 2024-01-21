@@ -30,17 +30,17 @@ class Bench :
     def capacity( self ):
         return cc.BmBench_capacity( self._cbench )
     
-    def at_code(self, i):
-        return Code( ccode= cc.BmBench_at_code( self._cbench, c_uint(i) ) )
+    def at(self, i):
+        return Code( ccode= cc.BmBench_at( self._cbench, c_uint(i) ) )
     
-    def at_value( self, i ):
-        return cc.BmBench_at_value( self._cbench, c_uint(i) )
+    def valueAt( self, i ):
+        return cc.BmBench_valueAt( self._cbench, c_uint(i) )
 
     def range(self):
         return range(1, self.size()+1)
     
     def list( self ):
-        return [ (self.at_code(i).list(), self.at_value(i)) for i in self.range() ]
+        return [ (self.at(i).list(), self.valueAt(i)) for i in self.range() ]
         
     
     # Construction
@@ -83,7 +83,7 @@ class Bench :
         size= self.size()
         if size == 0 :
             return "[]"
-        s= "["+ str( self.at_code(1) ) +":"+ str( self.at_value(1) )
+        s= "["+ str( self.at(1) ) +":"+ str( self.valueAt(1) )
         for i in range(2, size+1) :
-            s+= ", "+ str( self.at_code(i) ) +":"+ str( self.at_value(i) )
+            s+= ", "+ str( self.at(i) ) +":"+ str( self.valueAt(i) )
         return s+"]"
