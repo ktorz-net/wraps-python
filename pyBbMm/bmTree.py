@@ -57,3 +57,11 @@ class Tree :
 
     def at_set( self, codeList, option ):
         return self.atCode_set( Code( codeList ), option )
+
+    def option_setValue( self, iOption, value ):
+        cc.BmTree_option_setValue(
+            self._ctree,
+            c_uint(iOption),
+            c_double(value)
+        )
+        
