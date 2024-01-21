@@ -10,3 +10,7 @@ import pyBbMm as bm
 def test_BbMmInferer_init():
     trans= bm.Inferer()
     assert type(trans) == bm.Inferer
+    assert( trans.inputDimention() == 1 )
+    assert( trans.outputDimention() == 1 )
+    assert( trans.shiftDimention() == 0 )
+    assert( trans.overallDimention() == 2 )
