@@ -5,6 +5,7 @@ from numpy import empty
 from . import clib, clibCore as cc
 from .bmCode import Code
 from .bmBench import Bench
+from .bmCondition import Condition
 
 class Inferer:
     # Construction destruction:
@@ -16,7 +17,6 @@ class Inferer:
                      c_uint(inputDimention),
                      c_uint(outputDimention)
             )
-            codeSpace._cmaster= False
             self._cmaster= True
         else: 
             self._cinferer= cinferer
@@ -43,3 +43,42 @@ class Inferer:
     
     def overallDimention( self ):
         return cc.BmInferer_overallDimention( self._cinferer )
+
+    def node(self, iVar):
+        return Condition( ccondition= cc.BmInferer_node(
+            self._cinferer, c_uint(iVar) )
+        )
+    
+    def parents( self, iVar ):
+        return Code( ccode=cc.BmInferer_node_parents(
+            self._cinferer, c_uint(iVar) )
+        )
+    
+    # Construction :
+    def variable_setDependancyBm( self, iVar, parents, defaultDistrib ):
+        assert( parents._cmaster and defaultDistrib._cmaster )
+        parents._cmaster= False
+        defaultDistrib._cmaster= False
+        return Condition( ccondition= cc.BmInferer_node_reinitWith(
+            self._cinferer,
+            c_uint(iVar),
+            parents._ccode,
+            defaultDistrib._cbench )
+        )
+    
+    def variable_setDependancy( self, iVar, parentList, defaultDistribList ):
+        return self.variable_setDependancyBm(
+            iVar,
+            Code( parentList ),
+            Bench( [ ([o], v) for o, v in defaultDistribList ] )
+        )
+    
+    # Processing
+    def processBench( self, inputDistribution ):
+        return cc.BmInferer_process(
+            self._cinferer,
+            inputDistribution._cbench
+        )
+    
+    def processFrom( self, inputList ):
+        return self.processBench( Bench( [(inputList, 1.0)] ) )
