@@ -59,3 +59,36 @@ class Condition:
             )
         )
     
+    # Construction
+    def initializeWith( self, domain, parentSpace, defaultDistrib ):
+        assert( parentSpace._cmaster and defaultDistrib._cmaster )
+        parentSpace._cmaster= False
+        defaultDistrib._cmaster= False
+        return cc.BmCondition_reinitWith(
+            self._ccondition,
+            c_uint(domain),
+            parentSpace._ccode,
+            defaultDistrib._cbench
+        )
+    
+    def initialize( self, domain, parentSpaceList, defaultDistribList ):
+        return self.initializeWith( domain,
+            Code( parentSpaceList ),
+            Bench( [ ([o], v) for o, v in defaultDistribList] )
+        )
+
+    def fromCode_set( self, configuration, distribution ):
+        assert( configuration._cmaster and distribution._cmaster )
+        configuration._cmaster= False
+        distribution._cmaster= False
+        return cc.BmCondition_from_attach(
+            self._ccondition,
+            configuration._ccode,
+            distribution._cbench
+        )
+    
+    def fromList_set( self, configList, distribList ):
+        configuration= Code( configList )
+        distribution= Bench( [([int(output)], value) for output, value in distribList ] )
+        return self.fromCode_set(configuration, distribution)
+    
