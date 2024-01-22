@@ -76,3 +76,17 @@ class Evaluator:
         cc.BmEvaluator_crit_setWeight(
             self._cevaluator, c_uint(iCrit), c_double(weight)
         )
+
+    # Process
+    def processMulti( self, input ):
+        inputCode= Code( input )
+        values= []
+        for iCrit in range( 1, self.numberOfCriteria()+1 ) :
+            values.append( cc.BmEvaluator_crit_process( self._cevaluator, c_uint(iCrit), inputCode._ccode ) )
+        return values
+
+    def processCode( self, input ):
+        return cc.BmEvaluator_process( self._cevaluator, input._ccode )
+    
+    def process( self, inputList ):
+        return self.processCode( Code(inputList) )
