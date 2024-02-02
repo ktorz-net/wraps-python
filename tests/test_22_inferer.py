@@ -5,18 +5,18 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                T E S T   p y B b M m  : :  I N F E R E R                 #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm as bm
+import pyBbMm as bbmm
 
 def test_BbMmInferer_init():
-    trans= bm.Inferer()
-    assert type(trans) == bm.Inferer
+    trans= bbmm.Inferer()
+    assert type(trans) == bbmm.Inferer
     assert( trans.inputDimention() == 1 )
     assert( trans.outputDimention() == 1 )
     assert( trans.shiftDimention() == 0 )
     assert( trans.overallDimention() == 2 )
 
 def test_BbMmInferer_init2():
-    trans= bm.Inferer( [2, 3, 4, 6], 2, 1 )
+    trans= bbmm.Inferer( [2, 3, 4, 6], 2, 1 )
     assert( trans.inputDimention() == 2 )
     assert( trans.outputDimention() == 1 )
     assert( trans.shiftDimention() == 1 )
@@ -27,7 +27,7 @@ def test_BbMmInferer_init2():
         assert( trans.parents(1).list() == [] )
 
 def test_BbMmInferer_construction():
-    trans= bm.Inferer( [6, 3, 4, 6], 2, 1 )
+    trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
     trans.variable_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
     trans.variable_setDependancy( 4, [2, 3], [(1, 1.0)] )
 
@@ -48,7 +48,7 @@ def test_BbMmInferer_construction():
     assert( trans.node(4).parentSpace().list() == [3, 4] )
 
 def test_BbMmInferer_process():
-    trans= bm.Inferer( [6, 3, 4, 6], 2, 1 )
+    trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
     condition= trans.variable_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
     condition.fromList_set( [1], [(1, 1.0)] )
     condition.fromList_set( [2], [(2, 1.0)] )
@@ -65,5 +65,5 @@ def test_BbMmInferer_process():
     trans.processFrom( [4, 2] )
     assert bench.list() == [([1], 0.25), ([2], 0.25), ([3], 0.25), ([4], 0.25)]
 
-    trans.processBench( bm.Bench( [([4, 2], 0.7), ([1, 3], 0.3)] ) )
+    trans.processBench( bbmm.Bench( [([4, 2], 0.7), ([1, 3], 0.3)] ) )
     assert bench.list() == [([1], 0.475), ([2], 0.175), ([3], 0.175), ([4], 0.175)]
