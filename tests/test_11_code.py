@@ -82,5 +82,19 @@ def test_BbMmCode_iterate():
 def test_BbMmCode_print():
     assert str( bm.Code([1, 2, 3]) ) == "[1, 2, 3]"
 
+
+def test_BbMmCode_dump():
+    code= bm.Code([1, 2, 3])
+    assert code.dump() == [1, 2, 3]
+    assert code.dumpStr() == "[1, 2, 3]"
+
+def test_BbMmCode_load():
+    code= bm.Code().load( bm.Code([1, 2, 3]).dump() )
+    assert code.dump() == [1, 2, 3]
+    assert code.dumpStr() == "[1, 2, 3]"
+
+def test_BbMmCode_print():
+    assert str( bm.Code([1, 2, 3]) ) == "[1, 2, 3]"
+
 if __name__ == '__main__':
     test_BbMmCode_iterate()

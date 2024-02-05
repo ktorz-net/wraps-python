@@ -40,10 +40,24 @@ def test_BbMmBench_attach():
 
     c= bench.detachFirst()
     assert str(c) == "[0, 0]"
-    
+
 def test_BbMmBench_initFull():
     bench= bm.Bench( [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3), ([2, 4], 0)] )
     assert str(bench) == "[[0, 0]:1.0, [1]:0.2, [1, 2]:3.0, [2, 4]:0.0]"
     
     assert list( bench.range() ) == [ 1, 2, 3, 4 ]
     assert bench.list() == [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3), ([2, 4], 0)]
+
+
+def test_BbMmBench_dump():
+    bench= bm.Bench( [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3), ([2, 4], 0)] )
+    assert bench.dump() == [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]
+    assert bench.dumpStr() == "[([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]"
+
+def test_BbMmBench_load():
+    descriptor= [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]
+    bench= bm.Bench().load(descriptor)
+    assert bench.dump() == [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]
+    assert bench.dumpStr() == "[([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]"
+
+

@@ -23,6 +23,13 @@ class Bench :
         if self._cmaster :
             cc.deleteBmBench( self._cbench )
     
+    def initialize( self, aListOfTuples=[], capacity= 16 ):
+        capacity= max( capacity, len(aListOfTuples) )
+        cc.BmBench_reinit( self._cbench, c_uint(capacity) )
+        for codeList, value in aListOfTuples :
+            self.attachLast( Code( codeList ), value )
+        return self
+            
     # Accessor
     def size( self ):
         return cc.BmBench_size( self._cbench )
@@ -41,7 +48,6 @@ class Bench :
     
     def list( self ):
         return [ (self.at(i).list(), self.valueAt(i)) for i in self.range() ]
-        
     
     # Construction
     def attachLast( self, newCode, value ):
@@ -78,6 +84,17 @@ class Bench :
         )
         return Code( ccode= cpointer )
 
+    # dump and load:
+    def dump(self):
+        descriptor= self.list()
+        return descriptor
+    
+    def dumpStr(self):
+        return str( self.dump() )
+    
+    def load(self, descriptor):
+        return self.initialize( descriptor )
+    
     # Print 
     def __str__(self):
         size= self.size()

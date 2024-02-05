@@ -531,15 +531,30 @@ deleteBmTree= core.deleteBmTree
 deleteBmTree.restype= c_void_p
 deleteBmTree.argtypes= [c_void_p]
 
-# BmTree* BmTree_reinitWhith_on( BmTree* self, uint index, uint defaultOption );
-BmTree_reinitWhith_on= core.BmTree_reinitWhith_on
-BmTree_reinitWhith_on.restype= c_void_p
-BmTree_reinitWhith_on.argtypes= [c_void_p, c_uint, c_uint]
+# BmTree* BmTree_reinitWith( BmTree* self, BmCode* newSpace, uint optionSize );
+BmTree_reinitWith= core.BmTree_reinitWith
+BmTree_reinitWith.restype= c_void_p
+BmTree_reinitWith.argtypes= [c_void_p, c_void_p, c_uint]
 
-# BmTree* BmTree_reinitOn( BmTree* self, uint defaultOption );
-BmTree_reinitOn= core.BmTree_reinitOn
-BmTree_reinitOn.restype= c_void_p
-BmTree_reinitOn.argtypes= [c_void_p, c_uint]
+# BmTree* BmTree_clearWhith_on( BmTree* self, uint index, uint defaultOption );
+BmTree_clearWhith_on= core.BmTree_clearWhith_on
+BmTree_clearWhith_on.restype= c_void_p
+BmTree_clearWhith_on.argtypes= [c_void_p, c_uint, c_uint]
+
+# BmTree* BmTree_clearOn( BmTree* self, uint defaultOption );
+BmTree_clearOn= core.BmTree_clearOn
+BmTree_clearOn.restype= c_void_p
+BmTree_clearOn.argtypes= [c_void_p, c_uint]
+
+# uint BmTree_size( BmTree* self );
+BmTree_size= core.BmTree_size
+BmTree_size.restype= c_uint
+BmTree_size.argtypes= [c_void_p]
+
+# BmCode* BmTree_inputSpace( BmTree* self );
+BmTree_inputSpace= core.BmTree_inputSpace
+BmTree_inputSpace.restype= c_void_p
+BmTree_inputSpace.argtypes= [c_void_p]
 
 # uint BmTree_outputSize( BmTree* self );
 BmTree_outputSize= core.BmTree_outputSize
@@ -581,7 +596,7 @@ BmTree_at_readOrder_set= core.BmTree_at_readOrder_set
 BmTree_at_readOrder_set.restype= c_uint
 BmTree_at_readOrder_set.argtypes= [c_void_p, c_void_p, c_void_p, c_uint]
 
-# uint BmTree_branchSize( BmTree* self, uint branch );
+# uint BmTree_branchSize( BmTree* self, uint iBranch );
 BmTree_branchSize= core.BmTree_branchSize
 BmTree_branchSize.restype= c_uint
 BmTree_branchSize.argtypes= [c_void_p, c_uint]
@@ -595,6 +610,11 @@ BmTree_branch_state.argtypes= [c_void_p, c_uint, c_uint]
 BmTree_branchVariable= core.BmTree_branchVariable
 BmTree_branchVariable.restype= c_uint
 BmTree_branchVariable.argtypes= [c_void_p, c_uint]
+
+# uint BmTree_branchNumberOfOutputs( BmTree* self, uint branch );
+BmTree_branchNumberOfOutputs= core.BmTree_branchNumberOfOutputs
+BmTree_branchNumberOfOutputs.restype= c_uint
+BmTree_branchNumberOfOutputs.argtypes= [c_void_p, c_uint]
 
 # uint BmTree_deepOf( BmTree* self, BmCode* code );
 BmTree_deepOf= core.BmTree_deepOf
@@ -630,6 +650,11 @@ BmTree_removeBranch.argtypes= [c_void_p, c_uint]
 BmTree_asNewBench= core.BmTree_asNewBench
 BmTree_asNewBench.restype= c_void_p
 BmTree_asNewBench.argtypes= [c_void_p]
+
+# void BmTree_fromBench( BmTree* self, BmBench* model );
+BmTree_fromBench= core.BmTree_fromBench
+BmTree_fromBench.restype= c_void_p
+BmTree_fromBench.argtypes= [c_void_p, c_void_p]
 
 # char* BmTree_printBranch( BmTree* self, uint iBranch, char* output );
 BmTree_printBranch= core.BmTree_printBranch
@@ -856,7 +881,7 @@ BmInferer_node_reinitIndependant= core.BmInferer_node_reinitIndependant
 BmInferer_node_reinitIndependant.restype= c_void_p
 BmInferer_node_reinitIndependant.argtypes= [c_void_p, c_uint]
 
-# BmCondition* BmInferer_node_reinitWith( BmInferer* self, uint index, BmCode* newDependenceMask, BmBench* newDefaultDistrib );
+# BmCondition* BmInferer_node_reinitWith( BmInferer* self, uint index, BmCode* newDependenceList, BmBench* newDefaultDistrib );
 BmInferer_node_reinitWith= core.BmInferer_node_reinitWith
 BmInferer_node_reinitWith.restype= c_void_p
 BmInferer_node_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]

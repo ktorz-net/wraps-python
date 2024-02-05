@@ -72,3 +72,14 @@ class Vector :
     def at_set(self, i, value):
         assert( 0 < i and i <= self.dimention() )
         cc.BmVector_at_set(self._cvector, c_uint(i), c_double(value) )
+
+    # dump and load:
+    def dump(self):
+        descriptor= self.list()
+        return descriptor
+    
+    def dumpStr(self):
+        return str( self.dump() )
+    
+    def load(self, descriptor):
+        return self.initialize( descriptor )

@@ -92,3 +92,11 @@ class Condition:
         distribution= Bench( [([int(output)], value) for output, value in distribList ] )
         return self.fromCode_set(configuration, distribution)
     
+    # Dump & Load :
+    def dump( self ):
+        descriptor= {
+            "input": self.parentSpace().list(),
+            "output": self.domain(),
+            "distributions": []
+        }
+        return descriptor

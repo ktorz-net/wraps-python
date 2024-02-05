@@ -57,5 +57,15 @@ def test_BbMmVector_modify():
     vector.at_set(3, 1.0)
     assert vector.list() == [2.0, 3.0, 1.0, 6.0]
 
+def test_BbMmVector_dump():
+    vect= bm.Vector([1.0, 2.1, 3.0])
+    assert vect.dump() == [1.0, 2.1, 3.0]
+    assert vect.dumpStr() == "[1.0, 2.1, 3.0]"
+
+def test_BbMmVect_load():
+    vect= bm.Vector().load( bm.Vector([1.0, 2.1, 3.0]).dump() )
+    assert vect.dump() == [1.0, 2.1, 3.0]
+    assert vect.dumpStr() == "[1.0, 2.1, 3.0]"
+
 if __name__ == '__main__':
     test_BbMmVector_modify()

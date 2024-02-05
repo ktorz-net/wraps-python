@@ -6,7 +6,7 @@ from . import clib, clibCore as cc
 from .bmCode import Code
 from .bmBench import Bench
 
-# BmBench wrap:
+# BmTree wrap:
 class Tree :
     # Construction destruction:
     def __init__(self, space=[1], optionSize=1, ctree= None):
@@ -24,6 +24,12 @@ class Tree :
             cc.deleteBmTree( self._ctree )
 
     # Accessor
+    def size(self):
+        return cc.BmTree_size( self._ctree )
+    
+    def inputSpace(self):
+        return Code( ccode=cc.BmTree_inputSpace( self._ctree ) ).list()
+    
     def outputSize(self):
         return cc.BmTree_outputSize( self._ctree )
 
@@ -48,9 +54,18 @@ class Tree :
         return bench
 
     # Construction
-    def initialize( self, defaultOption ):
-        cc.BmTree_reinitOn( self._ctree, c_uint(defaultOption) )
+    def initialize( self, inputSpace, outputSize ):
+        codeSpace= Code( inputSpace )
+        self._ctree= cc.BmTree_reinitWith(
+            self._ctree,
+            codeSpace._ccode,
+            c_uint(outputSize)
+        )
+        codeSpace._cmaster= False
         return self
+    
+    def clear( self, defaultOutput=1, iInput=1 ):
+        cc.BmTree_clearWhith_on( self._ctree, c_uint(iInput), c_uint(defaultOutput) )
 
     def atCode_set( self, code, option ):
         cc.BmTree_at_set( self._ctree, code._ccode, c_uint(option) )
@@ -64,4 +79,49 @@ class Tree :
             c_uint(iOption),
             c_double(value)
         )
-        
+    
+    # branch manipulation
+    def iBranch_variable(self, iBranch):
+        return cc.BmTree_branchVariable( self._ctree, c_uint(iBranch) )
+
+    def iBranch_size(self, iBranch):
+        return cc.BmTree_branchSize( self._ctree, c_uint(iBranch) )
+
+    def iBranch_state(self, iBranch, index):
+        bound= self.outputSize()+1
+        state= cc.BmTree_branch_state( self._ctree, c_uint(iBranch), c_uint(index) )
+        if state < bound :
+            return ( "leaf", state )
+        return ( "child", state-bound )
+
+    def iBranch_states(self, iBranch):
+        return [
+            self.iBranch_state( iBranch, i+1 )
+            for i in range( self.iBranch_size(iBranch) )
+        ]
+    
+    # dump and load:
+    def dump(self):
+        descriptor= {
+            "input": self.inputSpace(),
+            "output": self.outputSize(),
+            "branches": [
+                { "child": i, "iInput": self.iBranch_variable(i), "states": self.iBranch_states(i) }
+                for i in range( self.size() )
+            ]
+        }
+        return descriptor
+    
+    def dumpStr(self, level= 0, ident=2):
+        dump= self.dump()
+        lstr= "".join( [" " for i in range( level*ident )] )
+        istr= "".join( [" " for i in range( (level+1)*ident )] )
+        dstr= lstr+"{"
+        for elt in dump :
+            dstr+= f"\n{istr}{elt}: {dump[elt]}"
+        dstr+= lstr+"\n}"
+        return dstr
+    
+    def load(self, descriptor):
+        self.initialize( descriptor["input"], descriptor["output"] )
+        return self

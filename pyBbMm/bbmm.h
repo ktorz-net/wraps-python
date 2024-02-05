@@ -10,10 +10,10 @@
  * 
  *   FUNCTION MODULE:
  *       - BmCondition    : Define a Bayesian Node (conditional probabilities over variable affectations)
- *       - BmInferer      : Define a Dynamic Bayesian Network as P(state' | state, action) 
+ *       - BmInferer      : Define a Bayesian Network as P(output | input) - potentially Dynamic P(state' | state, action)
  *       - BmEvaluator    : A value function over multiple criteria
  * 
- *   MODEL MODULE:
+ *   SOLVER MODULE:
  * 
  *   LICENSE: MIT License
  *
@@ -39,8 +39,8 @@
  * 
  * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
 
-#ifndef BBMM_STT_H
-#define BBMM_STT_H
+#ifndef BBMM_H
+#define BBMM_H
 
 #include <stdarg.h>
 
@@ -177,7 +177,6 @@ void deleteBmVector( BmVector* self );
 
 /* Re-Initialize */
 BmVector* BmVector_reinit( BmVector* self, uint newSize );
-
 BmVector* BmVector_copy( BmVector* self, BmVector* model );
 
 /* Accessor */
@@ -304,10 +303,14 @@ BmTree* BmTree_destroy( BmTree* self);
 void deleteBmTree( BmTree* self );
 
 /* Re-Initializer */
-BmTree* BmTree_reinitWhith_on( BmTree* self, uint index, uint defaultOption);
-BmTree* BmTree_reinitOn( BmTree* self, uint defaultOption );
+BmTree* BmTree_reinitWith( BmTree* self, BmCode* newSpace, uint optionSize );
+
+BmTree* BmTree_clearWhith_on( BmTree* self, uint index, uint defaultOption );
+BmTree* BmTree_clearOn( BmTree* self, uint defaultOption );
 
 /* Accessor */
+uint BmTree_size( BmTree* self );
+BmCode* BmTree_inputSpace( BmTree* self );
 uint BmTree_outputSize( BmTree* self );
 uint BmTree_at( BmTree* self, BmCode* code); // Return the option number of a code/state.
 double BmTree_at_value( BmTree* self, BmCode* code); // Return the value of a code/state.
@@ -322,9 +325,10 @@ uint BmTree_at_set( BmTree* self, BmCode* code, uint output ); // set the ouput 
 uint BmTree_at_readOrder_set( BmTree* self, BmCode* code, BmCode* codeOrder, uint output );
 
 /* Branch Accessor */
-uint BmTree_branchSize( BmTree* self, uint branch ); // Return the number of
+uint BmTree_branchSize( BmTree* self, uint iBranch );
 uint BmTree_branch_state( BmTree* self, uint iBranch, uint state );
 uint BmTree_branchVariable( BmTree* self, uint iBranch ); // Return the variable index represented by the branch.
+uint BmTree_branchNumberOfOutputs( BmTree* self, uint branch ); // Return the number of differents output
 uint BmTree_deepOf( BmTree* self, BmCode* code); // Return the number of branch to cross before reaching the output.
 
 /* Branch Construction */
@@ -338,6 +342,7 @@ uint BmTree_removeBranch( BmTree* self, uint iBranch); // Remove a branch: (must
 
 /* Generating */
 BmBench* BmTree_asNewBench( BmTree* self );
+void BmTree_fromBench( BmTree* self, BmBench* model );
 
 /* Printing */
 char* BmTree_printBranch( BmTree* self, uint iBranch, char* output );
@@ -349,11 +354,6 @@ char* BmTree_print( BmTree* self, char* output);
 
 char* BmTree_printInside( BmTree* self, char* output); // print `self` at the end of `output`
 
-#endif
-
-
-#ifndef BBMM_FUNCTION_H
-#define BBMM_FUNCTION_H
 
 /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
  *   B b M m   F U N C T I O N  :  C O N D I T I O N                       *
@@ -455,7 +455,7 @@ BmCode* BmInferer_node_parents( BmInferer* self, uint iVar );
 
 /* Construction */
 BmCondition* BmInferer_node_reinitIndependant( BmInferer* self, uint index );
-BmCondition* BmInferer_node_reinitWith( BmInferer* self, uint index, BmCode* newDependenceMask, BmBench* newDefaultDistrib );
+BmCondition* BmInferer_node_reinitWith( BmInferer* self, uint index, BmCode* newDependenceList, BmBench* newDefaultDistrib );
 
 /* Process */
 BmBench* BmInferer_process( BmInferer* self, BmBench* inputDistribution );        // Return distribution over output varibales
@@ -466,7 +466,6 @@ BmBench* BmInferer_processState_Action( BmInferer* self, BmCode* state, BmCode* 
 char* BmInferer_print(BmInferer* self, char* output); // print `self` at the end of `output`
 char* BmInferer_printStateActionSignature(BmInferer* self, char* output); // print `self` at the end of `output`
 char* BmInferer_printDependency(BmInferer* self, char* output); // print `self` at the end of `output`
-
 
 
 /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
@@ -521,4 +520,12 @@ void BmEvaluator_crit_setWeight( BmEvaluator* self, uint iCritirion, double weig
 /* Printing */
 
 
-#endif // BBMM_MODEL_H
+/* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
+ *   B b M m   S O L V E R :  . . .                                        *
+ * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
+ *
+ * 
+ * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
+
+
+#endif // BBMM_H

@@ -78,6 +78,17 @@ class Code :
         self.a = 1
         return IterCode(self)
     
+    # dump and load:
+    def dump(self):
+        descriptor= self.list()
+        return descriptor
+    
+    def dumpStr(self):
+        return str( self.dump() )
+    
+    def load(self, descriptor):
+        return self.initialize( descriptor )
+    
     # Print 
     def __str__(self):
         size= self.dimention()
