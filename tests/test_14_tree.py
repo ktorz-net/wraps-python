@@ -64,27 +64,28 @@ def test_BbMmTree_dump():
         "}"
     ]
 
-def ttest_BbMmTree_load():
+def test_BbMmTree_load():
     descriptor= {
-        "input": [],
-        "output": 0,
-        "bench": [([0, 1, 1, 2], 0.0), ([0, 1, 2, 1], 0.0), ([0, 2, 1, 2], 0.0), ([0, 2, 2, 1], 0.0), ([0, 3, 1, 2], 0.0), ([0, 3, 2, 1], 0.0), ([0, 4, 1, 4], 0.0), ([0, 4, 2, 4], 0.0), ([2, 0, 0, 2], 0.0)]
+        "input": [2, 4, 2],
+        "output": 8,
+        "branches" : [
+            {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 2)]},
+            {'child': 1, 'iInput': 3, 'states': [('child', 2), ('child', 3)]},
+            {'child': 2, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 2), ('leaf', 2), ('leaf', 4)]},
+            {'child': 3, 'iInput': 2, 'states': [('leaf', 1), ('leaf', 1), ('leaf', 1), ('leaf', 4)]}
+        ]
     }
 
     tree= bm.Tree().load( descriptor )
     
     dump= tree.dump()
     assert type( dump ) == type({})
-    assert list(dump.keys()) == ["input", "output", "bench"]
-    assert dump["input"] == []
-    assert dump["output"] == 0
-    assert dump["bench"] == [([0, 1, 1, 2], 0.0), ([0, 1, 2, 1], 0.0), ([0, 2, 1, 2], 0.0), ([0, 2, 2, 1], 0.0), ([0, 3, 1, 2], 0.0), ([0, 3, 2, 1], 0.0), ([0, 4, 1, 4], 0.0), ([0, 4, 2, 4], 0.0), ([2, 0, 0, 2], 0.0)]
-
-    print( tree.dumpStr() )
-    assert tree.dumpStr().split("\n") == [
-        "{",
-        "  input: []",
-        "  output: 0",
-        "  bench: [([0, 1, 1, 2], 0.0), ([0, 1, 2, 1], 0.0), ([0, 2, 1, 2], 0.0), ([0, 2, 2, 1], 0.0), ([0, 3, 1, 2], 0.0), ([0, 3, 2, 1], 0.0), ([0, 4, 1, 4], 0.0), ([0, 4, 2, 4], 0.0), ([2, 0, 0, 2], 0.0)]",
-        "}"
+    assert list(dump.keys()) == ["input", "output", "branches"]
+    assert dump["input"] == [2, 4, 2]
+    assert dump["output"] == 8
+    assert dump["branches"] == [
+        {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 2)]},
+        {'child': 1, 'iInput': 3, 'states': [('child', 2), ('child', 3)]},
+        {'child': 2, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 2), ('leaf', 2), ('leaf', 4)]},
+        {'child': 3, 'iInput': 2, 'states': [('leaf', 1), ('leaf', 1), ('leaf', 1), ('leaf', 4)]}
     ]

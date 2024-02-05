@@ -124,4 +124,16 @@ class Tree :
     
     def load(self, descriptor):
         self.initialize( descriptor["input"], descriptor["output"] )
+        iBranch= 0
+        for bDes in descriptor["branches"] :
+            r= cc.BmTree_newBranch( self._ctree, c_uint( bDes["iInput"] ), c_uint(1))
+            assert( int(r) == iBranch )
+            index= 1
+            for sType, sValue in bDes["states"] :
+                if sType == 'leaf' :
+                    cc.BmTree_branch_state_set( self._ctree, r, c_uint(index), c_uint(sValue) )
+                else :
+                    cc.BmTree_branch_state_connect( self._ctree, r, c_uint(index), c_uint(sValue) )
+                index+= 1
+            iBranch+= 1
         return self
