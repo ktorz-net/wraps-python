@@ -5,7 +5,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                T E S T   p y B b M m  : :  I N F E R E R                 #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm as bbmm
+import pyBbMm.core as bbmm
 
 def test_BbMmInferer_init():
     trans= bbmm.Inferer()

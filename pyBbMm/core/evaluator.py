@@ -2,10 +2,10 @@ from ctypes import c_uint, c_double, c_void_p, c_ulong
 import os
 
 from numpy import empty
-from . import clib, clibCore as cc
-from .bmCode import Code
-from .bmVector import Vector
-from .bmTree import Tree
+from . import clib, clibBbMm as cc
+from .code import Code
+from .vector import Vector
+from .tree import Tree
 
 class Evaluator:
     # Construction destruction:

@@ -5,7 +5,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                 T E S T   p y B b M m  : :  V E C T O R                  #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm as bm
+import pyBbMm.core as bm
 
 def test_BbMmVector_init():
     vector= bm.Vector()
@@ -60,12 +60,10 @@ def test_BbMmVector_modify():
 def test_BbMmVector_dump():
     vect= bm.Vector([1.0, 2.1, 3.0])
     assert vect.dump() == [1.0, 2.1, 3.0]
-    assert vect.dumpStr() == "[1.0, 2.1, 3.0]"
 
 def test_BbMmVect_load():
     vect= bm.Vector().load( bm.Vector([1.0, 2.1, 3.0]).dump() )
     assert vect.dump() == [1.0, 2.1, 3.0]
-    assert vect.dumpStr() == "[1.0, 2.1, 3.0]"
 
 if __name__ == '__main__':
     test_BbMmVector_modify()

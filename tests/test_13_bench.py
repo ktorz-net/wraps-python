@@ -5,7 +5,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                 T E S T   p y B b M m  : :  B E N C H                    #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm as bm
+import pyBbMm.core as bm
 
 def test_BbMmBench_init():
     bench= bm.Bench()
@@ -52,12 +52,10 @@ def test_BbMmBench_initFull():
 def test_BbMmBench_dump():
     bench= bm.Bench( [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3), ([2, 4], 0)] )
     assert bench.dump() == [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]
-    assert bench.dumpStr() == "[([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]"
 
 def test_BbMmBench_load():
     descriptor= [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]
     bench= bm.Bench().load(descriptor)
     assert bench.dump() == [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]
-    assert bench.dumpStr() == "[([0, 0], 1.0), ([1], 0.2), ([1, 2], 3.0), ([2, 4], 0.0)]"
 
 

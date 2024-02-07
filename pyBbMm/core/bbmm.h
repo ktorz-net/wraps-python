@@ -286,40 +286,39 @@ char* BmBench_printNetwork(BmBench* self, char* output);
  * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
 
 typedef struct {
-  BmCode* inputSpace;
-  BmVector* outputValues;
-  uint bound, capacity, size;
+  BmCode* inputRanges;
+  uint capacity, size;
   uint** branches;
 } BmTree;
 
 /* Constructor */
-BmTree* newBmTree( uint binarySpaceSize, uint optionSize );
-BmTree* newBmTreeWith( BmCode* newSpace, uint optionSize );
+BmTree* newBmTree( uint binarySpaceSize );
+BmTree* newBmTreeWith( BmCode* newSpace );
 
-BmTree* BmTree_createWhith( BmTree* self, BmCode* input, uint optionSize );
+BmTree* BmTree_createWhith( BmTree* self, BmCode* input );
 
 /* Destructor */
 BmTree* BmTree_destroy( BmTree* self);
 void deleteBmTree( BmTree* self );
 
 /* Re-Initializer */
-BmTree* BmTree_reinitWith( BmTree* self, BmCode* newSpace, uint optionSize );
+BmTree* BmTree_reinitWith( BmTree* self, BmCode* newSpace );
 
 BmTree* BmTree_clearWhith_on( BmTree* self, uint index, uint defaultOption );
 BmTree* BmTree_clearOn( BmTree* self, uint defaultOption );
 
 /* Accessor */
 uint BmTree_size( BmTree* self );
-BmCode* BmTree_inputSpace( BmTree* self );
-uint BmTree_outputSize( BmTree* self );
-uint BmTree_at( BmTree* self, BmCode* code); // Return the option number of a code/state.
-double BmTree_at_value( BmTree* self, BmCode* code); // Return the value of a code/state.
+BmCode* BmTree_inputRanges( BmTree* self );
+uint BmTree_at( BmTree* self, BmCode* code ); // Return the option number of a code/state.
+
+/* output */
+uint BmTreeChild( uint key );
+uint BmTreeLeaf( uint key );
 
 /* Construction */
 void BmTree_reziseCapacity( BmTree* self, uint newCapacity );
 void BmTree_reziseCompleteCapacity( BmTree* self );
-
-void BmTree_option_setValue( BmTree* self, uint iOption, double value ); // attach a tag and a value to a given option.
 
 uint BmTree_at_set( BmTree* self, BmCode* code, uint output ); // set the ouput value of a code or a partial code (with 0), return the number of potential dead branches
 uint BmTree_at_readOrder_set( BmTree* self, BmCode* code, BmCode* codeOrder, uint output );
@@ -349,7 +348,6 @@ char* BmTree_printBranch( BmTree* self, uint iBranch, char* output );
 
 char* BmTree_print( BmTree* self, char* output);
 char* BmTree_print_sep( BmTree* self, char* output, char* separator );
-char* BmTree_print_sep_options( BmTree* self, char* output, char* separator, char** optionStrs );
 char* BmTree_print( BmTree* self, char* output);
 
 char* BmTree_printInside( BmTree* self, char* output); // print `self` at the end of `output`
@@ -364,7 +362,7 @@ char* BmTree_printInside( BmTree* self, char* output); // print `self` at the en
  * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
 
 typedef struct {
-  uint domain;
+  uint range;
   BmCode* parentRanges;
   BmTree* selector;
   uint distribSize, distribCapacity;
@@ -387,7 +385,8 @@ uint BmCondition_reinitWith( BmCondition* self, uint domain, BmCode* newParents,
 uint BmCondition_reinitDistributionsWith( BmCondition* self, BmBench* newDistrib );
 
 /* Accessor */
-uint BmCondition_domain( BmCondition* self );
+uint BmCondition_range( BmCondition* self );
+BmTree* BmCondition_selector( BmCondition* self );
 BmCode* BmCondition_parents( BmCondition* self );
 BmBench* BmCondition_from( BmCondition* self, BmCode* configuration );
 BmBench* BmCondition_fromKey( BmCondition* self, uint configKey );
@@ -481,6 +480,7 @@ typedef struct {
   BmCode* space;
   uint criteriaSize;
   BmTree ** criteria;
+  BmVector ** critValues;
   BmCode ** masks;
   BmVector* weights;
 } BmEvaluator ;
@@ -512,6 +512,7 @@ double BmEvaluator_crit_process( BmEvaluator* self, uint iCriterion, BmCode* inp
 /* Construction */
 BmEvaluator* BmEvaluator_reinitCriterion( BmEvaluator* self, uint numberOfCriterion );
 BmTree* BmEvaluator_crit_reinitWith( BmEvaluator* self, uint index, BmCode* newDependenceMask, uint numberOfOptions, double defaultValue );
+void BmEvaluator_crit_at_set( BmEvaluator* self, uint index, BmCode* option, uint output, double value );
 void BmEvaluator_crit_setWeight( BmEvaluator* self, uint iCritirion, double weight );
 
 /* Infering */

@@ -1,11 +1,12 @@
 import sys
 sys.path.insert( 1, __file__.split('tests')[0] )
+import pprint
 
 # ------------------------------------------------------------------------ #
 #                T E S T   p y B b M m  : :  C O N D I T I O N            #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm as bm
+import pyBbMm.core as bm
 
 def test_BbMmCondition_init():
     cond= bm.Condition()
@@ -46,3 +47,44 @@ def test_BbMmCondition_construction2():
     assert cond.distributionSize() == 1
     for parent in bm.Code([2, 3]):
         assert cond.fromList(parent) == [(1, 1.0)]
+
+def test_BbMmCindition_dump():
+    cond= bm.Condition( 4, [2, 3], [(1, 0.6), (2, 0.4)] )
+    cond.fromList_set( [1, 0], [(3, 1.0)] )
+    cond.fromList_set( [1, 3], [(4, 1.0)] )
+    dump= cond.dump()
+    pprint.pprint(dump)
+    assert dump == {
+        'distributions': [
+            [([1], 0.6), ([2], 0.4)],
+            [([3], 1.0)],
+            [([4], 1.0)]
+        ],
+        'selector': {
+            'input': [2, 3],
+            'output': 6,
+            'branches': [
+                {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)] },
+                {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 2), ('leaf', 3)]}
+            ]
+        }
+    }
+
+def test_BbMmCindition_load():
+    dump= {
+        'distributions': [
+            [([1], 0.6), ([2], 0.4)],
+            [([3], 1.0)],
+            [([4], 1.0)]
+        ],
+        'selector': {
+            'input': [2, 3],
+            'output': 6,
+            'branches': [
+                {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)] },
+                {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 2), ('leaf', 3)]}
+            ]
+        }
+    }
+    cond= bm.Condition().load( dump )
+    assert cond.dump == dump

@@ -506,20 +506,20 @@ BmBench_printNetwork= core.BmBench_printNetwork
 BmBench_printNetwork.restype= c_void_p
 BmBench_printNetwork.argtypes= [c_void_p, c_void_p]
 
-# BmTree* newBmTree( uint binarySpaceSize, uint optionSize );
+# BmTree* newBmTree( uint binarySpaceSize );
 newBmTree= core.newBmTree
 newBmTree.restype= c_void_p
-newBmTree.argtypes= [c_uint, c_uint]
+newBmTree.argtypes= [c_uint]
 
-# BmTree* newBmTreeWith( BmCode* newSpace, uint optionSize );
+# BmTree* newBmTreeWith( BmCode* newSpace );
 newBmTreeWith= core.newBmTreeWith
 newBmTreeWith.restype= c_void_p
-newBmTreeWith.argtypes= [c_void_p, c_uint]
+newBmTreeWith.argtypes= [c_void_p]
 
-# BmTree* BmTree_createWhith( BmTree* self, BmCode* input, uint optionSize );
+# BmTree* BmTree_createWhith( BmTree* self, BmCode* input );
 BmTree_createWhith= core.BmTree_createWhith
 BmTree_createWhith.restype= c_void_p
-BmTree_createWhith.argtypes= [c_void_p, c_void_p, c_uint]
+BmTree_createWhith.argtypes= [c_void_p, c_void_p]
 
 # BmTree* BmTree_destroy( BmTree* self );
 BmTree_destroy= core.BmTree_destroy
@@ -531,10 +531,10 @@ deleteBmTree= core.deleteBmTree
 deleteBmTree.restype= c_void_p
 deleteBmTree.argtypes= [c_void_p]
 
-# BmTree* BmTree_reinitWith( BmTree* self, BmCode* newSpace, uint optionSize );
+# BmTree* BmTree_reinitWith( BmTree* self, BmCode* newSpace );
 BmTree_reinitWith= core.BmTree_reinitWith
 BmTree_reinitWith.restype= c_void_p
-BmTree_reinitWith.argtypes= [c_void_p, c_void_p, c_uint]
+BmTree_reinitWith.argtypes= [c_void_p, c_void_p]
 
 # BmTree* BmTree_clearWhith_on( BmTree* self, uint index, uint defaultOption );
 BmTree_clearWhith_on= core.BmTree_clearWhith_on
@@ -551,25 +551,25 @@ BmTree_size= core.BmTree_size
 BmTree_size.restype= c_uint
 BmTree_size.argtypes= [c_void_p]
 
-# BmCode* BmTree_inputSpace( BmTree* self );
-BmTree_inputSpace= core.BmTree_inputSpace
-BmTree_inputSpace.restype= c_void_p
-BmTree_inputSpace.argtypes= [c_void_p]
-
-# uint BmTree_outputSize( BmTree* self );
-BmTree_outputSize= core.BmTree_outputSize
-BmTree_outputSize.restype= c_uint
-BmTree_outputSize.argtypes= [c_void_p]
+# BmCode* BmTree_inputRanges( BmTree* self );
+BmTree_inputRanges= core.BmTree_inputRanges
+BmTree_inputRanges.restype= c_void_p
+BmTree_inputRanges.argtypes= [c_void_p]
 
 # uint BmTree_at( BmTree* self, BmCode* code );
 BmTree_at= core.BmTree_at
 BmTree_at.restype= c_uint
 BmTree_at.argtypes= [c_void_p, c_void_p]
 
-# double BmTree_at_value( BmTree* self, BmCode* code );
-BmTree_at_value= core.BmTree_at_value
-BmTree_at_value.restype= c_double
-BmTree_at_value.argtypes= [c_void_p, c_void_p]
+# uint BmTreeChild( uint key );
+BmTreeChild= core.BmTreeChild
+BmTreeChild.restype= c_uint
+BmTreeChild.argtypes= [c_uint]
+
+# uint BmTreeLeaf( uint key );
+BmTreeLeaf= core.BmTreeLeaf
+BmTreeLeaf.restype= c_uint
+BmTreeLeaf.argtypes= [c_uint]
 
 # void BmTree_reziseCapacity( BmTree* self, uint newCapacity );
 BmTree_reziseCapacity= core.BmTree_reziseCapacity
@@ -580,11 +580,6 @@ BmTree_reziseCapacity.argtypes= [c_void_p, c_uint]
 BmTree_reziseCompleteCapacity= core.BmTree_reziseCompleteCapacity
 BmTree_reziseCompleteCapacity.restype= c_void_p
 BmTree_reziseCompleteCapacity.argtypes= [c_void_p]
-
-# void BmTree_option_setValue( BmTree* self, uint iOption, double value );
-BmTree_option_setValue= core.BmTree_option_setValue
-BmTree_option_setValue.restype= c_void_p
-BmTree_option_setValue.argtypes= [c_void_p, c_uint, c_double]
 
 # uint BmTree_at_set( BmTree* self, BmCode* code, uint output );
 BmTree_at_set= core.BmTree_at_set
@@ -671,11 +666,6 @@ BmTree_print_sep= core.BmTree_print_sep
 BmTree_print_sep.restype= c_void_p
 BmTree_print_sep.argtypes= [c_void_p, c_void_p, c_void_p]
 
-# char* BmTree_print_sep_options( BmTree* self, char* output, char* separator, char** optionStrs );
-BmTree_print_sep_options= core.BmTree_print_sep_options
-BmTree_print_sep_options.restype= c_void_p
-BmTree_print_sep_options.argtypes= [c_void_p, c_void_p, c_void_p, c_void_p]
-
 # char* BmTree_print( BmTree* self, char* output );
 BmTree_print= core.BmTree_print
 BmTree_print.restype= c_void_p
@@ -726,10 +716,15 @@ BmCondition_reinitDistributionsWith= core.BmCondition_reinitDistributionsWith
 BmCondition_reinitDistributionsWith.restype= c_uint
 BmCondition_reinitDistributionsWith.argtypes= [c_void_p, c_void_p]
 
-# uint BmCondition_domain( BmCondition* self );
-BmCondition_domain= core.BmCondition_domain
-BmCondition_domain.restype= c_uint
-BmCondition_domain.argtypes= [c_void_p]
+# uint BmCondition_range( BmCondition* self );
+BmCondition_range= core.BmCondition_range
+BmCondition_range.restype= c_uint
+BmCondition_range.argtypes= [c_void_p]
+
+# BmTree* BmCondition_selector( BmCondition* self );
+BmCondition_selector= core.BmCondition_selector
+BmCondition_selector.restype= c_void_p
+BmCondition_selector.argtypes= [c_void_p]
 
 # BmCode* BmCondition_parents( BmCondition* self );
 BmCondition_parents= core.BmCondition_parents
@@ -995,6 +990,11 @@ BmEvaluator_reinitCriterion.argtypes= [c_void_p, c_uint]
 BmEvaluator_crit_reinitWith= core.BmEvaluator_crit_reinitWith
 BmEvaluator_crit_reinitWith.restype= c_void_p
 BmEvaluator_crit_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_uint, c_double]
+
+# void BmEvaluator_crit_at_set( BmEvaluator* self, uint index, BmCode* option, uint output, double value );
+BmEvaluator_crit_at_set= core.BmEvaluator_crit_at_set
+BmEvaluator_crit_at_set.restype= c_void_p
+BmEvaluator_crit_at_set.argtypes= [c_void_p, c_uint, c_void_p, c_uint, c_double]
 
 # void BmEvaluator_crit_setWeight( BmEvaluator* self, uint iCritirion, double weight );
 BmEvaluator_crit_setWeight= core.BmEvaluator_crit_setWeight

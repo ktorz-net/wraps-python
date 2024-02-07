@@ -2,8 +2,8 @@ from ctypes import c_uint, c_double, c_void_p, c_ulong
 import os
 
 from numpy import empty
-from . import clib, clibCore as cc
-from .bmCode import Code
+from . import clib, clibBbMm as cc
+from .code import Code
 
 # BmBench wrap:
 class Bench :
@@ -88,9 +88,6 @@ class Bench :
     def dump(self):
         descriptor= self.list()
         return descriptor
-    
-    def dumpStr(self):
-        return str( self.dump() )
     
     def load(self, descriptor):
         return self.initialize( descriptor )

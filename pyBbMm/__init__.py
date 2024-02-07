@@ -1,19 +1,5 @@
 # Core LibBbMm Wraps:
-
-## LibBbMm :: STRUCTURE MODULE :
-from . import bmCode, bmVector, bmBench, bmTree
-Code= bmCode.Code
-Vector= bmVector.Vector
-Bench= bmBench.Bench
-Tree= bmTree.Tree
-
-## LibBbMm :: FUNCTION MODULE :
-from . import bmCondition, bmInferer, bmEvaluator
-Condition= bmCondition.Condition
-Inferer= bmInferer.Inferer
-Evaluator= bmEvaluator.Evaluator
-
-## LibBbMm :: SOLVER MODULE :
+from . import core 
 
 ## User friendly API :
 
@@ -74,8 +60,6 @@ class Node():
             lambda configuration : [( function(configuration), 1.0 )]
         )
 
-
-
 class Model():
     # Construction destruction:
     def __init__( self, stateVariables= {}, actionVariables= {}, shiftVariables= {} ) -> None:
@@ -93,7 +77,7 @@ class Model():
         # Transition function:
         nbStateVar= len(stateVariables)
         nbActVar= len(actionVariables)
-        self._trans= Inferer( [len(d) for d in self._domains ], nbStateVar+nbActVar, nbStateVar )
+        self._trans= core.Inferer( [len(d) for d in self._domains ], nbStateVar+nbActVar, nbStateVar )
 
     # Accessor
     def variables(self):
@@ -149,7 +133,7 @@ class Model():
         digitDistrib= [ (domain.index(val)+1, proba) for val, proba in explicitDistrib ]
         self._trans.variable_setDependancy( iNode, parentsIds, digitDistrib )
         condition= self._trans.node( iNode )
-        for digitConf in Code( [len(d) for d in parentsDoms] ) :
+        for digitConf in core.Code( [len(d) for d in parentsDoms] ) :
             explicitDistrib= function( [ dom[i-1] for i, dom in zip(digitConf, parentsDoms) ] )
             digitDistrib= [ (domain.index(val)+1, proba) for val, proba in explicitDistrib ]
             condition.fromList_set( digitConf, digitDistrib )

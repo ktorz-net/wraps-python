@@ -2,7 +2,7 @@ from ctypes import c_uint, c_void_p, c_ulong
 import os
 
 from numpy import empty
-from . import clib, clibCore as cc
+from . import clib, clibBbMm as cc
 
 # BmCode wrap:
 class Code :
@@ -82,9 +82,6 @@ class Code :
     def dump(self):
         descriptor= self.list()
         return descriptor
-    
-    def dumpStr(self):
-        return str( self.dump() )
     
     def load(self, descriptor):
         return self.initialize( descriptor )

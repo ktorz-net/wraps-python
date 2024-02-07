@@ -5,19 +5,19 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                T E S T   p y B b M m  : :  M O D E L                     #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm as bbmm
+from pyBbMm import Model, Node
 import json
 
 buffer= None
 
 def test_BbMmModel_init():
-    model= bbmm.Model()
-    assert type(model) == bbmm.Model
+    model= Model()
+    assert type(model) == Model
     assert( model.variables() == [] )
     assert( model.domains() == [] )
 
 def test_BbMmModel_init2():
-    model= bbmm.Model(
+    model= Model(
         { "H": range(0, 3), "D": range(1, 7) },
         { "A": ["keep", "roll"] }
     )
@@ -27,7 +27,7 @@ def test_BbMmModel_init2():
         assert( dModel == dRef )
     
     aNode= model.node('H-0')
-    assert( type(aNode) == bbmm.Node )
+    assert( type(aNode) == Node )
     assert( aNode.id() == 1 )
     assert( aNode.name() == 'H-0' )
     assert( aNode.domain() == range(0, 3) )
@@ -42,7 +42,7 @@ def test_BbMmModel_init2():
 
 def test_BbMmModel_construction_transition():
     global buffer
-    model= bbmm.Model(
+    model= Model(
         { "H": range(0, 3), "D": range(1, 7) },
         { "A": ["keep", "roll"] }
     )
@@ -126,9 +126,9 @@ def test_BbMmModel_construction_transition():
 
 def ttest_BbMmModel_transition():
     global buffer
-    model= bbmm.Model()
+    model= Model()
     ### model.load( buffer )
-    model= bbmm.Model(
+    model= Model(
         { "H": range(0, 3), "D": range(1, 7) },
         { "A": ["keep", "roll"] }
     )

@@ -5,7 +5,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 # ------------------------------------------------------------------------ #
 from ctypes import c_uint, c_void_p, c_ulong
 from numpy import empty
-from pyBbMm import clib, clibCore as cc
+from pyBbMm.core import clib, clibBbMm as cc
 
 def test_ccCode_init():
     cCode= cc.newBmCode_all(2, 3)
@@ -28,13 +28,13 @@ def test_ccBench_init():
     cc.deleteBmBench( cBench )
 
 def test_ccTree_init():
-    cTree= cc.newBmTree(2, 4)
-    assert cc.BmTree_outputSize(cTree) == 4
+    cTree= cc.newBmTree(2)
+    assert cc.BmTree_size(cTree) == 0
     cc.deleteBmTree(cTree)
 
 def test_ccCondition_init():
     cCondition= cc.newBmConditionBasic(4)
-    assert cc.BmCondition_domain(cCondition) == 4
+    assert cc.BmCondition_range(cCondition) == 4
     cc.deleteBmCondition(cCondition)
 
 def test_ccInferer_init():

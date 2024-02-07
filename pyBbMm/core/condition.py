@@ -2,9 +2,10 @@ from ctypes import c_uint, c_double, c_void_p, c_ulong
 import os
 
 from numpy import empty
-from . import clib, clibCore as cc
-from .bmCode import Code
-from .bmBench import Bench
+from . import clib, clibBbMm as cc
+from .code import Code
+from .bench import Bench
+from .tree import Tree
 
 class Condition:
     # Construction destruction:
@@ -95,8 +96,24 @@ class Condition:
     # Dump & Load :
     def dump( self ):
         descriptor= {
-            "input": self.parentSpace().list(),
-            "output": self.domain(),
-            "distributions": []
+            "selector": Tree( ctree= cc.BmCondition_selector( self._ccondition ) ).dump(),
+            "distributions": [
+                self.distributionAt(i).dump()
+                for i in range( 1, self.distributionSize()+1 )
+            ]
         }
         return descriptor
+    
+    def load(self, descriptor):
+        distribs= [
+            Bench().load( benchDump )
+            for benchDump in descriptor['distributions']
+        ]
+        self.initializeWith(
+            descriptor['selector']['output'],
+            descriptor['selector']['input'],
+            distribs[0]
+        )
+        Tree( ctree= cc.BmCondition_selector( self._ccondition ) ).load(  )
+        
+        return self

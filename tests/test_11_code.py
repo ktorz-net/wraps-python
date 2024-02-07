@@ -3,7 +3,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 # ------------------------------------------------------------------------ #
 #                 T E S T   p y B b M m  : :  C O D E                      #
 # ------------------------------------------------------------------------ #
-import pyBbMm as bm
+import pyBbMm.core as bm
 
 def test_BbMmCode_init():
     code= bm.Code()
@@ -86,12 +86,10 @@ def test_BbMmCode_print():
 def test_BbMmCode_dump():
     code= bm.Code([1, 2, 3])
     assert code.dump() == [1, 2, 3]
-    assert code.dumpStr() == "[1, 2, 3]"
 
 def test_BbMmCode_load():
     code= bm.Code().load( bm.Code([1, 2, 3]).dump() )
     assert code.dump() == [1, 2, 3]
-    assert code.dumpStr() == "[1, 2, 3]"
 
 def test_BbMmCode_print():
     assert str( bm.Code([1, 2, 3]) ) == "[1, 2, 3]"
