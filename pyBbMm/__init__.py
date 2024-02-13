@@ -21,7 +21,7 @@ class Node():
         return self._model._domains[ self._id-1 ]
 
     def parents(self):
-        idParents= self._model._trans.parents( self._id ).list()
+        idParents= self._model._trans.parents( self._id ).asList()
         return [ self._model._varNames[ ip-1 ] for ip in idParents ]
 
     def distribution( self, configuration=[] ):
@@ -90,7 +90,7 @@ class Model():
         return Node( self, self._varIds[variableName] )
     
     def inode_distribution( self, iNode, configuration ):
-        idParents= self._trans.parents( iNode ).list()
+        idParents= self._trans.parents( iNode ).asList()
         assert( len(idParents) == len(configuration) )
         condition= self._trans.node( iNode )
         digitConf= [ self._domains[p-1].index(val)+1 for p, val in zip(idParents, configuration) ]
@@ -119,7 +119,7 @@ class Model():
     
     def inode_setConditionalDistribution( self, iNode, configuration, distribution ):
         condition= self._trans.node( iNode )
-        idParents= self._trans.parents( iNode ).list()
+        idParents= self._trans.parents( iNode ).asList()
         digitConf= [ self._domains[p-1].index(val)+1 for p, val in zip(idParents, configuration) ]
         domain= self._domains[ iNode-1 ]
         digitDistrib= [ (domain.index(val)+1, proba) for val, proba in distribution ]
@@ -139,7 +139,7 @@ class Model():
             condition.fromList_set( digitConf, digitDistrib )
 
     def digitTransition( self, digitStates, digitActions ):
-        return self._trans.processFrom( digitStates+digitActions ).list()
+        return self._trans.processFrom( digitStates+digitActions ).asList()
     
     def transition( self, states, actions ):
         return []

@@ -22,30 +22,30 @@ def test_BbMmInferer_init2():
     assert( trans.shiftDimention() == 1 )
     assert( trans.overallDimention() == 4 )
     for iVar, dom in zip(range(1, 5), [2, 3, 4, 6]) :
-        assert( trans.node(iVar).domain() == dom )
-        assert( trans.node(1).parentSpace().list() == [1] )
-        assert( trans.parents(1).list() == [] )
+        assert( trans.node(iVar).range() == dom )
+        assert( trans.node(1).parentSpace().asList() == [1] )
+        assert( trans.parents(1).asList() == [] )
 
 def test_BbMmInferer_construction():
     trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
     trans.variable_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
     trans.variable_setDependancy( 4, [2, 3], [(1, 1.0)] )
 
-    assert( trans.node(1).domain() == 6 )
-    assert( trans.parents(1).list() == [] )
-    assert( trans.node(1).parentSpace().list() == [1] )
+    assert( trans.node(1).range() == 6 )
+    assert( trans.parents(1).asList() == [] )
+    assert( trans.node(1).parentSpace().asList() == [1] )
     
-    assert( trans.node(2).domain() == 3 )
-    assert( trans.parents(2).list() == [] )
-    assert( trans.node(2).parentSpace().list() == [1] )
+    assert( trans.node(2).range() == 3 )
+    assert( trans.parents(2).asList() == [] )
+    assert( trans.node(2).parentSpace().asList() == [1] )
 
-    assert( trans.node(3).domain() == 4 )
-    assert( trans.parents(3).list() == [1] )
-    assert( trans.node(3).parentSpace().list() == [6] )
+    assert( trans.node(3).range() == 4 )
+    assert( trans.parents(3).asList() == [1] )
+    assert( trans.node(3).parentSpace().asList() == [6] )
 
-    assert( trans.node(4).domain() == 6 )
-    assert( trans.parents(4).list() == [2, 3] )
-    assert( trans.node(4).parentSpace().list() == [3, 4] )
+    assert( trans.node(4).range() == 6 )
+    assert( trans.parents(4).asList() == [2, 3] )
+    assert( trans.node(4).parentSpace().asList() == [3, 4] )
 
 def test_BbMmInferer_process():
     trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
@@ -58,12 +58,12 @@ def test_BbMmInferer_process():
     condition.fromList_set( [0, 2], [(2, 1.0)] )
 
     bench= trans.distribution()
-    assert bench.list() == []
+    assert bench.asList() == []
     assert( trans.inputDimention() == 2 )
     bench= trans.processFrom( [1, 1] )
-    assert bench.list() == [([1], 1.0)]
+    assert bench.asList() == [([1], 1.0)]
     trans.processFrom( [4, 2] )
-    assert bench.list() == [([1], 0.25), ([2], 0.25), ([3], 0.25), ([4], 0.25)]
+    assert bench.asList() == [([1], 0.25), ([2], 0.25), ([3], 0.25), ([4], 0.25)]
 
     trans.processBench( bbmm.Bench( [([4, 2], 0.7), ([1, 3], 0.3)] ) )
-    assert bench.list() == [([1], 0.475), ([2], 0.175), ([3], 0.175), ([4], 0.175)]
+    assert bench.asList() == [([1], 0.475), ([2], 0.175), ([3], 0.175), ([4], 0.175)]

@@ -351,7 +351,7 @@ newBmBench= core.newBmBench
 newBmBench.restype= c_void_p
 newBmBench.argtypes= [c_uint]
 
-# BmBench* newBmBenchWith( uint capacity, BmCode* newFirstItems, double value );
+# BmBench* newBmBenchWith( uint capacity, BmCode* newFirstItem, double value );
 newBmBenchWith= core.newBmBenchWith
 newBmBenchWith.restype= c_void_p
 newBmBenchWith.argtypes= [c_uint, c_void_p, c_double]
@@ -681,7 +681,7 @@ newBmConditionBasic= core.newBmConditionBasic
 newBmConditionBasic.restype= c_void_p
 newBmConditionBasic.argtypes= [c_uint]
 
-# BmCondition* newBmConditionWith( uint domain, BmCode* newParentRanges, BmBench* newDefaultDistrib );
+# BmCondition* newBmConditionWith( uint domain, BmCode* newInputRanges, BmBench* newDefaultDistrib );
 newBmConditionWith= core.newBmConditionWith
 newBmConditionWith.restype= c_void_p
 newBmConditionWith.argtypes= [c_uint, c_void_p, c_void_p]
@@ -691,7 +691,7 @@ BmCondition_createBasic= core.BmCondition_createBasic
 BmCondition_createBasic.restype= c_void_p
 BmCondition_createBasic.argtypes= [c_void_p, c_uint]
 
-# BmCondition* BmCondition_createWith( BmCondition* self, uint domain, BmCode* newParentRanges, BmBench* newDefaultDistrib );
+# BmCondition* BmCondition_createWith( BmCondition* self, uint domain, BmCode* newInputRanges, BmBench* newDefaultDistrib );
 BmCondition_createWith= core.BmCondition_createWith
 BmCondition_createWith.restype= c_void_p
 BmCondition_createWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
@@ -706,7 +706,7 @@ deleteBmCondition= core.deleteBmCondition
 deleteBmCondition.restype= c_void_p
 deleteBmCondition.argtypes= [c_void_p]
 
-# uint BmCondition_reinitWith( BmCondition* self, uint domain, BmCode* newParents, BmBench* newDistrib );
+# uint BmCondition_reinitWith( BmCondition* self, uint domain, BmCode* newInputRanges, BmBench* newDistrib );
 BmCondition_reinitWith= core.BmCondition_reinitWith
 BmCondition_reinitWith.restype= c_uint
 BmCondition_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
@@ -750,6 +750,11 @@ BmCondition_distributionSize.argtypes= [c_void_p]
 BmCondition_distributionAt= core.BmCondition_distributionAt
 BmCondition_distributionAt.restype= c_void_p
 BmCondition_distributionAt.argtypes= [c_void_p, c_uint]
+
+# uint BmCondition_attach( BmCondition* self, BmBench* distribution );
+BmCondition_attach= core.BmCondition_attach
+BmCondition_attach.restype= c_uint
+BmCondition_attach.argtypes= [c_void_p, c_void_p]
 
 # uint BmCondition_from_attach( BmCondition* self, BmCode* configuration, BmBench* distribution );
 BmCondition_from_attach= core.BmCondition_from_attach
@@ -911,6 +916,81 @@ BmInferer_printDependency= core.BmInferer_printDependency
 BmInferer_printDependency.restype= c_void_p
 BmInferer_printDependency.argtypes= [c_void_p, c_void_p]
 
+# BmCriterion* newBmCriterionBasic( uint inputSize, uint outputSize );
+newBmCriterionBasic= core.newBmCriterionBasic
+newBmCriterionBasic.restype= c_void_p
+newBmCriterionBasic.argtypes= [c_uint, c_uint]
+
+# BmCriterion* newBmCriterionWith( BmCode* newInputRanges, BmVector* newOutputs );
+newBmCriterionWith= core.newBmCriterionWith
+newBmCriterionWith.restype= c_void_p
+newBmCriterionWith.argtypes= [c_void_p, c_void_p]
+
+# BmCriterion* BmCriterion_createWith( BmCriterion* self, BmCode* newInputRanges, BmVector* newOutputs );
+BmCriterion_createWith= core.BmCriterion_createWith
+BmCriterion_createWith.restype= c_void_p
+BmCriterion_createWith.argtypes= [c_void_p, c_void_p, c_void_p]
+
+# BmCriterion* BmCriterion_destroy( BmCriterion* self );
+BmCriterion_destroy= core.BmCriterion_destroy
+BmCriterion_destroy.restype= c_void_p
+BmCriterion_destroy.argtypes= [c_void_p]
+
+# void deleteBmCriterion( BmCriterion* instance );
+deleteBmCriterion= core.deleteBmCriterion
+deleteBmCriterion.restype= c_void_p
+deleteBmCriterion.argtypes= [c_void_p]
+
+# uint BmCriterion_reinitWith( BmCriterion* self, BmCode* newInputRanges, BmVector* newOutputs );
+BmCriterion_reinitWith= core.BmCriterion_reinitWith
+BmCriterion_reinitWith.restype= c_uint
+BmCriterion_reinitWith.argtypes= [c_void_p, c_void_p, c_void_p]
+
+# BmTree* BmCriterion_selector( BmCriterion* self );
+BmCriterion_selector= core.BmCriterion_selector
+BmCriterion_selector.restype= c_void_p
+BmCriterion_selector.argtypes= [c_void_p]
+
+# BmVector* BmCriterion_outputs( BmCriterion* self );
+BmCriterion_outputs= core.BmCriterion_outputs
+BmCriterion_outputs.restype= c_void_p
+BmCriterion_outputs.argtypes= [c_void_p]
+
+# double BmCriterion_from( BmCriterion* self, BmCode* input );
+BmCriterion_from= core.BmCriterion_from
+BmCriterion_from.restype= c_double
+BmCriterion_from.argtypes= [c_void_p, c_void_p]
+
+# uint BmCriterion_ouputId_setValue( BmCriterion* self, uint ouputId, double ouputValue );
+BmCriterion_ouputId_setValue= core.BmCriterion_ouputId_setValue
+BmCriterion_ouputId_setValue.restype= c_uint
+BmCriterion_ouputId_setValue.argtypes= [c_void_p, c_uint, c_double]
+
+# uint BmCriterion_from_set( BmCriterion* self, BmCode* input, uint ouputId );
+BmCriterion_from_set= core.BmCriterion_from_set
+BmCriterion_from_set.restype= c_uint
+BmCriterion_from_set.argtypes= [c_void_p, c_void_p, c_uint]
+
+# void BmCriterion_switch( BmCriterion* self, BmCriterion* doppelganger );
+BmCriterion_switch= core.BmCriterion_switch
+BmCriterion_switch.restype= c_void_p
+BmCriterion_switch.argtypes= [c_void_p, c_void_p]
+
+# BmBench* BmCriterion_asNewBench( BmCriterion* self );
+BmCriterion_asNewBench= core.BmCriterion_asNewBench
+BmCriterion_asNewBench.restype= c_void_p
+BmCriterion_asNewBench.argtypes= [c_void_p]
+
+# char* BmCriterion_print( BmCriterion* self, char* buffer );
+BmCriterion_print= core.BmCriterion_print
+BmCriterion_print.restype= c_void_p
+BmCriterion_print.argtypes= [c_void_p, c_void_p]
+
+# char* BmCriterion_printSep( BmCriterion* self, char* buffer, char* separator );
+BmCriterion_printSep= core.BmCriterion_printSep
+BmCriterion_printSep.restype= c_void_p
+BmCriterion_printSep.argtypes= [c_void_p, c_void_p, c_void_p]
+
 # BmEvaluator* newBmEvaluatorBasic( uint spaceDimention, uint numberOfCriteria );
 newBmEvaluatorBasic= core.newBmEvaluatorBasic
 newBmEvaluatorBasic.restype= c_void_p
@@ -946,25 +1026,35 @@ BmEvaluator_numberOfCriteria= core.BmEvaluator_numberOfCriteria
 BmEvaluator_numberOfCriteria.restype= c_uint
 BmEvaluator_numberOfCriteria.argtypes= [c_void_p]
 
-# BmTree* BmEvaluator_crit( BmEvaluator* self, uint iCritirion );
-BmEvaluator_crit= core.BmEvaluator_crit
-BmEvaluator_crit.restype= c_void_p
-BmEvaluator_crit.argtypes= [c_void_p, c_uint]
+# BmCriterion* BmEvaluator_criterion( BmEvaluator* self, uint iCritirion );
+BmEvaluator_criterion= core.BmEvaluator_criterion
+BmEvaluator_criterion.restype= c_void_p
+BmEvaluator_criterion.argtypes= [c_void_p, c_uint]
 
 # BmVector* BmEvaluator_weights( BmEvaluator* self );
 BmEvaluator_weights= core.BmEvaluator_weights
 BmEvaluator_weights.restype= c_void_p
 BmEvaluator_weights.argtypes= [c_void_p]
 
-# double BmEvaluator_crit_weight( BmEvaluator* self, uint iCritirion );
-BmEvaluator_crit_weight= core.BmEvaluator_crit_weight
-BmEvaluator_crit_weight.restype= c_double
-BmEvaluator_crit_weight.argtypes= [c_void_p, c_uint]
+# double BmEvaluator_criterion_weight( BmEvaluator* self, uint iCritirion );
+BmEvaluator_criterion_weight= core.BmEvaluator_criterion_weight
+BmEvaluator_criterion_weight.restype= c_double
+BmEvaluator_criterion_weight.argtypes= [c_void_p, c_uint]
+
+# BmCode* BmEvaluator_criterion_mask( BmEvaluator* self, uint iCritirion );
+BmEvaluator_criterion_mask= core.BmEvaluator_criterion_mask
+BmEvaluator_criterion_mask.restype= c_void_p
+BmEvaluator_criterion_mask.argtypes= [c_void_p, c_uint]
 
 # double BmEvaluator_process( BmEvaluator* self, BmCode* input );
 BmEvaluator_process= core.BmEvaluator_process
 BmEvaluator_process.restype= c_double
 BmEvaluator_process.argtypes= [c_void_p, c_void_p]
+
+# double BmEvaluator_criterion_process( BmEvaluator* self, uint iCriterion, BmCode* input );
+BmEvaluator_criterion_process= core.BmEvaluator_criterion_process
+BmEvaluator_criterion_process.restype= c_double
+BmEvaluator_criterion_process.argtypes= [c_void_p, c_uint, c_void_p]
 
 # double BmEvaluator_processState_action( BmEvaluator* self, BmCode* state, BmCode* action );
 BmEvaluator_processState_action= core.BmEvaluator_processState_action
@@ -976,27 +1066,102 @@ BmEvaluator_processState_action_state= core.BmEvaluator_processState_action_stat
 BmEvaluator_processState_action_state.restype= c_double
 BmEvaluator_processState_action_state.argtypes= [c_void_p, c_void_p, c_void_p, c_void_p]
 
-# double BmEvaluator_crit_process( BmEvaluator* self, uint iCriterion, BmCode* input );
-BmEvaluator_crit_process= core.BmEvaluator_crit_process
-BmEvaluator_crit_process.restype= c_double
-BmEvaluator_crit_process.argtypes= [c_void_p, c_uint, c_void_p]
-
 # BmEvaluator* BmEvaluator_reinitCriterion( BmEvaluator* self, uint numberOfCriterion );
 BmEvaluator_reinitCriterion= core.BmEvaluator_reinitCriterion
 BmEvaluator_reinitCriterion.restype= c_void_p
 BmEvaluator_reinitCriterion.argtypes= [c_void_p, c_uint]
 
-# BmTree* BmEvaluator_crit_reinitWith( BmEvaluator* self, uint index, BmCode* newDependenceMask, uint numberOfOptions, double defaultValue );
-BmEvaluator_crit_reinitWith= core.BmEvaluator_crit_reinitWith
-BmEvaluator_crit_reinitWith.restype= c_void_p
-BmEvaluator_crit_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_uint, c_double]
+# BmCriterion* BmEvaluator_criterion_reinitWith( BmEvaluator* self, uint iCrit, BmCode* newDependenceMask, BmVector* newValues );
+BmEvaluator_criterion_reinitWith= core.BmEvaluator_criterion_reinitWith
+BmEvaluator_criterion_reinitWith.restype= c_void_p
+BmEvaluator_criterion_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
 
-# void BmEvaluator_crit_at_set( BmEvaluator* self, uint index, BmCode* option, uint output, double value );
-BmEvaluator_crit_at_set= core.BmEvaluator_crit_at_set
-BmEvaluator_crit_at_set.restype= c_void_p
-BmEvaluator_crit_at_set.argtypes= [c_void_p, c_uint, c_void_p, c_uint, c_double]
+# void BmEvaluator_criterion_from_set( BmEvaluator* self, uint index, BmCode* option, uint output );
+BmEvaluator_criterion_from_set= core.BmEvaluator_criterion_from_set
+BmEvaluator_criterion_from_set.restype= c_void_p
+BmEvaluator_criterion_from_set.argtypes= [c_void_p, c_uint, c_void_p, c_uint]
 
-# void BmEvaluator_crit_setWeight( BmEvaluator* self, uint iCritirion, double weight );
-BmEvaluator_crit_setWeight= core.BmEvaluator_crit_setWeight
-BmEvaluator_crit_setWeight.restype= c_void_p
-BmEvaluator_crit_setWeight.argtypes= [c_void_p, c_uint, c_double]
+# void BmEvaluator_criterion_setWeight( BmEvaluator* self, uint iCritirion, double weight );
+BmEvaluator_criterion_setWeight= core.BmEvaluator_criterion_setWeight
+BmEvaluator_criterion_setWeight.restype= c_void_p
+BmEvaluator_criterion_setWeight.argtypes= [c_void_p, c_uint, c_double]
+
+# BmDecision* newBmDecisionBasic( uint inputSize );
+newBmDecisionBasic= core.newBmDecisionBasic
+newBmDecisionBasic.restype= c_void_p
+newBmDecisionBasic.argtypes= [c_uint]
+
+# BmDecision* newBmDecisionWith( BmCode* newInputRanges, BmBench* newOutputs );
+newBmDecisionWith= core.newBmDecisionWith
+newBmDecisionWith.restype= c_void_p
+newBmDecisionWith.argtypes= [c_void_p, c_void_p]
+
+# BmDecision* BmDecision_createWith( BmDecision* self, BmCode* newInputRanges, BmBench* newOutputs );
+BmDecision_createWith= core.BmDecision_createWith
+BmDecision_createWith.restype= c_void_p
+BmDecision_createWith.argtypes= [c_void_p, c_void_p, c_void_p]
+
+# BmDecision* BmDecision_destroy( BmDecision* self );
+BmDecision_destroy= core.BmDecision_destroy
+BmDecision_destroy.restype= c_void_p
+BmDecision_destroy.argtypes= [c_void_p]
+
+# void deleteBmDecision( BmDecision* instance );
+deleteBmDecision= core.deleteBmDecision
+deleteBmDecision.restype= c_void_p
+deleteBmDecision.argtypes= [c_void_p]
+
+# uint BmDecision_reinitWith( BmDecision* self, BmCode* newInputRanges, BmBench* newOutputs );
+BmDecision_reinitWith= core.BmDecision_reinitWith
+BmDecision_reinitWith.restype= c_uint
+BmDecision_reinitWith.argtypes= [c_void_p, c_void_p, c_void_p]
+
+# BmTree* BmDecision_selector( BmDecision* self );
+BmDecision_selector= core.BmDecision_selector
+BmDecision_selector.restype= c_void_p
+BmDecision_selector.argtypes= [c_void_p]
+
+# BmBench* BmDecision_outputs( BmDecision* self );
+BmDecision_outputs= core.BmDecision_outputs
+BmDecision_outputs.restype= c_void_p
+BmDecision_outputs.argtypes= [c_void_p]
+
+# uint BmDecision_from( BmDecision* self, BmCode* input );
+BmDecision_from= core.BmDecision_from
+BmDecision_from.restype= c_uint
+BmDecision_from.argtypes= [c_void_p, c_void_p]
+
+# BmCode* BmDecision_codeFrom( BmDecision* self, BmCode* input );
+BmDecision_codeFrom= core.BmDecision_codeFrom
+BmDecision_codeFrom.restype= c_void_p
+BmDecision_codeFrom.argtypes= [c_void_p, c_void_p]
+
+# double BmDecision_valueFrom( BmDecision* self, BmCode* input );
+BmDecision_valueFrom= core.BmDecision_valueFrom
+BmDecision_valueFrom.restype= c_double
+BmDecision_valueFrom.argtypes= [c_void_p, c_void_p]
+
+# uint BmDecision_attachOuput( BmDecision* self, BmCode* newOuputCode, double ouputValue );
+BmDecision_attachOuput= core.BmDecision_attachOuput
+BmDecision_attachOuput.restype= c_uint
+BmDecision_attachOuput.argtypes= [c_void_p, c_void_p, c_double]
+
+# uint BmDecision_from_set( BmDecision* self, BmCode* input, uint ouputId );
+BmDecision_from_set= core.BmDecision_from_set
+BmDecision_from_set.restype= c_uint
+BmDecision_from_set.argtypes= [c_void_p, c_void_p, c_uint]
+
+# void BmDecision_switch( BmDecision* self, BmDecision* doppelganger );
+BmDecision_switch= core.BmDecision_switch
+BmDecision_switch.restype= c_void_p
+BmDecision_switch.argtypes= [c_void_p, c_void_p]
+
+# char* BmDecision_print( BmDecision* self, char* output );
+BmDecision_print= core.BmDecision_print
+BmDecision_print.restype= c_void_p
+BmDecision_print.argtypes= [c_void_p, c_void_p]
+
+# char* BmDecision_printSep( BmDecision* self, char* output, char* separator );
+BmDecision_printSep= core.BmDecision_printSep
+BmDecision_printSep.restype= c_void_p
+BmDecision_printSep.argtypes= [c_void_p, c_void_p, c_void_p]

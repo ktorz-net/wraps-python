@@ -31,8 +31,8 @@ class Condition:
             cc.deleteBmCondition( self._ccondition )
 
     # Accessor
-    def domain( self ):
-        return cc.BmCondition_domain( self._ccondition )
+    def range( self ):
+        return cc.BmCondition_range( self._ccondition )
     
     def parentSpace( self ):
         return Code( ccode= cc.BmCondition_parents( self._ccondition ) )
@@ -46,7 +46,7 @@ class Condition:
     def fromList( self, configurationList ):
         bench= self.fromCode( Code( configurationList ) )
         distrib= [ (output[0], value)
-            for output, value in bench.list() ]
+            for output, value in bench.asList() ]
         return distrib
 
     def distributionSize( self ):
@@ -96,6 +96,7 @@ class Condition:
     # Dump & Load :
     def dump( self ):
         descriptor= {
+            "range": self.range(),
             "selector": Tree( ctree= cc.BmCondition_selector( self._ccondition ) ).dump(),
             "distributions": [
                 self.distributionAt(i).dump()
@@ -105,15 +106,26 @@ class Condition:
         return descriptor
     
     def load(self, descriptor):
+        # Generate all the distributions:
         distribs= [
-            Bench().load( benchDump )
-            for benchDump in descriptor['distributions']
+            Bench().load( distribDump )
+            for distribDump in descriptor['distributions']
         ]
+        
+        # Re-initialize the intance:
         self.initializeWith(
-            descriptor['selector']['output'],
-            descriptor['selector']['input'],
+            descriptor['range'],
+            Code( descriptor['selector']['input'] ),
             distribs[0]
         )
-        Tree( ctree= cc.BmCondition_selector( self._ccondition ) ).load(  )
+
+        # Generate all the distributions:
+        for distrib in distribs[1:] :
+            cc.BmCondition_attach( self._ccondition, distrib._cbench )
+            distrib._cmaster= False # Do not distroy the bench went distribDump will be distroyed. (aDistrib instance is not the master)
+        
+        
+        # Generate the tree selector:
+        Tree( ctree= cc.BmCondition_selector( self._ccondition ) ).load( descriptor['selector'] )
         
         return self

@@ -11,16 +11,16 @@ import pyBbMm.core as bm
 def test_BbMmCondition_init():
     cond= bm.Condition()
     assert type(cond) == bm.Condition
-    assert cond.domain() == 1
-    assert cond.parentSpace().list() == [1]
+    assert cond.range() == 1
+    assert cond.parentSpace().asList() == [1]
     assert cond.distributionSize() == 1
-    assert cond.distributionAt(1).list() == [([1], 1.0)]
+    assert cond.distributionAt(1).asList() == [([1], 1.0)]
     assert cond.fromList([1]) == [(1, 1.0)]
 
 def test_BbMmCondition_init2():
     cond= bm.Condition( 4, [2, 3], [(1, 0.6), (2, 0.4)] )
-    assert cond.domain() == 4
-    assert cond.parentSpace().list() == [2, 3]
+    assert cond.range() == 4
+    assert cond.parentSpace().asList() == [2, 3]
     assert cond.fromList([1, 3]) == [(1, 0.6), (2, 0.4)] 
 
 def test_BbMmCondition_construction():
@@ -55,36 +55,47 @@ def test_BbMmCindition_dump():
     dump= cond.dump()
     pprint.pprint(dump)
     assert dump == {
+        'range': 4,
+        'selector': {
+            'input': [2, 3],
+            'branches': [
+                {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)] },
+                {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 2), ('leaf', 3)]}
+            ]   
+        },
         'distributions': [
             [([1], 0.6), ([2], 0.4)],
             [([3], 1.0)],
             [([4], 1.0)]
-        ],
-        'selector': {
-            'input': [2, 3],
-            'output': 6,
-            'branches': [
-                {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)] },
-                {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 2), ('leaf', 3)]}
-            ]
-        }
+        ]
     }
 
 def test_BbMmCindition_load():
     dump= {
+        'range': 4,
+        'selector': {
+            'input': [2, 3],
+            'branches': [
+                {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)] },
+                {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 2), ('leaf', 3)]}
+            ]   
+        },
         'distributions': [
             [([1], 0.6), ([2], 0.4)],
             [([3], 1.0)],
             [([4], 1.0)]
-        ],
-        'selector': {
-            'input': [2, 3],
-            'output': 6,
-            'branches': [
-                {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)] },
-                {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 2), ('leaf', 3)]}
-            ]
-        }
+        ]
     }
+
+    distribs= [
+            benchDump
+            for benchDump in dump['distributions']
+        ]
+    
+    pprint.pprint( distribs )
+
     cond= bm.Condition().load( dump )
-    assert cond.dump == dump
+    
+    pprint.pprint( cond.dump() )
+    
+    assert cond.dump() == dump

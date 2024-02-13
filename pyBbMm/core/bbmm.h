@@ -5,19 +5,23 @@
  *   STRUCTURE MODULE:
  *       - BmCode         : a fixed size array of digit (unsigned integers)
  *       - BmBench        : a dynamic-size collection of BmCode with and value (i -> code and value )
- *       - BmTree         : a tree based BmCode (code -> output and value )
+ *       - BmTree         : a tree based BmCode (input code -> output digit )
  *       - BmVector       : a fixed size array of values (doubles)
  * 
  *   FUNCTION MODULE:
  *       - BmCondition    : Define a Bayesian Node (conditional probabilities over variable affectations)
  *       - BmInferer      : Define a Bayesian Network as P(output | input) - potentially Dynamic P(state' | state, action)
+ *       - BmCriterion    : Define a transition from a code to a value
  *       - BmEvaluator    : A value function over multiple criteria
  * 
  *   SOLVER MODULE:
+ *       - BmDecision     : Define a transition from a code to another one (input code -> output code + value)
+ * 
+ *   VERSION: 0.0.X
  * 
  *   LICENSE: MIT License
  *
- *   Copyright © 2022-2023 Guillaume Lozenguez.
+ *   Copyright © 2022-2024 Guillaume Lozenguez.
  * 
  *   Permission is hereby granted, free of charge, to any person obtaining a
  *   copy of this software and associated documentation files (the "Software"),
@@ -218,7 +222,7 @@ typedef struct {
 
 /* Constructor */
 BmBench* newBmBench( uint capacity );
-BmBench* newBmBenchWith( uint capacity, BmCode* newFirstItems, double value );
+BmBench* newBmBenchWith( uint capacity, BmCode* newFirstItem, double value );
 BmBench* newBmBenchAs( BmBench* model );
 
 BmBench* BmBench_create( BmBench* self, uint capacity );
@@ -363,7 +367,6 @@ char* BmTree_printInside( BmTree* self, char* output); // print `self` at the en
 
 typedef struct {
   uint range;
-  BmCode* parentRanges;
   BmTree* selector;
   uint distribSize, distribCapacity;
   BmBench **distributions;
@@ -371,17 +374,17 @@ typedef struct {
 
 /* Constructor */
 BmCondition* newBmConditionBasic(uint domain);
-BmCondition* newBmConditionWith(uint domain, BmCode* newParentRanges, BmBench* newDefaultDistrib);
+BmCondition* newBmConditionWith(uint domain, BmCode* newInputRanges, BmBench* newDefaultDistrib);
 
 BmCondition* BmCondition_createBasic(BmCondition* self, uint domain);
-BmCondition* BmCondition_createWith(BmCondition* self, uint domain, BmCode* newParentRanges, BmBench* newDefaultDistrib);
+BmCondition* BmCondition_createWith(BmCondition* self, uint domain, BmCode* newInputRanges, BmBench* newDefaultDistrib);
 
 /* Destructor */
 BmCondition* BmCondition_destroy(BmCondition* self);
 void deleteBmCondition(BmCondition* instance);
 
 /* re-initializer */
-uint BmCondition_reinitWith( BmCondition* self, uint domain, BmCode* newParents, BmBench* newDistrib );
+uint BmCondition_reinitWith( BmCondition* self, uint domain, BmCode* newInputRanges, BmBench* newDistrib );
 uint BmCondition_reinitDistributionsWith( BmCondition* self, BmBench* newDistrib );
 
 /* Accessor */
@@ -394,6 +397,7 @@ uint BmCondition_distributionSize( BmCondition* self );
 BmBench* BmCondition_distributionAt( BmCondition* self, uint iDistrib );
 
 /* Construction */
+uint BmCondition_attach( BmCondition* self, BmBench* distribution );
 uint BmCondition_from_attach( BmCondition* self, BmCode* configuration, BmBench* distribution );
 
 /* Instance tools */
@@ -468,6 +472,53 @@ char* BmInferer_printDependency(BmInferer* self, char* output); // print `self` 
 
 
 /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
+ *   B b M m   F U N C T I O N  :  C R I T E R I O N                       *
+ * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
+ *
+ * 
+ * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
+
+typedef struct {
+  BmTree* selector;
+  BmVector* outputs;
+} BmCriterion;
+
+/* Constructor */
+BmCriterion* newBmCriterionBasic( uint inputSize, uint outputSize );
+BmCriterion* newBmCriterionWith( BmCode* newInputRanges, BmVector* newOutputs );
+
+BmCriterion* BmCriterion_createWith( BmCriterion* self, BmCode* newInputRanges, BmVector* newOutputs );
+
+/* Destructor */
+BmCriterion* BmCriterion_destroy( BmCriterion* self );
+void deleteBmCriterion( BmCriterion* instance );
+
+/* re-initializer */
+uint BmCriterion_reinitWith( BmCriterion* self, BmCode* newInputRanges, BmVector* newOutputs );
+
+/* Accessor */
+BmTree* BmCriterion_selector( BmCriterion* self );
+BmCode*   BmCriterion_inputRanges( BmCriterion* self );
+BmVector* BmCriterion_outputs( BmCriterion* self );
+
+double BmCriterion_from( BmCriterion* self, BmCode* input );
+
+/* Construction */
+uint BmCriterion_ouputId_setValue( BmCriterion* self, uint ouputId, double ouputValue );
+uint BmCriterion_from_set( BmCriterion* self, BmCode* input, uint ouputId );
+
+/* Instance tools */
+void BmCriterion_switch(BmCriterion* self, BmCriterion* doppelganger);
+
+/* Generating */
+BmBench* BmCriterion_asNewBench( BmCriterion* self );
+
+/* Printing */
+char* BmCriterion_print(BmCriterion* self, char* buffer);
+char* BmCriterion_printSep(BmCriterion* self, char* buffer, char* separator);
+
+
+/* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
  *   B b M m   F U N C T I O N  :  E V A L U A T O R                       *
  * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
  *
@@ -478,12 +529,11 @@ char* BmInferer_printDependency(BmInferer* self, char* output); // print `self` 
 
 typedef struct {
   BmCode* space;
-  uint criteriaSize;
-  BmTree ** criteria;
-  BmVector ** critValues;
+  uint size;
+  BmCriterion ** ccriteria;
   BmCode ** masks;
   BmVector* weights;
-} BmEvaluator ;
+} BmEvaluator;
 
 /* Constructor*/
 BmEvaluator* newBmEvaluatorBasic( uint spaceDimention, uint numberOfCriteria );
@@ -498,22 +548,24 @@ BmEvaluator* BmEvaluator_destroy( BmEvaluator* self);
 /* Accessor */
 BmCode* BmEvaluator_space( BmEvaluator* self );
 uint BmEvaluator_numberOfCriteria( BmEvaluator* self );
-BmTree* BmEvaluator_crit( BmEvaluator* self, uint iCritirion );
+BmCriterion* BmEvaluator_criterion( BmEvaluator* self, uint iCritirion );
 BmVector* BmEvaluator_weights( BmEvaluator* self );
-double BmEvaluator_crit_weight( BmEvaluator* self, uint iCritirion );
+double BmEvaluator_criterion_weight( BmEvaluator* self, uint iCritirion );
+BmCode* BmEvaluator_criterion_mask( BmEvaluator* self, uint iCritirion );
 
 /* Process */
 double BmEvaluator_process( BmEvaluator* self, BmCode* input );
+double BmEvaluator_criterion_process( BmEvaluator* self, uint iCriterion, BmCode* input );
+
 double BmEvaluator_processState_action(BmEvaluator* self, BmCode* state, BmCode* action);
 double BmEvaluator_processState_action_state(BmEvaluator* self, BmCode* state, BmCode* action, BmCode* statePrime);
 
-double BmEvaluator_crit_process( BmEvaluator* self, uint iCriterion, BmCode* input );
 
 /* Construction */
 BmEvaluator* BmEvaluator_reinitCriterion( BmEvaluator* self, uint numberOfCriterion );
-BmTree* BmEvaluator_crit_reinitWith( BmEvaluator* self, uint index, BmCode* newDependenceMask, uint numberOfOptions, double defaultValue );
-void BmEvaluator_crit_at_set( BmEvaluator* self, uint index, BmCode* option, uint output, double value );
-void BmEvaluator_crit_setWeight( BmEvaluator* self, uint iCritirion, double weight );
+BmCriterion* BmEvaluator_criterion_reinitWith( BmEvaluator* self, uint iCrit, BmCode* newDependenceMask, BmVector* newValues  );
+void BmEvaluator_criterion_from_set( BmEvaluator* self, uint index, BmCode* option, uint output );
+void BmEvaluator_criterion_setWeight( BmEvaluator* self, uint iCritirion, double weight );
 
 /* Infering */
 
@@ -528,5 +580,50 @@ void BmEvaluator_crit_setWeight( BmEvaluator* self, uint iCritirion, double weig
  * 
  * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
 
+
+/* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
+ *   B b M m   F U N C T I O N  :  F U N C T I O N                         *
+ * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
+ *
+ * Define a transition from a code to another one (input code -> output code + value)
+ * 
+ * ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
+
+typedef struct {
+  BmTree* selector;
+  BmBench* outputs;
+} BmDecision;
+
+/* Constructor */
+BmDecision* newBmDecisionBasic( uint inputSize );
+BmDecision* newBmDecisionWith( BmCode* newInputRanges, BmBench* newOutputs );
+
+BmDecision* BmDecision_createWith( BmDecision* self, BmCode* newInputRanges, BmBench* newOutputs );
+
+/* Destructor */
+BmDecision* BmDecision_destroy( BmDecision* self );
+void deleteBmDecision( BmDecision* instance );
+
+/* re-initializer */
+uint BmDecision_reinitWith( BmDecision* self, BmCode* newInputRanges, BmBench* newOutputs );
+
+/* Accessor */
+BmTree* BmDecision_selector( BmDecision* self );
+BmBench* BmDecision_outputs( BmDecision* self );
+
+uint BmDecision_from( BmDecision* self, BmCode* input );
+BmCode* BmDecision_codeFrom( BmDecision* self, BmCode* input );
+double BmDecision_valueFrom( BmDecision* self, BmCode* input );
+
+/* Construction */
+uint BmDecision_attachOuput( BmDecision* self, BmCode* newOuputCode, double ouputValue );
+uint BmDecision_from_set( BmDecision* self, BmCode* input, uint ouputId );
+
+/* Instance tools */
+void BmDecision_switch(BmDecision* self, BmDecision* doppelganger);
+
+/* Printing */
+char* BmDecision_print(BmDecision* self, char* output);
+char* BmDecision_printSep(BmDecision* self, char* output, char* separator);
 
 #endif // BBMM_H

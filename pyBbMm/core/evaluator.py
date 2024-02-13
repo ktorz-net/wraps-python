@@ -6,6 +6,7 @@ from . import clib, clibBbMm as cc
 from .code import Code
 from .vector import Vector
 from .tree import Tree
+from .criterion import Criterion
 
 class Evaluator:
     # Construction destruction:
@@ -27,53 +28,84 @@ class Evaluator:
             cc.deleteBmEvaluator( self._cevaluator )
 
     # Accessor
-    def inputSpace( self ):
-        return Code( ccode= cc.BmEvaluator_space( self._cevaluator ) )
+    def inputRanges( self ):
+        return Code( ccode= cc.BmEvaluator_space( self._cevaluator ) ).asList()
     
     def numberOfCriteria( self ):
         return cc.BmEvaluator_numberOfCriteria( self._cevaluator )
     
-    def criteria( self, iCrit ):
-        return Tree( ctree= cc.BmEvaluator_crit(
-            self._cevaluator,
-            c_uint(iCrit) )
-        )
-    
     def weights( self ):
         return Vector(
             cvector= cc.BmEvaluator_weights( self._cevaluator )
-        )
+        ).asList()
     
-    def criteriaWeight( self, iCrit ):
-        return cc.BmEvaluator_crit_weight(
+    def criterion( self, iCrit ):
+        return Criterion( ccriterion=cc.BmEvaluator_criterion(
+            self._cevaluator,
+            c_uint(iCrit)
+        ) )
+
+    def criterionWeight( self, iCrit ):
+        return cc.BmEvaluator_criterion_weight(
             self._cevaluator,
             c_uint(iCrit)
         )
-    
+
+    def criterionMask( self, iCrit ):
+        return Code( ccode=cc.BmEvaluator_criterion_mask(
+            self._cevaluator,
+            c_uint(iCrit) )
+        ).asList()
+
     # Construction
-    def criteria_intializeCode( self, iCrit, dependence, possibleValues ):
-        assert( dependence._cmaster )
-        dependence._cmaster= False
-        numberOfOption= len(possibleValues)
-        crit= Tree( ctree= cc.BmEvaluator_crit_reinitWith(
+    def criterion_intializeWith( self, iCrit, codeDependence, vectorValues ):
+        assert( codeDependence._cmaster ) # free to attach...
+        assert( vectorValues._cmaster ) # free to attach...
+        cc.BmEvaluator_criterion_reinitWith(
+            self._cevaluator,
+            c_uint( iCrit ),
+            codeDependence._ccode,
+            vectorValues._cvector
+        )
+        codeDependence._cmaster= False
+        vectorValues._cmaster= False
+        return self.criterion( iCrit )
+    
+    def criterion_intialize( self, iCrit, dependenceList, possibleValues ):
+        return self.criterion_intializeWith(
+            iCrit,
+            Code( dependenceList ),
+            Vector( possibleValues )
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def criteria_at_set(self, iCrit, option, output, value):
+        cc.BmEvaluator_criterion_at_set(
             self._cevaluator,
             c_uint(iCrit),
-            dependence._ccode,
-            c_uint(numberOfOption),
-            c_double(possibleValues[0]) )
-        )
-        for i in range( numberOfOption ):
-            crit.option_setValue( i+1, possibleValues[i] )
-        return crit
-    
-    def criteria_intialize( self, iCrit, dependenceList, possibleValues ):
-        return self.criteria_intializeCode(
-            iCrit, Code( dependenceList ),
-            possibleValues
+            option._ccode,
+            c_uint(output),
+            c_double(value)
         )
     
     def criteria_setWeight( self, iCrit, weight ):
-        cc.BmEvaluator_crit_setWeight(
+        cc.BmEvaluator_criterion_setWeight(
             self._cevaluator, c_uint(iCrit), c_double(weight)
         )
 
@@ -82,7 +114,7 @@ class Evaluator:
         inputCode= Code( input )
         values= []
         for iCrit in range( 1, self.numberOfCriteria()+1 ) :
-            values.append( cc.BmEvaluator_crit_process( self._cevaluator, c_uint(iCrit), inputCode._ccode ) )
+            values.append( cc.BmEvaluator_criterion_process( self._cevaluator, c_uint(iCrit), inputCode._ccode ) )
         return values
 
     def processCode( self, input ):

@@ -48,7 +48,7 @@ class Vector :
         assert( 0 < i and i <= self.dimention() )
         return (int)(cc.BmVector_at( self._cvector, (c_uint)(i) ) )    
 
-    def list(self):
+    def asList(self):
         return clib.readDoubleLst( self.dimention(), cc.BmVector_values(self._cvector) )
 
     # comparizon:
@@ -75,7 +75,7 @@ class Vector :
 
     # dump and load:
     def dump(self):
-        descriptor= self.list()
+        descriptor= self.asList()
         return descriptor
     
     def load(self, descriptor):

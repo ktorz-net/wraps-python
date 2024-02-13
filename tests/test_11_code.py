@@ -15,7 +15,7 @@ def test_BbMmCode_init2():
     assert code.at(1) == 1
     assert code.at(2) == 2
     assert code.at(3) == 3
-    assert code.list() == [1, 2, 3]
+    assert code.asList() == [1, 2, 3]
 
 def test_BbMmCode_copy():
     code= bm.Code([1, 2, 3])
@@ -24,10 +24,10 @@ def test_BbMmCode_copy():
     assert cpy.at(1) == 1
     assert cpy.at(2) == 2
     assert cpy.at(3) == 3
-    assert cpy.list() == [1, 2, 3]
+    assert cpy.asList() == [1, 2, 3]
     code.initialize([3, 2])
-    assert code.list() == [3, 2]
-    assert cpy.list() == [1, 2, 3]
+    assert code.asList() == [3, 2]
+    assert cpy.asList() == [1, 2, 3]
 
 def test_BbMmCode_compare():
     code1= bm.Code([1, 42, 3])
@@ -44,16 +44,16 @@ def test_BbMmCode_compare():
 
 def test_BbMmCode_modify():
     code= bm.Code([1, 2, 3])
-    assert code.list() == [1, 2, 3]
+    assert code.asList() == [1, 2, 3]
     code.resize(2)
-    assert code.list() == [1, 2]
+    assert code.asList() == [1, 2]
     code.resize(4)
-    assert code.list() == [1, 2, 0, 0]
+    assert code.asList() == [1, 2, 0, 0]
     code.at_set(1, 2)
     code.at_set(4, 6)
     code.at_set(2, 3)
     code.at_set(3, 1)
-    assert code.list() == [2, 3, 1, 6]
+    assert code.asList() == [2, 3, 1, 6]
 
 def test_BbMmCode_iterate():
     code= bm.Code([2, 3, 2])

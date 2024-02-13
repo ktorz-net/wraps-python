@@ -46,7 +46,7 @@ def test_BbMmBench_initFull():
     assert str(bench) == "[[0, 0]:1.0, [1]:0.2, [1, 2]:3.0, [2, 4]:0.0]"
     
     assert list( bench.range() ) == [ 1, 2, 3, 4 ]
-    assert bench.list() == [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3), ([2, 4], 0)]
+    assert bench.asList() == [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3), ([2, 4], 0)]
 
 
 def test_BbMmBench_dump():

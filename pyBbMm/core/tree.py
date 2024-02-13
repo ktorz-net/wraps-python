@@ -10,7 +10,6 @@ from .bench import Bench
 class Tree :
     # Construction destruction:
     def __init__(self, space=[1], ctree= None):
-        assert( type(ctree) != int )
         if ctree is None :
             codeSpace= Code( space )
             self._ctree= cc.newBmTreeWith( codeSpace._ccode )
@@ -29,7 +28,7 @@ class Tree :
         return cc.BmTree_size( self._ctree )
     
     def inputRanges(self):
-        return Code( ccode=cc.BmTree_inputRanges( self._ctree ) ).list()
+        return Code( ccode=cc.BmTree_inputRanges( self._ctree ) ).asList()
     
     def atCode( self, code ):
         return cc.BmTree_at( self._ctree, code._ccode)

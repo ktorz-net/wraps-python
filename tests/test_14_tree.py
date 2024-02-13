@@ -14,7 +14,7 @@ def test_BbMmTree_init():
 
 def test_BbMmTree_init2():
     stateSpace= bm.Code([2, 3])
-    tree= bm.Tree( stateSpace.list() )
+    tree= bm.Tree( stateSpace.asList() )
     for c in stateSpace :
         assert tree.at(c) == 1
     assert str( tree.asBench() ) == '[[0, 0, 1]:0.0]'

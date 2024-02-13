@@ -1,11 +1,17 @@
 import sys
 sys.path.insert( 1, __file__.split('tests')[0] )
+
 # ------------------------------------------------------------------------ #
 #               T E S T   p y B b M m  C l i b C o r e                     #
 # ------------------------------------------------------------------------ #
+
 from ctypes import c_uint, c_void_p, c_ulong
 from numpy import empty
 from pyBbMm.core import clib, clibBbMm as cc
+
+# ------------------------------------------------------------------------ #
+#   STRUCTURE MODULE:
+# ------------------------------------------------------------------------ #
 
 def test_ccCode_init():
     cCode= cc.newBmCode_all(2, 3)
@@ -32,6 +38,11 @@ def test_ccTree_init():
     assert cc.BmTree_size(cTree) == 0
     cc.deleteBmTree(cTree)
 
+
+# ------------------------------------------------------------------------ #
+#   FUNCTION MODULE:
+# ------------------------------------------------------------------------ #
+
 def test_ccCondition_init():
     cCondition= cc.newBmConditionBasic(4)
     assert cc.BmCondition_range(cCondition) == 4
@@ -45,7 +56,17 @@ def test_ccInferer_init():
     cc.deleteBmInferer(cInf)
     cc.deleteBmCode( cCode )
 
+def test_ccCriterion_init():
+    cCrit= cc.newBmCriterionBasic(2, 2)
+    assert cc.BmTree_size( cc.BmCriterion_selector( cCrit ) ) == 1
+    assert cc.BmVector_dimention( cc.BmCriterion_outputs( cCrit ) ) == 2
+    cc.deleteBmCriterion(cCrit)
+
 def test_ccEvaluator_init():
     cEval= cc.newBmEvaluatorBasic(3, 2)
     assert cc.BmEvaluator_numberOfCriteria(cEval) == 2
     cc.deleteBmEvaluator(cEval)
+
+# ------------------------------------------------------------------------ #
+#   SOLVER MODULE:
+# ------------------------------------------------------------------------ #

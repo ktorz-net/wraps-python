@@ -48,7 +48,7 @@ class Code :
         assert( 0 < i and i <= self.dimention() )
         return (int)(cc.BmCode_at( self._ccode, (c_uint)(i) ) )    
 
-    def list(self):
+    def asList(self):
         return clib.readUintLst( self.dimention(), cc.BmCode_numbers(self._ccode) )
 
     # comparizon:
@@ -80,7 +80,7 @@ class Code :
     
     # dump and load:
     def dump(self):
-        descriptor= self.list()
+        descriptor= self.asList()
         return descriptor
     
     def load(self, descriptor):
@@ -110,7 +110,7 @@ class IterCode :
     
     def __next__(self):
         if cc.BmCode_isIncluding( self.range._ccode, self.conf._ccode ) :
-            lst= self.conf.list()
+            lst= self.conf.asList()
             cc.BmCode_nextCode( self.range._ccode, self.conf._ccode )
             return lst
         else:

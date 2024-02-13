@@ -46,8 +46,8 @@ class Bench :
     def range(self):
         return range(1, self.size()+1)
     
-    def list( self ):
-        return [ (self.at(i).list(), self.valueAt(i)) for i in self.range() ]
+    def asList( self ):
+        return [ (self.at(i).asList(), self.valueAt(i)) for i in self.range() ]
     
     # Construction
     def attachLast( self, newCode, value ):
@@ -86,7 +86,7 @@ class Bench :
 
     # dump and load:
     def dump(self):
-        descriptor= self.list()
+        descriptor= self.asList()
         return descriptor
     
     def load(self, descriptor):
