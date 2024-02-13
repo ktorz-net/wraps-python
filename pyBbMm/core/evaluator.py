@@ -78,37 +78,12 @@ class Evaluator:
             Vector( possibleValues )
         )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def criteria_at_set(self, iCrit, option, output, value):
-        cc.BmEvaluator_criterion_at_set(
-            self._cevaluator,
-            c_uint(iCrit),
-            option._ccode,
-            c_uint(output),
-            c_double(value)
-        )
-    
-    def criteria_setWeight( self, iCrit, weight ):
+    def criterion_setWeight( self, iCrit, weight ):
         cc.BmEvaluator_criterion_setWeight(
             self._cevaluator, c_uint(iCrit), c_double(weight)
         )
-
+        return self
+    
     # Process
     def processMulti( self, input ):
         inputCode= Code( input )
