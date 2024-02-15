@@ -7,6 +7,7 @@ import pyBbMm.core as bm
 
 def test_BbMmCode_init():
     code= bm.Code()
+    assert str(code) == "code[]"
     assert code.dimention() == 0
 
 def test_BbMmCode_init2():
@@ -15,6 +16,7 @@ def test_BbMmCode_init2():
     assert code.at(1) == 1
     assert code.at(2) == 2
     assert code.at(3) == 3
+    assert str(code) == "code[1, 2, 3]"
     assert code.asList() == [1, 2, 3]
 
 def test_BbMmCode_copy():
@@ -80,7 +82,7 @@ def test_BbMmCode_iterate():
     assert count == 2*3*2
 
 def test_BbMmCode_print():
-    assert str( bm.Code([1, 2, 3]) ) == "[1, 2, 3]"
+    assert str( bm.Code([1, 2, 3]) ) == "code[1, 2, 3]"
 
 
 def test_BbMmCode_dump():
@@ -92,7 +94,7 @@ def test_BbMmCode_load():
     assert code.dump() == [1, 2, 3]
 
 def test_BbMmCode_print():
-    assert str( bm.Code([1, 2, 3]) ) == "[1, 2, 3]"
+    assert str( bm.Code([1, 2, 3]) ) == "code[1, 2, 3]"
 
 if __name__ == '__main__':
     test_BbMmCode_iterate()

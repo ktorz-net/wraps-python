@@ -28,9 +28,7 @@ class Inferer:
 
     # Accessor
     def distribution( self ):
-        return Bench( cbench= cc.BmInferer_distribution(
-            self._cinferer )
-        )
+        return Bench( cbench= cc.BmInferer_distribution( self._cinferer ) )
 
     def inputDimention( self ):
         return cc.BmInferer_inputDimention( self._cinferer )
@@ -79,7 +77,20 @@ class Inferer:
             self._cinferer,
             inputDistribution._cbench
         )
-        return self.distribution()
+        distrib= self.distribution()
+        print( f"> {type(distrib)}: {distrib}" )
+        return distrib
     
     def processFrom( self, inputList ):
+        print( f"Inferer:: process from {inputList}" )
         return self.processBench( Bench( [(inputList, 1.0)] ) )
+
+    # Dumping:
+    def dump( self ):
+        return {
+            "input": self.inputRanges(),
+            "criteria": [
+                { "mask": i }
+                for i in range(3)
+            ]
+        }

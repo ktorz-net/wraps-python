@@ -74,3 +74,4 @@ def test_BbMmEvaluator_process():
 
     assert instance.processMulti( [1, 2, 4] ) == [0.01, 3.0]
     assert instance.process( [1, 2, 4] ) == 6.01
+

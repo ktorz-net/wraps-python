@@ -25,25 +25,25 @@ def test_BbMmBench_attach():
     assert c2.dimention() == 1 
     assert c2.at(1) == 1
     assert bench.valueAt( 1 ) == 1.0
-    assert str(bench) == "[[1]:1.0]"
+    assert str(bench) == "bench[[1]:1.0]"
 
     bench.attachLast( bm.Code([1, 2]), 1.2 )
-    assert str(bench) == "[[1]:1.0, [1, 2]:1.2]"
+    assert str(bench) == "bench[[1]:1.0, [1, 2]:1.2]"
 
     bench.attachLast( bm.Code([2, 4]), 100.2 )
     bench.attachFirst( bm.Code([0, 0]), 0.1 )
 
-    assert str(bench) == "[[0, 0]:0.1, [1]:1.0, [1, 2]:1.2, [2, 4]:100.2]"
+    assert str(bench) == "bench[[0, 0]:0.1, [1]:1.0, [1, 2]:1.2, [2, 4]:100.2]"
 
     c= bench.detachLast()
-    assert str(c) == "[2, 4]"
+    assert str(c) == "code[2, 4]"
 
     c= bench.detachFirst()
-    assert str(c) == "[0, 0]"
+    assert str(c) == "code[0, 0]"
 
 def test_BbMmBench_initFull():
     bench= bm.Bench( [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3), ([2, 4], 0)] )
-    assert str(bench) == "[[0, 0]:1.0, [1]:0.2, [1, 2]:3.0, [2, 4]:0.0]"
+    assert str(bench) == "bench[[0, 0]:1.0, [1]:0.2, [1, 2]:3.0, [2, 4]:0.0]"
     
     assert list( bench.range() ) == [ 1, 2, 3, 4 ]
     assert bench.asList() == [([0, 0], 1.0), ([1], 0.2), ([1, 2], 3), ([2, 4], 0)]

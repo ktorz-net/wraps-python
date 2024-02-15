@@ -62,7 +62,7 @@ class Node():
 
 class Model():
     # Construction destruction:
-    def __init__( self, stateVariables= {}, actionVariables= {}, shiftVariables= {} ) -> None:
+    def __init__( self, stateVariables= {}, actionVariables= {}, shiftVariables= {}, numberOfRewardCriteria=1 ) -> None:
         # Initialize variable enumeration :
         self._varNames= [ var+'-0' for var in stateVariables ]
         self._varNames+= [ var for var in actionVariables ]
@@ -77,7 +77,9 @@ class Model():
         # Transition function:
         nbStateVar= len(stateVariables)
         nbActVar= len(actionVariables)
-        self._trans= core.Inferer( [len(d) for d in self._domains ], nbStateVar+nbActVar, nbStateVar )
+        space= [len(d) for d in self._domains ]
+        self._trans= core.Inferer( space, nbStateVar+nbActVar, nbStateVar )
+        self._rewas= core.Evaluator( space, numberOfRewardCriteria )
 
     # Accessor
     def variables(self):
@@ -154,6 +156,7 @@ class Model():
                 "parents": n.parents(),
                 "condition": self._trans.node( n.id() ).dump()
             }
+        descriptor["rewards"]= []
         return descriptor
     
     # def load( self ):

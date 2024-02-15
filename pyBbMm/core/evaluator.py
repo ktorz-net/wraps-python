@@ -97,3 +97,4 @@ class Evaluator:
     
     def process( self, inputList ):
         return self.processCode( Code(inputList) )
+    

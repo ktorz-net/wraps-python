@@ -17,16 +17,16 @@ def test_BbMmTree_init2():
     tree= bm.Tree( stateSpace.asList() )
     for c in stateSpace :
         assert tree.at(c) == 1
-    assert str( tree.asBench() ) == '[[0, 0, 1]:0.0]'
+    assert str( tree.asBench() ) == 'bench[[0, 0, 1]:0.0]'
 
 def ttest_BbMmTree_construct():
     tree= bm.Tree( [2, 4] )
     tree.clear( 3 )
-    assert str( tree.asBench() ) == '[[1, 0, 3]:0.0, [2, 0, 3]:0.0]'
+    assert str( tree.asBench() ) == 'bench[[1, 0, 3]:0.0, [2, 0, 3]:0.0]'
     assert tree.size() == 1
     tree.at_set( [1, 2], 1 )
     tree.at_set( [1, 4], 4 )
-    assert str( tree.asBench() ) == '[[1, 1, 3]:0.0, [1, 2, 1]:0.0, [1, 3, 3]:0.0, [1, 4, 4]:0.0, [2, 0, 3]:0.0]'
+    assert str( tree.asBench() ) == 'bench[[1, 1, 3]:0.0, [1, 2, 1]:0.0, [1, 3, 3]:0.0, [1, 4, 4]:0.0, [2, 0, 3]:0.0]'
     assert tree.size() == 2
 
 def test_BbMmTree_dump():

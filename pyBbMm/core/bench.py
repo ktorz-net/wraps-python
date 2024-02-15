@@ -96,8 +96,8 @@ class Bench :
     def __str__(self):
         size= self.size()
         if size == 0 :
-            return "[]"
-        s= "["+ str( self.at(1) ) +":"+ str( self.valueAt(1) )
+            return "bench[]"
+        s= "bench["+ str( self.at(1).asList() ) +":"+ str( self.valueAt(1) )
         for i in range(2, size+1) :
-            s+= ", "+ str( self.at(i) ) +":"+ str( self.valueAt(i) )
+            s+= ", "+ str( self.at(i).asList() ) +":"+ str( self.valueAt(i) )
         return s+"]"

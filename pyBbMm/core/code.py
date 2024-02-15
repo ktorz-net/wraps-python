@@ -90,8 +90,8 @@ class Code :
     def __str__(self):
         size= self.dimention()
         if size == 0 :
-            return "[]"
-        s= "["+ str( self.at(1) )
+            return "code[]"
+        s= "code["+ str( self.at(1) )
         for i in range(2, size+1) :
             s+= ", "+ str( self.at(i) )
         return s+"]"

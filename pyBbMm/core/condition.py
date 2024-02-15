@@ -44,6 +44,8 @@ class Condition:
         )
     
     def fromList( self, configurationList ):
+        if len( configurationList ) == 0 :
+            configurationList= [1]
         bench= self.fromCode( Code( configurationList ) )
         distrib= [ (output[0], value)
             for output, value in bench.asList() ]
