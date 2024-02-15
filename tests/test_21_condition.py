@@ -14,7 +14,7 @@ def test_BbMmCondition_init():
     assert cond.range() == 1
     assert cond.parentSpace().asList() == [1]
     assert cond.distributionSize() == 1
-    assert cond.distributionAt(1).asList() == [([1], 1.0)]
+    assert cond.distributionAt(1) == [(1, 1.0)]
     assert cond.fromList([1]) == [(1, 1.0)]
 
 def test_BbMmCondition_init2():
@@ -64,9 +64,9 @@ def test_BbMmCindition_dump():
             ]   
         },
         'distributions': [
-            [([1], 0.6), ([2], 0.4)],
-            [([3], 1.0)],
-            [([4], 1.0)]
+            [(1, 0.6), (2, 0.4)],
+            [(3, 1.0)],
+            [(4, 1.0)]
         ]
     }
 
@@ -81,9 +81,9 @@ def test_BbMmCindition_load():
             ]   
         },
         'distributions': [
-            [([1], 0.6), ([2], 0.4)],
-            [([3], 1.0)],
-            [([4], 1.0)]
+            [(1, 0.6), (2, 0.4)],
+            [(3, 1.0)],
+            [(4, 1.0)]
         ]
     }
 

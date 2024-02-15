@@ -1,5 +1,6 @@
 import sys
 sys.path.insert( 1, __file__.split('tests')[0] )
+from pprint import pprint
 
 # ------------------------------------------------------------------------ #
 #                T E S T   p y B b M m  : :  I N F E R E R                 #
@@ -21,6 +22,9 @@ def test_BbMmInferer_init2():
     assert( trans.outputDimention() == 1 )
     assert( trans.shiftDimention() == 1 )
     assert( trans.overallDimention() == 4 )
+    assert trans.inputs() == [2, 3]
+    assert trans.outputs() == [6]
+    assert trans.shifts() == [4]
     for iVar, dom in zip(range(1, 5), [2, 3, 4, 6]) :
         assert( trans.node(iVar).range() == dom )
         assert( trans.node(1).parentSpace().asList() == [1] )
@@ -28,8 +32,8 @@ def test_BbMmInferer_init2():
 
 def test_BbMmInferer_construction():
     trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
-    trans.variable_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
-    trans.variable_setDependancy( 4, [2, 3], [(1, 1.0)] )
+    trans.node_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
+    trans.node_setDependancy( 4, [2, 3], [(1, 1.0)] )
 
     assert( trans.node(1).range() == 6 )
     assert( trans.parents(1).asList() == [] )
@@ -47,13 +51,63 @@ def test_BbMmInferer_construction():
     assert( trans.parents(4).asList() == [2, 3] )
     assert( trans.node(4).parentSpace().asList() == [3, 4] )
 
-def test_BbMmInferer_process():
+
+def test_BbMmInferer_dump():
     trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
-    condition= trans.variable_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
+    condition= trans.node_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
     condition.fromList_set( [1], [(1, 1.0)] )
     condition.fromList_set( [2], [(2, 1.0)] )
     condition.fromList_set( [3], [(3, 1.0)] )
-    condition= trans.variable_setDependancy( 4, [2, 3], [(1, 0.7), (4, 0.3)] )
+    condition= trans.node_setDependancy( 4, [2, 3], [(1, 0.7), (4, 0.3)] )
+    condition.fromList_set( [1, 0], [(1, 1.0)] )
+    condition.fromList_set( [0, 2], [(2, 1.0)] )
+
+    assert( trans.overallDimention() == 4 )
+
+    dump= trans.dump()
+    #pprint( dump )
+    dumpRef= {
+        "inputs": [6, 3],
+        "outputs": [6],
+        "shifts": [4],
+        'nodes': [
+            { "nodeId": 1, 'parents': [], 'distributions': [[(1, 1.0)]], 'selector': [] },
+            { "nodeId": 2, 'parents': [], 'distributions': [[(1, 1.0)]], 'selector': [] },
+            {
+                "nodeId": 3, 
+                'parents': [1],
+                'distributions': [
+                    [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)],
+                    [(1, 1.0)],
+                    [(2, 1.0)],
+                    [(3, 1.0)]
+                ],
+                'selector': [ {'child': 0, 'iInput': 1, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 4), ('leaf', 1), ('leaf', 1), ('leaf', 1)]} ]
+            },
+            {
+                "nodeId": 4, 
+                'parents': [2, 3],
+                'distributions': [[(1, 0.7), (4, 0.3)], [(1, 1.0)], [(2, 1.0)]],
+                'selector': [
+                        { 'child': 0, 'iInput': 1, 'states': [('child', 1), ('child', 2), ('child', 3)] },
+                        { 'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 2), ('leaf', 2)] },
+                        { 'child': 2, 'iInput': 2, 'states': [('leaf', 1), ('leaf', 3), ('leaf', 1), ('leaf', 1)] },
+                        { 'child': 3, 'iInput': 2, 'states': [('leaf', 1), ('leaf', 3), ('leaf', 1), ('leaf', 1)] }
+                    ]
+            }
+        ]
+    }
+    assert dump == dumpRef 
+    #transBis= bbmm.Inferer().load( dump )
+    #assert transBis.dump() == dumpRef
+
+def test_BbMmInferer_process():
+    trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
+    condition= trans.node_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
+    condition.fromList_set( [1], [(1, 1.0)] )
+    condition.fromList_set( [2], [(2, 1.0)] )
+    condition.fromList_set( [3], [(3, 1.0)] )
+    condition= trans.node_setDependancy( 4, [2, 3], [(1, 0.7), (4, 0.3)] )
     condition.fromList_set( [1, 0], [(1, 1.0)] )
     condition.fromList_set( [0, 2], [(2, 1.0)] )
 

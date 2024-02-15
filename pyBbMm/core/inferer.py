@@ -51,9 +51,35 @@ class Inferer:
         return Code( ccode=cc.BmInferer_node_parents(
             self._cinferer, c_uint(iVar) )
         )
+    def space( self ):
+        return [ cc.BmInferer_node_size( self._cinferer, c_uint(i) ) for i in range( 1, self.inputDimention()+1 ) ]
+    
+    def inputs( self ):
+        inputBound= self.inputDimention()+1
+        return [ cc.BmInferer_node_size( self._cinferer, c_uint(i) ) for i in range( 1, inputBound ) ]
+    
+    def outputs( self ):
+        overBound= self.overallDimention()+1
+        outputStart= overBound - self.outputDimention()
+        return [ cc.BmInferer_node_size( self._cinferer, c_uint(i) ) for i in range( outputStart, overBound ) ]
+    
+    def shifts( self ):
+        inputBound= self.inputDimention()+1
+        shiftBound= inputBound + self.shiftDimention()
+        return [ cc.BmInferer_node_size( self._cinferer, c_uint(i) ) for i in range( inputBound, shiftBound ) ]
     
     # Construction :
-    def variable_setDependancyBm( self, iVar, parents, defaultDistrib ):
+    def initialize( self, inputs, outputs, shifts= [] ):
+        spaceCode= Code( inputs+outputs+shifts )
+        cc.BmInferer_destroy( self._cinferer )
+        cc.BmInferer_create(
+            self._cinferer,
+            spaceCode._ccode,
+            c_uint( len(inputs) ), c_uint( len(outputs) )
+        )
+        return self
+    
+    def node_setDependancyBm( self, iVar, parents, defaultDistrib ):
         assert( parents._cmaster and defaultDistrib._cmaster )
         parents._cmaster= False
         defaultDistrib._cmaster= False
@@ -64,8 +90,9 @@ class Inferer:
             defaultDistrib._cbench )
         )
     
-    def variable_setDependancy( self, iVar, parentList, defaultDistribList ):
-        return self.variable_setDependancyBm(
+    def node_setDependancy( self, iVar, parentList, defaultDistribList ):
+        print( f"node_setDependancy: {iVar}, {parentList}, {defaultDistribList}" )
+        return self.node_setDependancyBm(
             iVar,
             Code( parentList ),
             Bench( [ ([o], v) for o, v in defaultDistribList ] )
@@ -87,10 +114,30 @@ class Inferer:
 
     # Dumping:
     def dump( self ):
-        return {
-            "input": self.inputRanges(),
-            "criteria": [
-                { "mask": i }
-                for i in range(3)
-            ]
+        size= self.overallDimention()
+        dumpNodes= []
+        for i in range(1, size+1) :
+            condDump= self.node(i).dump()
+            dumpNodes.append({
+                'nodeId': i,
+                'parents': Code( ccode= cc.BmInferer_node_parents( self._cinferer, c_uint(i) ) ).asList(),
+                'distributions': condDump['distributions'],
+                'selector': condDump['selector']['branches']
+            })
+        return { 
+            'inputs': self.inputs(),
+            'outputs': self.outputs(),
+            'shifts': self.shifts(),
+            'nodes': dumpNodes
         }
+
+    def load( self, dump ):
+        self.initialize( dump['inputs'], dump['outputs'], dump['shifts'] )
+        for nodeDump in dump['nodes'] :
+            self.node_setDependancy( 
+                nodeDump['nodeId'],
+                nodeDump['parents'],
+                nodeDump['distributions'][0]
+             )
+            print('-')
+        return self

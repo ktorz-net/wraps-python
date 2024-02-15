@@ -54,13 +54,18 @@ class Condition:
     def distributionSize( self ):
         return cc.BmCondition_distributionSize(self._ccondition)
     
-    def distributionAt( self, iDistribution ):
+    def distributionBenchAt( self, iDistribution ):
         return Bench(
             cbench= cc.BmCondition_distributionAt(
                 self._ccondition,
                 c_uint(iDistribution)
             )
         )
+    def distributionAt( self, iDistribution ):
+        bench= self.distributionBenchAt( iDistribution )
+        distrib= [ (output[0], value)
+            for output, value in bench.asList() ]
+        return distrib
     
     # Construction
     def initializeWith( self, domain, parentSpace, defaultDistrib ):
@@ -101,16 +106,16 @@ class Condition:
             "range": self.range(),
             "selector": Tree( ctree= cc.BmCondition_selector( self._ccondition ) ).dump(),
             "distributions": [
-                self.distributionAt(i).dump()
+                self.distributionAt(i)
                 for i in range( 1, self.distributionSize()+1 )
             ]
         }
         return descriptor
     
-    def load(self, descriptor):
+    def load( self, descriptor ):
         # Generate all the distributions:
         distribs= [
-            Bench().load( distribDump )
+            Bench().load( [([o], v) for o, v in distribDump ] )
             for distribDump in descriptor['distributions']
         ]
         
