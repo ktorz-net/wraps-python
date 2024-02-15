@@ -5,6 +5,7 @@ from numpy import empty
 from . import clib, clibBbMm as cc
 from .code import Code
 from .bench import Bench
+from .tree import Tree
 from .condition import Condition
 
 class Inferer:
@@ -70,7 +71,7 @@ class Inferer:
     
     # Construction :
     def initialize( self, inputs, outputs, shifts= [] ):
-        spaceCode= Code( inputs+outputs+shifts )
+        spaceCode= Code( inputs+shifts+outputs )
         cc.BmInferer_destroy( self._cinferer )
         cc.BmInferer_create(
             self._cinferer,
@@ -81,6 +82,7 @@ class Inferer:
     
     def node_setDependancyBm( self, iVar, parents, defaultDistrib ):
         assert( parents._cmaster and defaultDistrib._cmaster )
+        assert( parents.dimention() > 0 )
         parents._cmaster= False
         defaultDistrib._cmaster= False
         return Condition( ccondition= cc.BmInferer_node_reinitWith(
@@ -91,7 +93,6 @@ class Inferer:
         )
     
     def node_setDependancy( self, iVar, parentList, defaultDistribList ):
-        print( f"node_setDependancy: {iVar}, {parentList}, {defaultDistribList}" )
         return self.node_setDependancyBm(
             iVar,
             Code( parentList ),
@@ -122,7 +123,7 @@ class Inferer:
                 'nodeId': i,
                 'parents': Code( ccode= cc.BmInferer_node_parents( self._cinferer, c_uint(i) ) ).asList(),
                 'distributions': condDump['distributions'],
-                'selector': condDump['selector']['branches']
+                'selector': condDump['selector']
             })
         return { 
             'inputs': self.inputs(),
@@ -133,11 +134,19 @@ class Inferer:
 
     def load( self, dump ):
         self.initialize( dump['inputs'], dump['outputs'], dump['shifts'] )
+        print( self.dump() )
         for nodeDump in dump['nodes'] :
-            self.node_setDependancy( 
-                nodeDump['nodeId'],
-                nodeDump['parents'],
-                nodeDump['distributions'][0]
-             )
-            print('-')
+            if len(nodeDump['parents']) > 0 :
+                print( f"- node_setDependancy: {nodeDump['nodeId']}, {nodeDump['parents']}, {nodeDump['distributions'][0]}" )
+                condition= self.node_setDependancy( 
+                    nodeDump['nodeId'],
+                    nodeDump['parents'],
+                    nodeDump['distributions'][0]
+                )
+                # Generate all the distributions:
+                for  distrib in nodeDump['distributions'][1:]:
+                    condition.addDistribution( distrib )
+                        
+                # Generate the tree selector:
+                Tree( ctree= cc.BmCondition_selector( condition._ccondition ) ).load( nodeDump['selector'] )
         return self

@@ -65,14 +65,14 @@ def test_BbMmInferer_dump():
     assert( trans.overallDimention() == 4 )
 
     dump= trans.dump()
-    #pprint( dump )
+    pprint( dump )
     dumpRef= {
         "inputs": [6, 3],
         "outputs": [6],
         "shifts": [4],
         'nodes': [
-            { "nodeId": 1, 'parents': [], 'distributions': [[(1, 1.0)]], 'selector': [] },
-            { "nodeId": 2, 'parents': [], 'distributions': [[(1, 1.0)]], 'selector': [] },
+            { "nodeId": 1, 'parents': [], 'distributions': [[(1, 1.0)]], 'selector': { 'input': [1], 'branches': [] } },
+            { "nodeId": 2, 'parents': [], 'distributions': [[(1, 1.0)]], 'selector': { 'input': [1], 'branches': [] } },
             {
                 "nodeId": 3, 
                 'parents': [1],
@@ -82,24 +82,24 @@ def test_BbMmInferer_dump():
                     [(2, 1.0)],
                     [(3, 1.0)]
                 ],
-                'selector': [ {'child': 0, 'iInput': 1, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 4), ('leaf', 1), ('leaf', 1), ('leaf', 1)]} ]
+                'selector': { 'input': [6], 'branches': [ {'child': 0, 'iInput': 1, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 4), ('leaf', 1), ('leaf', 1), ('leaf', 1)]} ] }
             },
             {
                 "nodeId": 4, 
                 'parents': [2, 3],
                 'distributions': [[(1, 0.7), (4, 0.3)], [(1, 1.0)], [(2, 1.0)]],
-                'selector': [
+                'selector': { 'input': [3, 4], 'branches': [
                         { 'child': 0, 'iInput': 1, 'states': [('child', 1), ('child', 2), ('child', 3)] },
                         { 'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 2), ('leaf', 2)] },
                         { 'child': 2, 'iInput': 2, 'states': [('leaf', 1), ('leaf', 3), ('leaf', 1), ('leaf', 1)] },
                         { 'child': 3, 'iInput': 2, 'states': [('leaf', 1), ('leaf', 3), ('leaf', 1), ('leaf', 1)] }
-                    ]
+                    ] }
             }
         ]
     }
     assert dump == dumpRef 
-    #transBis= bbmm.Inferer().load( dump )
-    #assert transBis.dump() == dumpRef
+    transBis= bbmm.Inferer().load( dump )
+    assert transBis.dump() == dumpRef
 
 def test_BbMmInferer_process():
     trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )

@@ -100,6 +100,12 @@ class Condition:
         distribution= Bench( [([int(output)], value) for output, value in distribList ] )
         return self.fromCode_set(configuration, distribution)
     
+    def addDistribution( self, distrib ):
+        distribBench= Bench( [([int(output)], value) for output, value in distrib ] )
+        iDistrib= cc.BmCondition_attach( self._ccondition, distribBench._cbench )
+        distribBench._cmaster= False # Do not distroy the bench went distribDump will be distroyed. (aDistrib instance is not the master)
+        return 
+
     # Dump & Load :
     def dump( self ):
         descriptor= {
@@ -113,24 +119,13 @@ class Condition:
         return descriptor
     
     def load( self, descriptor ):
-        # Generate all the distributions:
-        distribs= [
-            Bench().load( [([o], v) for o, v in distribDump ] )
-            for distribDump in descriptor['distributions']
-        ]
-        
-        # Re-initialize the intance:
-        self.initializeWith(
-            descriptor['range'],
-            Code( descriptor['selector']['input'] ),
-            distribs[0]
-        )
 
-        # Generate all the distributions:
-        for distrib in distribs[1:] :
-            cc.BmCondition_attach( self._ccondition, distrib._cbench )
-            distrib._cmaster= False # Do not distroy the bench went distribDump will be distroyed. (aDistrib instance is not the master)
+        # Re-initialize the intance:
+        self.initialize( descriptor['range'], descriptor['selector']['input'], descriptor['distributions'][0] )
         
+        # Generate all the distributions:
+        for  distrib in descriptor['distributions'][1:]:
+            self.addDistribution( distrib )
         
         # Generate the tree selector:
         Tree( ctree= cc.BmCondition_selector( self._ccondition ) ).load( descriptor['selector'] )
