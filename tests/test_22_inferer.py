@@ -101,23 +101,110 @@ def test_BbMmInferer_dump():
     transBis= bbmm.Inferer().load( dump )
     assert transBis.dump() == dumpRef
 
-def test_BbMmInferer_process():
-    trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
-    condition= trans.node_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
-    condition.fromList_set( [1], [(1, 1.0)] )
-    condition.fromList_set( [2], [(2, 1.0)] )
-    condition.fromList_set( [3], [(3, 1.0)] )
-    condition= trans.node_setDependancy( 4, [2, 3], [(1, 0.7), (4, 0.3)] )
-    condition.fromList_set( [1, 0], [(1, 1.0)] )
-    condition.fromList_set( [0, 2], [(2, 1.0)] )
+def test_BbMmInferer_process421():
+    trans= bbmm.Inferer( [3, 6, 2, 3, 6], 3, 2 )
 
-    bench= trans.distribution()
-    assert bench.asList() == []
-    assert( trans.inputDimention() == 2 )
-    bench= trans.processFrom( [1, 1] )
-    assert bench.asList() == [([1], 1.0)]
-    trans.processFrom( [4, 2] )
-    assert bench.asList() == [([1], 0.25), ([2], 0.25), ([3], 0.25), ([4], 0.25)]
+    cHorizon= trans.node_setDependancy( 4, [1], [(1, 1.0)] )
+    cHorizon.fromList_set( [3], [(2, 1.0)] )
 
-    trans.processBench( bbmm.Bench( [([4, 2], 0.7), ([1, 3], 0.3)] ) )
-    assert bench.asList() == [([1], 0.475), ([2], 0.175), ([3], 0.175), ([4], 0.175)]
+    cDice= trans.node_setDependancy( 5, [3, 2], [
+            (1, 1/6), (2, 1/6), (3, 1/6),
+            (4, 1/6), (5, 1/6), (6, 1/6)
+        ]
+    )
+    
+    cDice.fromList_set( [1, 1], [(1, 1.0)] )
+    cDice.fromList_set( [1, 2], [(2, 1.0)] )
+    cDice.fromList_set( [1, 3], [(3, 1.0)] )
+    cDice.fromList_set( [1, 4], [(4, 1.0)] )
+    cDice.fromList_set( [1, 5], [(5, 1.0)] )
+    cDice.fromList_set( [1, 6], [(6, 1.0)] )
+    
+    dump= trans.dump()
+    #pprint( dump )
+    assert( list( dump.keys() ) == [ 'inputs', 'outputs', 'shifts', 'nodes' ] )
+    assert( dump['inputs'] == [3, 6, 2] )
+    assert( dump['outputs'] == [3, 6] )
+    assert( dump['shifts'] == [] )
+
+    assert(
+        dump['nodes'][0] == {
+            'nodeId': 1,
+            'parents': [],
+            'distributions': [[(1, 1.0)]],
+            'selector': {'input': [1], 'branches': []}
+        }
+    )
+
+    assert(
+        dump['nodes'][1] == {
+            'nodeId': 2,
+            'parents': [],
+            'distributions': [[(1, 1.0)]],
+            'selector': {'input': [1], 'branches': []}
+        }
+    )
+
+
+    assert(
+        dump['nodes'][2] == {
+            'nodeId': 3,
+            'parents': [],
+            'distributions': [[(1, 1.0)]],
+            'selector': {'input': [1], 'branches': []}
+        }
+    )
+    
+    assert(
+        dump['nodes'][3] == {
+            'nodeId': 4,
+            'parents': [1],
+            'distributions': [ [(1, 1.0)], [(2, 1.0)]],
+            'selector': {
+                'input': [3],
+                'branches': [
+                    { 'child': 0, 'iInput': 1, 'states': [('leaf', 1), ('leaf', 1), ('leaf', 2)] }
+                ]
+            }
+        }
+    )
+
+    assert(
+        dump['nodes'][4] == {
+            'nodeId': 5,
+            'parents': [3, 2],
+            'distributions': [
+                [(1, 1/6), (2, 1/6), (3, 1/6), (4, 1/6), (5, 1/6), (6, 1/6)],
+                [(1, 1.0)],
+                [(2, 1.0)],
+                [(3, 1.0)],
+                [(4, 1.0)],
+                [(5, 1.0)],
+                [(6, 1.0)]
+            ],
+            'selector': {
+                'input': [2, 6],
+                'branches': [
+                    {'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)]},
+                    {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 4), ('leaf', 5), ('leaf', 6), ('leaf', 7)]}
+                ]
+            }
+        }
+    )
+    
+    assert trans.node(5).fromList( [1, 1] ) == [ (1, 1.0) ]
+    assert trans.node(5).fromList( [1, 3] ) == [ (3, 1.0) ]
+    assert trans.node(5).fromList( [2, 1] ) == [ (1, 1/6), (2, 1/6), (3, 1/6),(4, 1/6), (5, 1/6), (6, 1/6) ]
+
+    assert trans.inputDimention() == 3 
+    assert trans.outputDimention() == 2 
+    assert trans.shiftDimention() == 0 
+    assert trans.overallDimention() == 5
+
+    assert trans.processFrom( [1, 1, 1] ).asList() == [([1, 1], 1.0)]
+    assert trans.processFrom( [2, 4, 1] ).asList() == [([1, 4], 1.0)]
+    pprint( trans.processFrom( [3, 2, 2] ).asList() )
+    assert trans.processFrom( [3, 2, 2] ).asList() == [
+        ([2, 1], 1/6), ([2, 2], 1/6), ([2, 3], 1/6),
+        ([2, 4], 1/6), ([2, 5], 1/6), ([2, 6], 1/6)
+    ]

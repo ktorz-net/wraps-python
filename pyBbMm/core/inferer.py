@@ -106,11 +106,9 @@ class Inferer:
             inputDistribution._cbench
         )
         distrib= self.distribution()
-        print( f"> {type(distrib)}: {distrib}" )
         return distrib
     
     def processFrom( self, inputList ):
-        print( f"Inferer:: process from {inputList}" )
         return self.processBench( Bench( [(inputList, 1.0)] ) )
 
     # Dumping:
@@ -134,10 +132,8 @@ class Inferer:
 
     def load( self, dump ):
         self.initialize( dump['inputs'], dump['outputs'], dump['shifts'] )
-        print( self.dump() )
         for nodeDump in dump['nodes'] :
             if len(nodeDump['parents']) > 0 :
-                print( f"- node_setDependancy: {nodeDump['nodeId']}, {nodeDump['parents']}, {nodeDump['distributions'][0]}" )
                 condition= self.node_setDependancy( 
                     nodeDump['nodeId'],
                     nodeDump['parents'],
