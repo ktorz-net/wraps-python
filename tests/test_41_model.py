@@ -12,7 +12,7 @@ import json
 def test_BbMmModel_init():
   model= Model()
   assert type(model) == Model
-  assert( model.variables() == [] )
+  assert( model.nodes() == [] )
   assert( model.domains() == [] )
 
 def test_BbMmModel_init2():
@@ -21,7 +21,7 @@ def test_BbMmModel_init2():
       { "A": ["keep", "roll"] }
   )
 
-  assert( model.variables() == [ "H-0", "D-0", "A" , "H-1", "D-1" ] )
+  assert( model.nodes() == [ "H-0", "D-0", "A" , "H-1", "D-1" ] )
   for dModel, dRef in zip( model.domains(), [range(0, 3), range(1, 7), ["keep", "roll"], range(0, 3), range(1, 7)] ) :
       assert( dModel == dRef )
 
@@ -70,19 +70,22 @@ def test_BbMmModel_construction_transition():
     assert( nodeH.distribution( [0] ) == [(0, 1.0)]  )
     assert( nodeH.distribution( [2] ) == [(1, 1.0)]  )
 
-    assert( model.digit( [1, 5, "roll"] ) == [2, 5, 2] )
+    assert( model.digits( [1, 5, "roll"] ) == [2, 5, 2] )
     
     buffer= model.dump()
     
     assert list( buffer.keys() ) == [ 'H-0', 'D-0', 'A', 'H-1', 'D-1', 'rewards' ]
 
     assert buffer['H-0'] == {
-      "domain": [0, 1, 2],
-      "parents": [],
-      "condition": {
-        "range": 3,
-        "selector": { "input": [1], "branches": [] },
-        "distributions": [ [ ([1], 1.0) ] ]
+      'domain': [0, 1, 2],
+      'parents': [],
+      'condition': {
+        'range': 3,
+        'distributions': [[(1, 1.0)]],
+        'selector': {
+            'input': [1],
+            'branches': []
+          }
       }
     }
     
@@ -91,8 +94,8 @@ def test_BbMmModel_construction_transition():
       "parents": [],
       "condition": {
         "range": 6,
-        "selector": { "input": [1], "branches": [] },
-        "distributions": [ [ ([1], 1.0) ] ]
+        "distributions": [ [ (1, 1.0) ] ],
+        "selector": { "input": [1], "branches": [] }
       }
     }
     
@@ -101,8 +104,8 @@ def test_BbMmModel_construction_transition():
       "parents": [],
       "condition": {
         "range": 2,
-        "selector": { "input": [1], "branches": [] },
-        "distributions": [ [ ([1], 1.0) ] ]
+        "distributions": [ [ (1, 1.0) ] ],
+        "selector": { "input": [1], "branches": [] }
       }
     }
 
@@ -110,8 +113,8 @@ def test_BbMmModel_construction_transition():
       'domain': [0, 1, 2],
       'parents': ['H-0'],
       'condition': {
-        'distributions': [[([1], 1.0)], [([1], 1.0)], [([1], 1.0)], [([2], 1.0)]],
         'range': 3,
+        'distributions': [[(1, 1.0)], [(1, 1.0)], [(1, 1.0)], [(2, 1.0)]],
         'selector': {
           'input': [3],
           'branches': [
@@ -127,16 +130,16 @@ def test_BbMmModel_construction_transition():
       'domain': [1, 2, 3, 4, 5, 6],
       'parents': ["A", "D-0"],
       'condition': {
-        'distributions': [
-          [([1], 0.16666666666666666), ([2], 0.16666666666666666), ([3], 0.16666666666666666), ([4], 0.16666666666666666), ([5], 0.16666666666666666), ([6], 0.16666666666666666)],
-          [([1], 1.0)],
-          [([2], 1.0)],
-          [([3], 1.0)],
-          [([4], 1.0)],
-          [([5], 1.0)],
-          [([6], 1.0)]
-        ],
         'range': 6,
+        'distributions': [
+          [(1, 1/6), (2, 1/6), (3, 1/6), (4, 1/6), (5, 1/6), (6, 1/6)],
+          [(1, 1.0)],
+          [(2, 1.0)],
+          [(3, 1.0)],
+          [(4, 1.0)],
+          [(5, 1.0)],
+          [(6, 1.0)]
+        ],
         'selector': {
           'input': [2, 6],
           'branches': [
@@ -168,13 +171,7 @@ def test_BbMmModel_transition():
 
     model.node( "H-1" ).create( ["H-0"], lambda config: [(max( config[0]-1, 0 ), 1.0)] )
 
-    print( "---" )
-    print( model._trans.processFrom( [2, 5, 1] ) )
-    print( "---" )
-    print( model.digitTransition( [2, 5], [2] ) )
-    print( "---" )
-
-    assert( model.digitTransition( [2, 5], [1] ) == [
+    assert( model.digitTransition( [2, 5], [2] ) == [
         ([1, 1], 1/6),
         ([1, 2], 1/6),
         ([1, 3], 1/6),
@@ -183,6 +180,11 @@ def test_BbMmModel_transition():
         ([1, 6], 1/6),
     ])
 
+    print( "---" )
+    print( model.transition( [1, 5], ["roll"] ) )
+    print( "---" )
+
+    assert( model.digits( [1, 5, "roll"] ) == [2, 5, 2] )
     assert( model.transition( [1, 5], ["roll"] ) == [
         ([0, 1], 1/6),
         ([0, 2], 1/6),
@@ -193,7 +195,13 @@ def test_BbMmModel_transition():
     ])
 
 def test_BbMmModel_construction_reward():
-    pass
+    model= Model(
+        { "H": range(0, 3), "D": range(1, 7) },
+        { "A": ["keep", "roll"] },
+        numberOfRewardCriteria= 3
+    )
+
+    assert type( model.reward(1) ) == Reward
 
 if __name__ == "__main__" :
     test_BbMmModel_init2()
