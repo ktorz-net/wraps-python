@@ -39,6 +39,9 @@ class Evaluator:
             cvector= cc.BmEvaluator_weights( self._cevaluator )
         ).asList()
     
+    def weight( self, iCrit ):
+        return cc.BmEvaluator_criterion_weight( self._cevaluator, c_uint(iCrit) )
+    
     def criterion( self, iCrit ):
         return Criterion( ccriterion=cc.BmEvaluator_criterion(
             self._cevaluator,

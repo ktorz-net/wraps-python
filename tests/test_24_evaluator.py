@@ -75,3 +75,18 @@ def test_BbMmEvaluator_process():
     assert instance.processMulti( [1, 2, 4] ) == [0.01, 3.0]
     assert instance.process( [1, 2, 4] ) == 6.01
 
+def test_BbMmEvaluator_dump():
+    instance= bm.Evaluator( [2, 4, 4], 2 )
+
+    criterion= instance.criterion_intialize( 1, [1, 3], [0.01, 0.02, 0.03, 0.04] )
+    criterion.from_set( [1, 0], 1 )
+    criterion.from_set( [2, 0], 2 )
+    criterion.from_set( [1, 3], 3 )
+    
+    instance.criterion_intialize( 2, [2], [3.0, -1.0, 0.0] )
+    instance.criterion(2).from_set( [1], 2 )
+    instance.criterion_setWeight( 2, 2.0 )
+
+    assert instance.dump() == {
+        
+    }

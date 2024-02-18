@@ -132,19 +132,19 @@ def test_BbMmModel_construction_transition():
       'condition': {
         'range': 6,
         'distributions': [
-          [(1, 1/6), (2, 1/6), (3, 1/6), (4, 1/6), (5, 1/6), (6, 1/6)],
-          [(1, 1.0)],
-          [(2, 1.0)],
-          [(3, 1.0)],
-          [(4, 1.0)],
-          [(5, 1.0)],
-          [(6, 1.0)]
+            [(1, 1/6), (2, 1/6), (3, 1/6), (4, 1/6), (5, 1/6), (6, 1/6)],
+            [(1, 1.0)],
+            [(2, 1.0)],
+            [(3, 1.0)],
+            [(4, 1.0)],
+            [(5, 1.0)],
+            [(6, 1.0)]
         ],
         'selector': {
-          'input': [2, 6],
-          'branches': [
-            { 'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)] },
-            {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 4), ('leaf', 5), ('leaf', 6), ('leaf', 7)]}
+            'input': [2, 6],
+            'branches': [
+                { 'child': 0, 'iInput': 1, 'states': [('child', 1), ('leaf', 1)] },
+                {'child': 1, 'iInput': 2, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 4), ('leaf', 5), ('leaf', 6), ('leaf', 7)]}
           ]
         }
       }
@@ -198,8 +198,17 @@ def test_BbMmModel_construction_reward():
     model= Model(
         { "H": range(0, 3), "D": range(1, 7) },
         { "A": ["keep", "roll"] },
-        numberOfRewardCriteria= 3
+        numberOfCriteria= 3
     )
-    
-    assert model.numberOfRewardCriteria() == 3
 
+    assert model.numberOfCriteria() == 3
+    for i in range(1, 4) :
+        assert model.criterion(i).weight() == 1.0
+        assert model.criterion(i).parents() == []
+
+    model.criterion(i).initialize( ["H-0", "D-1"], [ 1.1 + (i*0.1) for i in range(6) ] )
+    model.criterion(i).initialize( ["A"], [ 0.0, 0.1 ] )
+
+    #dump= model._rewards.dump()
+    #pprint( dump )
+    #assert dump == {}

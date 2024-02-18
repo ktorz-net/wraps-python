@@ -35,7 +35,7 @@ class Node():
     def initialize( self, parents, defaultDistrib ):
         self._model.inode_initialize(
             self._id,
-            [ self._model._varIds[p] for p in parents ],
+            self._model.nodeIds( parents ),
             defaultDistrib
         )
         return self
@@ -47,7 +47,7 @@ class Node():
     def create( self, parents, function ):
         self._model.inode_create(
             self._id,
-            [ self._model._varIds[p] for p in parents ],
+            self._model.nodeIds( parents ),
             function
         )
         return self
@@ -60,25 +60,36 @@ class Node():
 
 ### Model Reward (A reward function to optimize)
 class Reward():
-    # Construction destruction:
-    def __init__( self, model= None, iVar=0 ) -> None:
+    # Constructor / destruction:
+    def __init__( self, model= None, iCrit=0 ) -> None:
         self._model= model
-        self._id= iVar
+        self._id= iCrit
     
     # Accessor:
     def id(self):
         return self._id
     
     def parents(self):
-        return []
+        return [
+            self._model.domain(iNode)
+            for iNode in  self._model._rewards.criterionMask( self._id )
+        ]
     
     def weight( self ):
-        return 0.0
+        return self._model._rewards.weight( self._id )
     
+    # Construction:
+    def initialize( self, parentsList, possibleValues ):
+        self._model._rewards.criterion_intialize(
+            self._id,
+            self._model.nodeIds( parentsList ),
+            possibleValues
+        )
+        return self
 
 class Model():
     # Construction destruction:
-    def __init__( self, stateVariables= {}, actionVariables= {}, shiftVariables= {}, numberOfRewardCriteria=1 ) -> None:
+    def __init__( self, stateVariables= {}, actionVariables= {}, shiftVariables= {}, numberOfCriteria=1 ) -> None:
         # Initialize variable enumeration :
         self._varNames= [ var+'-0' for var in stateVariables ]
         self._varNames+= [ var for var in actionVariables ]
@@ -97,7 +108,7 @@ class Model():
         self._trans= core.Inferer( space, nbStateVar+nbActVar, nbStateVar )
         
         # Rewards function:
-        self._rewards= core.Evaluator( space, numberOfRewardCriteria )
+        self._rewards= core.Evaluator( space, numberOfCriteria )
 
     # Accessor
     def nodes(self):
@@ -112,10 +123,13 @@ class Model():
     def node( self, variableName ):
         return Node( self, self._varIds[variableName] )
     
-    def reward( self, iCriterion=1 ):
+    def nodeIds( self, variableNames ):
+        return [ self._varIds[name] for name in variableNames ]
+    
+    def criterion( self, iCriterion=1 ):
         return Reward( self, iCriterion )
 
-    def numberOfRewardCriteria( self ):
+    def numberOfCriteria( self ):
         return self._rewards.numberOfCriteria()
     
     # Node Accessor:
