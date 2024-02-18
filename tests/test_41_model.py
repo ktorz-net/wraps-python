@@ -6,38 +6,38 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                T E S T   p y B b M m  : :  M O D E L                     #
 # ------------------------------------------------------------------------ #
 
-from pyBbMm import Model, Node
+from pyBbMm import Model, Node, Reward
 import json
 
 def test_BbMmModel_init():
-  model= Model()
-  assert type(model) == Model
-  assert( model.nodes() == [] )
-  assert( model.domains() == [] )
+    model= Model()
+    assert type(model) == Model
+    assert( model.nodes() == [] )
+    assert( model.domains() == [] )
 
 def test_BbMmModel_init2():
-  model= Model(
-      { "H": range(0, 3), "D": range(1, 7) },
-      { "A": ["keep", "roll"] }
-  )
+    model= Model(
+        { "H": range(0, 3), "D": range(1, 7) },
+        { "A": ["keep", "roll"] }
+    )
 
-  assert( model.nodes() == [ "H-0", "D-0", "A" , "H-1", "D-1" ] )
-  for dModel, dRef in zip( model.domains(), [range(0, 3), range(1, 7), ["keep", "roll"], range(0, 3), range(1, 7)] ) :
-      assert( dModel == dRef )
+    assert( model.nodes() == [ "H-0", "D-0", "A" , "H-1", "D-1" ] )
+    for dModel, dRef in zip( model.domains(), [range(0, 3), range(1, 7), ["keep", "roll"], range(0, 3), range(1, 7)] ) :
+        assert( dModel == dRef )
 
-  aNode= model.node('H-0')
-  assert( type(aNode) == Node )
-  assert( aNode.id() == 1 )
-  assert( aNode.name() == 'H-0' )
-  assert( aNode.domain() == range(0, 3) )
-  assert( aNode.parents() == [] )
-  assert( aNode.distribution() == [(0, 1.0)] )
-  assert( model.node('A').distribution() == [("keep", 1.0)] )
+    aNode= model.node('H-0')
+    assert( type(aNode) == Node )
+    assert( aNode.id() == 1 )
+    assert( aNode.name() == 'H-0' )
+    assert( aNode.domain() == range(0, 3) )
+    assert( aNode.parents() == [] )
+    assert( aNode.distribution() == [(0, 1.0)] )
+    assert( model.node('A').distribution() == [("keep", 1.0)] )
 
-  nodeA= model.node("A")
-  assert( nodeA.domain() == ["keep", "roll"] )
-  assert( nodeA.index("keep") == 1 )
-  assert( nodeA.value(2) == "roll" )
+    nodeA= model.node("A")
+    assert( nodeA.domain() == ["keep", "roll"] )
+    assert( nodeA.index("keep") == 1 )
+    assert( nodeA.value(2) == "roll" )
 
 def test_BbMmModel_construction_transition():
     model= Model(
@@ -90,38 +90,38 @@ def test_BbMmModel_construction_transition():
     }
     
     assert buffer['D-0'] == {
-      "domain": [1, 2, 3, 4, 5, 6],
-      "parents": [],
-      "condition": {
-        "range": 6,
-        "distributions": [ [ (1, 1.0) ] ],
-        "selector": { "input": [1], "branches": [] }
-      }
+        "domain": [1, 2, 3, 4, 5, 6],
+        "parents": [],
+        "condition": {
+            "range": 6,
+            "distributions": [ [ (1, 1.0) ] ],
+            "selector": { "input": [1], "branches": [] }
+        }
     }
     
     assert buffer['A'] == {
-      "domain": ["keep", "roll"],
-      "parents": [],
-      "condition": {
-        "range": 2,
-        "distributions": [ [ (1, 1.0) ] ],
-        "selector": { "input": [1], "branches": [] }
-      }
+        "domain": ["keep", "roll"],
+        "parents": [],
+        "condition": {
+            "range": 2,
+            "distributions": [ [ (1, 1.0) ] ],
+            "selector": { "input": [1], "branches": [] }
+        }
     }
 
     assert buffer['H-1'] == {
-      'domain': [0, 1, 2],
-      'parents': ['H-0'],
-      'condition': {
-        'range': 3,
-        'distributions': [[(1, 1.0)], [(1, 1.0)], [(1, 1.0)], [(2, 1.0)]],
-        'selector': {
-          'input': [3],
-          'branches': [
-            {'child': 0, 'iInput': 1, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 4)]}
-          ]
+        'domain': [0, 1, 2],
+        'parents': ['H-0'],
+        'condition': {
+            'range': 3,
+            'distributions': [[(1, 1.0)], [(1, 1.0)], [(1, 1.0)], [(2, 1.0)]],
+            'selector': {
+                'input': [3],
+                'branches': [
+                    {'child': 0, 'iInput': 1, 'states': [('leaf', 2), ('leaf', 3), ('leaf', 4)]}
+            ]
+          }
         }
-      }
     }
 
     pprint( buffer['D-1'] )
@@ -151,7 +151,7 @@ def test_BbMmModel_construction_transition():
     }
 
 def test_BbMmModel_construction_reward():
-  pass
+    pass
 
 def test_BbMmModel_transition():
     model= Model(
@@ -200,8 +200,6 @@ def test_BbMmModel_construction_reward():
         { "A": ["keep", "roll"] },
         numberOfRewardCriteria= 3
     )
+    
+    assert model.numberOfRewardCriteria() == 3
 
-    assert type( model.reward(1) ) == Reward
-
-if __name__ == "__main__" :
-    test_BbMmModel_init2()
