@@ -42,7 +42,8 @@ def test_BbMmModel_init2():
 def test_BbMmModel_construction_transition():
     model= Model(
         { "H": range(0, 3), "D": range(1, 7) },
-        { "A": ["keep", "roll"] }
+        { "A": ["keep", "roll"] },
+        numberOfCriteria= 2
     )
 
     nodeD= model.node("D-1")
@@ -74,42 +75,13 @@ def test_BbMmModel_construction_transition():
     
     buffer= model.dump()
     
-    assert list( buffer.keys() ) == [ 'H-0', 'D-0', 'A', 'H-1', 'D-1', 'rewards' ]
+    assert list( buffer.keys() ) == [ 'state', 'action', 'shift', 'numberOfCriteria', 'criteria' ]
 
-    assert buffer['H-0'] == {
-      'domain': [0, 1, 2],
-      'parents': [],
-      'condition': {
-        'range': 3,
-        'distributions': [[(1, 1.0)]],
-        'selector': {
-            'input': [1],
-            'branches': []
-          }
-      }
-    }
-    
-    assert buffer['D-0'] == {
-        "domain": [1, 2, 3, 4, 5, 6],
-        "parents": [],
-        "condition": {
-            "range": 6,
-            "distributions": [ [ (1, 1.0) ] ],
-            "selector": { "input": [1], "branches": [] }
-        }
-    }
-    
-    assert buffer['A'] == {
-        "domain": ["keep", "roll"],
-        "parents": [],
-        "condition": {
-            "range": 2,
-            "distributions": [ [ (1, 1.0) ] ],
-            "selector": { "input": [1], "branches": [] }
-        }
-    }
+    assert list( buffer['state'].keys() ) == [ 'H', 'D' ]
+    assert list( buffer['action'].keys() ) == [ 'A' ]
+    assert list( buffer['shift'].keys() ) == []
 
-    assert buffer['H-1'] == {
+    assert buffer['state']['H'] == {
         'domain': [0, 1, 2],
         'parents': ['H-0'],
         'condition': {
@@ -123,10 +95,18 @@ def test_BbMmModel_construction_transition():
           }
         }
     }
-
-    pprint( buffer['D-1'] )
     
-    assert buffer['D-1'] == {
+    assert buffer['action']['A'] == {
+        "domain": ["keep", "roll"],
+        "parents": [],
+        "condition": {
+            "range": 2,
+            "distributions": [ [ (1, 1.0) ] ],
+            "selector": { "input": [1], "branches": [] }
+        }
+    }
+
+    assert buffer['state']['D'] == {
       'domain': [1, 2, 3, 4, 5, 6],
       'parents': ["A", "D-0"],
       'condition': {
@@ -150,8 +130,69 @@ def test_BbMmModel_construction_transition():
       }
     }
 
+    
 def test_BbMmModel_construction_reward():
-    pass
+    model= Model(
+        { "H": range(0, 3), "D": range(1, 7) },
+        { "A": ["keep", "roll"] },
+        numberOfCriteria= 2
+    )
+
+    crit= model.criterion(1).initialize( ['H-0', 'D-1'], [0.0, 1.1, 1.2, 3.1] )
+    
+    assert crit.outputs() == [0.0, 1.1, 1.2, 3.1]
+    assert crit.from_set( [1, 1], 3.1 ) == 4
+
+    crit.from_set( [1, 3], 1.1 )
+    crit.from_set( [1, 4], 3.1 )
+    crit.from_set( [1, 5], 1.1 )
+    crit.from_set( [1, 6], 1.2 )
+    
+    crit= model.criterion(2).initialize( ['A'], [0.0, -1.0] )
+    crit.from_set( ["roll"], -1.0 )
+    crit. setWeight( 0.1 )
+
+    buffer= model.dump()
+
+    assert buffer['numberOfCriteria'] == 2
+    assert buffer['numberOfCriteria'] == 2
+    assert len( buffer['criteria'] ) == 2
+
+    assert buffer['criteria'][0] == {
+        'criterionId': 1,
+        'weight': 1.0,
+        'parents': [1, 5],
+        'values': [0.0, 1.1, 1.2, 3.1],
+        'selector': {
+            'branches': [
+                {'child': 0, 'iInput': 1, 'states': [('leaf', 1), ('child', 1), ('leaf', 1)]},
+                {'child': 1, 'iInput': 2, 'states': [('leaf', 4), ('leaf', 1), ('leaf', 2), ('leaf', 4), ('leaf', 2), ('leaf', 3)]}
+            ],
+            'input': [3, 6]
+        }
+    }
+    
+    assert buffer['criteria'][1] == {
+        'criterionId': 2,
+        'weight': 0.1,
+        'parents': [3],
+        'values': [0.0, -1.0],
+        'selector': {
+            'input': [2],
+            'branches': [{'child': 0, 'iInput': 1, 'states': [('leaf', 1), ('leaf', 2)]}]
+        }
+    }
+    
+    crit= model.criterion(1)
+    assert crit.from_set( [1, 2], -10.0 ) == 5
+    assert crit.outputs() == [0.0, 1.1, 1.2, 3.1, -10.0]
+ 
+    pprint( model.dump() )
+
+    assert model.reward( [2, 4], ["keep"], [1, 4] ) == 0.0
+    assert model.reward( [2, 4], ["roll"], [1, 4] ) == -0.1
+    assert model.reward( [1, 4], ["roll"], [0, 2] ) == -10.1
+    assert model.reward( [1, 4], ["roll"], [0, 1] ) == 3.0
 
 def test_BbMmModel_transition():
     model= Model(
@@ -193,21 +234,6 @@ def test_BbMmModel_transition():
         ([0, 5], 1/6),
         ([0, 6], 1/6),
     ])
-
-def test_BbMmModel_construction_reward():
-    model= Model(
-        { "H": range(0, 3), "D": range(1, 7) },
-        { "A": ["keep", "roll"] },
-        numberOfCriteria= 3
-    )
-
-    assert model.numberOfCriteria() == 3
-    for i in range(1, 4) :
-        assert model.criterion(i).weight() == 1.0
-        assert model.criterion(i).parents() == []
-
-    model.criterion(i).initialize( ["H-0", "D-1"], [ 1.1 + (i*0.1) for i in range(6) ] )
-    model.criterion(i).initialize( ["A"], [ 0.0, 0.1 ] )
 
     #dump= model._rewards.dump()
     #pprint( dump )

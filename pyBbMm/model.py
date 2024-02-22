@@ -64,20 +64,24 @@ class Reward():
     def __init__( self, model= None, iCrit=0 ) -> None:
         self._model= model
         self._id= iCrit
+        self._coreCrit= model._rewards.criterion(self._id)
     
     # Accessor:
     def id(self):
         return self._id
+
+    def parentIds(self):
+        return  self._model._rewards.criterionParents( self._id )
     
     def parents(self):
-        return [
-            self._model.domain(iNode)
-            for iNode in  self._model._rewards.criterionMask( self._id )
-        ]
+        return [ self._model.domain(iNode) for iNode in  self.parentIds() ]
     
     def weight( self ):
         return self._model._rewards.weight( self._id )
     
+    def outputs( self ):
+        return self._coreCrit.outputs()
+
     # Construction:
     def initialize( self, parentsList, possibleValues ):
         self._model._rewards.criterion_intialize(
@@ -86,6 +90,19 @@ class Reward():
             possibleValues
         )
         return self
+    
+    def from_set( self, configuration, value ):
+        codeConfig= self._model.digits( configuration, self.parentIds() )
+        try:
+            outputId= self.outputs().index( value )+1
+        except ValueError:
+            outputId= self._coreCrit.addValue( value )
+    
+        self._coreCrit.from_set( codeConfig, outputId )
+        return outputId
+
+    def setWeight( self, value ):
+        return self._model._rewards.criterion_setWeight( self._id, value )
 
 class Model():
     # Construction destruction:
@@ -111,6 +128,15 @@ class Model():
         self._rewards= core.Evaluator( space, numberOfCriteria )
 
     # Accessor
+    def stateDimention(self):
+        return core.Inferer( cinferer=self._trans._cinferer ).stateDimention()
+    
+    def actionDimention(self):
+        return core.Inferer( cinferer=self._trans._cinferer ).actionDimention()
+    
+    def shiftDimention(self):
+        return core.Inferer( cinferer=self._trans._cinferer ).shiftDimention()
+    
     def nodes(self):
         return self._varNames
 
@@ -125,12 +151,12 @@ class Model():
     
     def nodeIds( self, variableNames ):
         return [ self._varIds[name] for name in variableNames ]
-    
-    def criterion( self, iCriterion=1 ):
-        return Reward( self, iCriterion )
 
     def numberOfCriteria( self ):
         return self._rewards.numberOfCriteria()
+
+    def criterion( self, iCriterion=1 ):
+        return Reward( self, iCriterion )
     
     # Node Accessor:
     def inode_index( self, iNode, value ):
@@ -160,7 +186,7 @@ class Model():
         assert( len(digits) == len(iNodes) )
         return [ self.domain(i)[d-1] for i, d in zip( iNodes, digits ) ]
     
-    # Construction:
+    # Node Construction:
     def inode_initialize( self, iNode, parentsIds, defaultExplicitDistrib ):
         domain= self._domains[ iNode-1 ]
         defaultDigitDistrib= [ (domain.index(val)+1, proba) for val, proba in defaultExplicitDistrib ]
@@ -187,29 +213,64 @@ class Model():
             digitDistrib= [ (domain.index(val)+1, proba) for val, proba in explicitDistrib ]
             condition.fromList_set( digitConf, digitDistrib )
 
+    # Process:
     def digitTransition( self, digitStates, digitActions ):
         return self._trans.processFrom( digitStates+digitActions ).asList()
     
-    def transition( self, states, actions=[] ):
-        digitInpout= self.digits( states+actions )
+    def transition( self, state, action=[] ):
+        digitInpout= self.digits( state+action )
         distribution= [
             (self.values( code ), proba)
             for code, proba in self._trans.processFrom( digitInpout ).asList()
         ]
         return distribution
     
+    def reward( self, state, action, futur ):
+        digitConfig= self.digits( state+action+futur )
+        return self._rewards.process( digitConfig )
+
     # Dump & Load
     def dump( self ):
-        descriptor= {}
-        for var in self._varNames :
-            n= self.node(var)
-            descriptor[var]= {
+        stBound= self.stateDimention()
+        acBound= stBound + self.actionDimention()
+        shBound= acBound + self.shiftDimention()
+        rewardDump= self._rewards.dump()
+
+        descriptor= {
+            'state': {},
+            'action':{},
+            'shift': {},
+            'numberOfCriteria': rewardDump['numberOfCriteria'],
+            'criteria': rewardDump['criteria']
+        }
+
+        for var in self._varNames[:stBound] :
+            var= var.split('-')[0]
+            n= self.node(var+'-1')
+            descriptor['state'][var]= {
                 "domain": list( n.domain() ),
                 "parents": n.parents(),
                 "condition": self._trans.node( n.id() ).dump()
             }
-        descriptor["rewards"]= []
+        
+        for var in self._varNames[stBound:acBound] :
+            n= self.node(var)
+            descriptor['action'][var]= {
+                "domain": list( n.domain() ),
+                "parents": n.parents(),
+                "condition": self._trans.node( n.id() ).dump()
+            }
+
+        for var in self._varNames[acBound:shBound] :
+            n= self.node(var)
+            descriptor['shift'][var]= {
+                "domain": list( n.domain() ),
+                "parents": n.parents(),
+                "condition": self._trans.node( n.id() ).dump()
+            }
+        
         return descriptor
     
-    # def load( self ):
-    #    return {}
+    #def load( self, descriptor ):
+    #    self.initialize(  )
+    #    return self

@@ -27,7 +27,7 @@ class Tree :
     def size(self):
         return cc.BmTree_size( self._ctree )
     
-    def inputRanges(self):
+    def inputs(self):
         return Code( ccode=cc.BmTree_inputRanges( self._ctree ) ).asList()
     
     def atCode( self, code ):
@@ -92,7 +92,7 @@ class Tree :
     # dump and load:
     def dump(self):
         descriptor= {
-            "input": self.inputRanges(),
+            "input": self.inputs(),
             "branches": [
                 { "child": i, "iInput": self.iBranch_variable(i), "states": self.iBranch_states(i) }
                 for i in range( self.size() )

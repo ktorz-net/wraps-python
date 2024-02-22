@@ -30,8 +30,8 @@ class Criterion:
             cc.deleteBmCriterion( self._ccriterion )
 
     # Accessor
-    def inputRanges( self ):
-        return self.selector().inputRanges()
+    def inputs( self ):
+        return self.selector().inputs()
    
     def selector( self ):
         return Tree( ctree= cc.BmCriterion_selector( self._ccriterion ) )
@@ -66,6 +66,9 @@ class Criterion:
     def initialize( self, input, values ):
         return self.initializeWith( Code( input ), Vector( values ) )
     
+    def addValue( self, value ):
+        return cc.BmCriterion_addValue( self._ccriterion, c_double(value) )
+
     def from_set(self, input, outputId ):
         inputCode= Code( input )
         cc.BmCriterion_from_set(

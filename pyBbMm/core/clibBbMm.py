@@ -961,6 +961,11 @@ BmCriterion_from= core.BmCriterion_from
 BmCriterion_from.restype= c_double
 BmCriterion_from.argtypes= [c_void_p, c_void_p]
 
+# uint BmCriterion_addValue( BmCriterion* self, double ouputValue );
+BmCriterion_addValue= core.BmCriterion_addValue
+BmCriterion_addValue.restype= c_uint
+BmCriterion_addValue.argtypes= [c_void_p, c_double]
+
 # uint BmCriterion_ouputId_setValue( BmCriterion* self, uint ouputId, double ouputValue );
 BmCriterion_ouputId_setValue= core.BmCriterion_ouputId_setValue
 BmCriterion_ouputId_setValue.restype= c_uint

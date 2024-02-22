@@ -36,10 +36,16 @@ class Inferer:
     
     def outputDimention( self ):
         return cc.BmInferer_outputDimention( self._cinferer )
-    
+
     def shiftDimention( self ):
         return cc.BmInferer_shiftDimention( self._cinferer )
     
+    def stateDimention( self ):
+        return cc.BmInferer_outputDimention( self._cinferer )
+    
+    def actionDimention( self ):
+        return cc.BmInferer_inputDimention( self._cinferer ) - cc.BmInferer_outputDimention( self._cinferer )
+
     def overallDimention( self ):
         return cc.BmInferer_overallDimention( self._cinferer )
 
@@ -111,7 +117,7 @@ class Inferer:
     def processFrom( self, inputList ):
         return self.processBench( Bench( [(inputList, 1.0)] ) )
 
-    # Dumping:
+    # Dump & Load
     def dump( self ):
         size= self.overallDimention()
         dumpNodes= []

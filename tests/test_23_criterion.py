@@ -11,25 +11,25 @@ from pyBbMm.core import clibBbMm as cc
 def test_BbMmCriterion_init():
     instance= bm.Criterion()
     assert type(instance) == bm.Criterion
-    assert instance.inputRanges() == [1]
+    assert instance.inputs() == [1]
     assert instance.outputs() == [0.0]
 
 def test_BbMmCriterion_init2():
     instance= bm.Criterion( [2, 4], [0.0, 1.0, 0.5] )
     assert type(instance) == bm.Criterion
-    assert instance.inputRanges() == [2, 4]
+    assert instance.inputs() == [2, 4]
     assert instance.outputs() == [0.0, 1.0, 0.5]
 
 def test_BbMmCriterion_construction():
     instance= bm.Criterion()
     instance.initialize( [2, 3], [0.01, 0.02, 0.03, 0.04] )
 
-    assert instance.inputRanges() == [2, 3]
+    assert instance.inputs() == [2, 3]
     assert instance.outputs() == [0.01, 0.02, 0.03, 0.04]
 
     assert instance.asList() == [([1, 0, 1], 0.01), ([2, 0, 1], 0.01)]
 
-    assert instance.inputRanges() == [2, 3]
+    assert instance.inputs() == [2, 3]
     assert instance.outputs() == [0.01, 0.02, 0.03, 0.04]
 
     instance.from_set( [1, 0], 1 )
