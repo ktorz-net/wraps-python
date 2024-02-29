@@ -1,10 +1,9 @@
 #!env python3
 """
-Script MDP 421 
+Ultimate421 game with bbmm.
 """
 
 import pyBbMm as bbmm
-
 
 # Initialize Domains:
 diceDomain= range(1,7)

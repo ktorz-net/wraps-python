@@ -200,8 +200,7 @@ def test_BbMmModel_transition():
         { "A": ["keep", "roll"] }
     )
 
-    nodeD= model.node("D-1")
-    nodeD.initialize( ["A", "D-0"], [(1, 1/6), (2, 1/6), (3, 1/6), (4, 1/6), (5, 1/6), (6, 1/6)] )
+    nodeD= model.node("D-1").initialize( ["A", "D-0"], [(1, 1/6), (2, 1/6), (3, 1/6), (4, 1/6), (5, 1/6), (6, 1/6)] )
 
     nodeD.setConditionalDistribution( ["keep", 1], [(1, 1.0)] )
     nodeD.setConditionalDistribution( ["keep", 2], [(2, 1.0)] )
@@ -238,3 +237,9 @@ def test_BbMmModel_transition():
     #dump= model._rewards.dump()
     #pprint( dump )
     #assert dump == {}
+
+def test_BbMmModel_simple421():
+    import models.simple421 as m
+    model= m.generate()
+
+    assert model.dump == {".json"}

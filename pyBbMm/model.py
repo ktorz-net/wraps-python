@@ -226,7 +226,8 @@ class Model():
         return distribution
     
     def reward( self, state, action, futur ):
-        digitConfig= self.digits( state+action+futur )
+        shift= [1 for i in range( self.shiftDimention() ) ]
+        digitConfig= self.digits( state+action+shift+futur )
         return self._rewards.process( digitConfig )
 
     # Dump & Load
