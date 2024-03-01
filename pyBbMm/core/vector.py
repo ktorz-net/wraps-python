@@ -42,7 +42,7 @@ class Vector :
 
     # Accessor
     def dimention(self):
-        return (int)(cc.BmVector_dimention( self._cvector ) )
+        return (int)(cc.BmVectorDimention( self._cvector ) )
 
     def at(self, i):
         assert( 0 < i and i <= self.dimention() )

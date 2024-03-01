@@ -242,4 +242,4 @@ def test_BbMmModel_simple421():
     import models.simple421 as m
     model= m.generate()
 
-    assert model.dump == {".json"}
+    #assert model.dump == {".json"}

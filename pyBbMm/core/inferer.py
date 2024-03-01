@@ -78,7 +78,7 @@ class Inferer:
     # Construction :
     def initialize( self, inputs, outputs, shifts= [] ):
         spaceCode= Code( inputs+shifts+outputs )
-        cc.BmInferer_destroy( self._cinferer )
+        cc.BmInfererdestroy( self._cinferer )
         cc.BmInferer_create(
             self._cinferer,
             spaceCode._ccode,

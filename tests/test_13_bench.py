@@ -23,7 +23,7 @@ def test_BbMmBench_attach():
     c2= bench.at( 1 )
     assert c1._ccode == c2._ccode 
     assert c2.dimention() == 1 
-    assert c2.at(1) == 1
+    assert c2.digit(1) == 1
     assert bench.valueAt( 1 ) == 1.0
     assert str(bench) == "bench[[1]:1.0]"
 

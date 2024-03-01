@@ -69,7 +69,7 @@ class Evaluator:
     # Construction
     def initialize( self, inputs, numberOfCriteria=1 ):
         inputsCode= Code( inputs )
-        cc.BmEvaluator_destroy( self._cevaluator )
+        cc.BmEvaluatordestroy( self._cevaluator )
         cc.BmEvaluator_createWith(
             self._cevaluator,
             inputsCode._ccode,

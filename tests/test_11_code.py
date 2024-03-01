@@ -13,9 +13,9 @@ def test_BbMmCode_init():
 def test_BbMmCode_init2():
     code= bm.Code([1, 2, 3])
     assert code.dimention() == 3
-    assert code.at(1) == 1
-    assert code.at(2) == 2
-    assert code.at(3) == 3
+    assert code.digit(1) == 1
+    assert code.digit(2) == 2
+    assert code.digit(3) == 3
     assert str(code) == "code[1, 2, 3]"
     assert code.asList() == [1, 2, 3]
 
@@ -23,9 +23,9 @@ def test_BbMmCode_copy():
     code= bm.Code([1, 2, 3])
     cpy= code.copy()
     assert cpy.dimention() == 3
-    assert cpy.at(1) == 1
-    assert cpy.at(2) == 2
-    assert cpy.at(3) == 3
+    assert cpy.digit(1) == 1
+    assert cpy.digit(2) == 2
+    assert cpy.digit(3) == 3
     assert cpy.asList() == [1, 2, 3]
     code.initialize([3, 2])
     assert code.asList() == [3, 2]

@@ -42,14 +42,14 @@ class Code :
 
     # Accessor
     def dimention(self):
-        return (int)(cc.BmCode_dimention( self._ccode ) )
+        return (int)(cc.BmCodeDimention( self._ccode ) )
 
-    def at(self, i):
+    def digit(self, i):
         assert( 0 < i and i <= self.dimention() )
-        return (int)(cc.BmCode_at( self._ccode, (c_uint)(i) ) )    
+        return (int)(cc.BmCode_digit( self._ccode, (c_uint)(i) ) )    
 
     def asList(self):
-        return clib.readUintLst( self.dimention(), cc.BmCode_numbers(self._ccode) )
+        return [ self.digit(i) for i in range(1, self.dimention()+1) ]
 
     # comparizon:
     def __eq__(a, b):
@@ -91,9 +91,9 @@ class Code :
         size= self.dimention()
         if size == 0 :
             return "code[]"
-        s= "code["+ str( self.at(1) )
+        s= "code["+ str( self.digit(1) )
         for i in range(2, size+1) :
-            s+= ", "+ str( self.at(i) )
+            s+= ", "+ str( self.digit(i) )
         return s+"]"
 
 class IterCode :
