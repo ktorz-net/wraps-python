@@ -44,13 +44,13 @@ class Vector :
     def dimention(self):
         return (int)(cc.BmVectorDimention( self._cvector ) )
 
-    def at(self, i):
+    def value(self, i):
         assert( 0 < i and i <= self.dimention() )
-        return (int)(cc.BmVector_at( self._cvector, (c_uint)(i) ) )    
+        return (float)(cc.BmVector_value( self._cvector, (c_uint)(i) ) )    
 
     def asList(self):
-        return clib.readDoubleLst( self.dimention(), cc.BmVector_values(self._cvector) )
-
+        return [ self.value(i) for i in range(1, self.dimention()+1) ]
+    
     # comparizon:
     def __eq__(a, b):
         return (int)( cc.BmVector_isEqualTo(a._cvector, b._cvector) ) != 0

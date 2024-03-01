@@ -14,18 +14,18 @@ def test_BbMmVector_init():
 def test_BbMmVector_init2():
     vector= bm.Vector([1, 2, 3])
     assert vector.dimention() == 3
-    assert vector.at(1) == 1
-    assert vector.at(2) == 2
-    assert vector.at(3) == 3
+    assert vector.value(1) == 1
+    assert vector.value(2) == 2
+    assert vector.value(3) == 3
     assert vector.asList() == [1, 2, 3]
 
 def test_BbMmVector_copy():
     vector= bm.Vector([1, 2, 3])
     cpy= vector.copy()
     assert cpy.dimention() == 3
-    assert cpy.at(1) == 1
-    assert cpy.at(2) == 2
-    assert cpy.at(3) == 3
+    assert cpy.value(1) == 1
+    assert cpy.value(2) == 2
+    assert cpy.value(3) == 3
     assert cpy.asList() == [1, 2, 3]
     vector.initialize([3, 2])
     assert vector.asList() == [3, 2]

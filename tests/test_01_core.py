@@ -24,7 +24,7 @@ def test_ccVector_init():
     cVector= cc.newBmVector_all(2, 3.0)
     assert cc.BmVectorDimention( cVector ) == 2
     for i in range(1, 3) :
-        assert cc.BmVector_at( cVector, i ) == 3.0
+        assert cc.BmVector_value( cVector, i ) == 3.0
     cc.deleteBmVector( cVector )
 
 def test_ccBench_init():

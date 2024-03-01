@@ -281,15 +281,10 @@ BmVectorDimention= core.BmVectorDimention
 BmVectorDimention.restype= c_uint
 BmVectorDimention.argtypes= [c_void_p]
 
-# double BmVector_at( BmVector* self, uint i );
-BmVector_at= core.BmVector_at
-BmVector_at.restype= c_double
-BmVector_at.argtypes= [c_void_p, c_uint]
-
-# double* BmVector_values( BmVector* self );
-BmVector_values= core.BmVector_values
-BmVector_values.restype= c_void_p
-BmVector_values.argtypes= [c_void_p]
+# double BmVector_value( BmVector* self, uint i );
+BmVector_value= core.BmVector_value
+BmVector_value.restype= c_double
+BmVector_value.argtypes= [c_void_p, c_uint]
 
 # BmVector* BmVector_redimention( BmVector* self, uint size );
 BmVector_redimention= core.BmVector_redimention
@@ -306,15 +301,15 @@ BmVector_setValues= core.BmVector_setValues
 BmVector_setValues.restype= c_void_p
 BmVector_setValues.argtypes= [c_void_p, c_void_p]
 
-# double BmVector_sum( BmVector* self );
-BmVector_sum= core.BmVector_sum
-BmVector_sum.restype= c_double
-BmVector_sum.argtypes= [c_void_p]
+# double BmVectorSum( BmVector* self );
+BmVectorSum= core.BmVectorSum
+BmVectorSum.restype= c_double
+BmVectorSum.argtypes= [c_void_p]
 
-# double BmVector_product( BmVector* self );
-BmVector_product= core.BmVector_product
-BmVector_product.restype= c_double
-BmVector_product.argtypes= [c_void_p]
+# double BmVectorProduct( BmVector* self );
+BmVectorProduct= core.BmVectorProduct
+BmVectorProduct.restype= c_double
+BmVectorProduct.argtypes= [c_void_p]
 
 # bool BmVector_isEqualTo( BmVector* self, BmVector* another );
 BmVector_isEqualTo= core.BmVector_isEqualTo
