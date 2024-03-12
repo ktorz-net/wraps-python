@@ -8,13 +8,13 @@ from .vector import Vector
 from .bench import Bench
 from .tree import Tree
 
-class Criterion:
+class ValueFct:
     # Construction destruction:
-    def __init__(self, inputRanges=[1], outputs=[0.0], ccriterion= None):
-        if ccriterion is None :
+    def __init__(self, inputRanges=[1], outputs=[0.0], cvaluefct= None):
+        if cvaluefct is None :
             inputCode= Code( inputRanges )
             outputVector= Vector( outputs )
-            self._ccriterion= cc.newBmCriterionWith(
+            self._cvaluefct= cc.newBmValueFctWith(
                 inputCode._ccode,
                 outputVector._cvector
             )
@@ -22,40 +22,40 @@ class Criterion:
             outputVector._cmaster= False
             self._cmaster= True
         else: 
-            self._ccriterion= ccriterion
+            self._cvaluefct= cvaluefct
             self._cmaster= False
     
     def __del__(self):
         if self._cmaster :
-            cc.deleteBmCriterion( self._ccriterion )
+            cc.deleteBmValueFct( self._cvaluefct )
 
     # Accessor
     def inputs( self ):
         return self.selector().inputs()
    
     def selector( self ):
-        return Tree( ctree= cc.BmCriterion_selector( self._ccriterion ) )
+        return Tree( ctree= cc.BmValueFct_selector( self._cvaluefct ) )
     
     def outputs( self ):
-        return Vector( cvector= cc.BmCriterion_outputs( self._ccriterion ) ).asList()
+        return Vector( cvector= cc.BmValueFct_outputs( self._cvaluefct ) ).asList()
 
     def getFrom( self, input ):
-        return cc.BmCriterion_from( self._ccriterion, Code(input) )
+        return cc.BmValueFct_from( self._cvaluefct, Code(input) )
 
     def asBench( self ):
-        bench= Bench( cbench=cc.BmCriterion_asNewBench( self._ccriterion ) )
+        bench= Bench( cbench=cc.BmValueFct_asNewBench( self._cvaluefct ) )
         bench._cmaster= True
         return bench
         
     def asList( self ):
-        return self.asBench().asList()
+        return self.asBench().asCodeValueList()
 
     # Construction
     def initializeWith( self, inputCode, vectorValues ):
         assert( inputCode._cmaster ) # free to attach...
         assert( vectorValues._cmaster ) # free to attach...
-        cc.BmCriterion_reinitWith(
-            self._ccriterion,
+        cc.BmValueFct_reinitWith(
+            self._cvaluefct,
             inputCode._ccode,
             vectorValues._cvector
         )
@@ -67,12 +67,12 @@ class Criterion:
         return self.initializeWith( Code( input ), Vector( values ) )
     
     def addValue( self, value ):
-        return cc.BmCriterion_addValue( self._ccriterion, c_double(value) )
+        return cc.BmValueFct_addValue( self._cvaluefct, c_double(value) )
 
     def from_set(self, input, outputId ):
         inputCode= Code( input )
-        cc.BmCriterion_from_set(
-            self._ccriterion,
+        cc.BmValueFct_from_set(
+            self._cvaluefct,
             inputCode._ccode,
             c_uint(outputId)
         )

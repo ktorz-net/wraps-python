@@ -6,7 +6,7 @@ from . import clib, clibBbMm as cc
 from .code import Code
 from .vector import Vector
 from .tree import Tree
-from .valuefct import Criterion
+from .valuefct import ValueFct
 
 class Evaluator:
     # Construction destruction:
@@ -43,7 +43,7 @@ class Evaluator:
         return cc.BmEvaluator_criterion_weight( self._cevaluator, c_uint(iCrit) )
     
     def criterion( self, iCrit ):
-        return Criterion( ccriterion=cc.BmEvaluator_criterion(
+        return ValueFct( ccriterion=cc.BmEvaluator_criterion(
             self._cevaluator,
             c_uint(iCrit)
         ) )

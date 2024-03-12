@@ -8,20 +8,20 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 import pyBbMm.core as bm
 from pyBbMm.core import clibBbMm as cc
 
-def test_BbMmCriterion_init():
-    instance= bm.Criterion()
-    assert type(instance) == bm.Criterion
+def test_BbMmValueFct_init():
+    instance= bm.ValueFct()
+    assert type(instance) == bm.ValueFct
     assert instance.inputs() == [1]
     assert instance.outputs() == [0.0]
 
-def test_BbMmCriterion_init2():
-    instance= bm.Criterion( [2, 4], [0.0, 1.0, 0.5] )
-    assert type(instance) == bm.Criterion
+def test_BbMmValueFct_init2():
+    instance= bm.ValueFct( [2, 4], [0.0, 1.0, 0.5] )
+    assert type(instance) == bm.ValueFct
     assert instance.inputs() == [2, 4]
     assert instance.outputs() == [0.0, 1.0, 0.5]
 
-def test_BbMmCriterion_construction():
-    instance= bm.Criterion()
+def test_BbMmValueFct_construction():
+    instance= bm.ValueFct()
     instance.initialize( [2, 3], [0.01, 0.02, 0.03, 0.04] )
 
     assert instance.inputs() == [2, 3]
@@ -39,4 +39,4 @@ def test_BbMmCriterion_construction():
     assert instance.asList() == [([1, 1, 1], 0.01), ([1, 2, 1], 0.01), ([1, 3, 3], 0.03), ([2, 0, 2], 0.02)]
 
 if __name__ == "__main__" :
-    test_BbMmCriterion_construction()
+    test_BbMmValueFct_construction()

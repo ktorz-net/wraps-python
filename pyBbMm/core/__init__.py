@@ -9,6 +9,9 @@ Bench= bench.Bench
 Tree= tree.Tree
 
 ## LibBbMm :: FUNCTION MODULE :
+from . import valuefct, function
+ValueFct= valuefct.ValueFct
+Function= function.Function
 
 ## LibBbMm :: COMPONENT MODULE :
 from . import condition, inferer, evaluator
