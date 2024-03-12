@@ -15,14 +15,14 @@ from pyBbMm.core import clib, clibBbMm as cc
 
 def test_ccCode_init():
     cCode= cc.newBmCode_all(2, 3)
-    assert cc.BmCodeDimention( cCode ) == 2
+    assert cc.BmCode_dimention( cCode ) == 2
     for i in range(1, 3) :
         assert cc.BmCode_digit( cCode, i ) == 3
     cc.deleteBmCode( cCode )
 
 def test_ccVector_init():
     cVector= cc.newBmVector_all(2, 3.0)
-    assert cc.BmVectorDimention( cVector ) == 2
+    assert cc.BmVector_dimention( cVector ) == 2
     for i in range(1, 3) :
         assert cc.BmVector_value( cVector, i ) == 3.0
     cc.deleteBmVector( cVector )
@@ -30,7 +30,6 @@ def test_ccVector_init():
 def test_ccBench_init():
     cBench= cc.newBmBench(2)
     assert cc.BmBench_size(cBench) == 0
-    assert cc.BmBench_capacity(cBench) == 2
     cc.deleteBmBench( cBench )
 
 def test_ccTree_init():
@@ -38,6 +37,22 @@ def test_ccTree_init():
     assert cc.BmTree_size(cTree) == 0
     cc.deleteBmTree(cTree)
 
+
+# ------------------------------------------------------------------------ #
+#   FUNCTION MODULE:
+# ------------------------------------------------------------------------ #
+
+def test_ccValueFct_init():
+    cValueFct= cc.newBmValueFctBasic(4, 8)
+    assert cc.BmValueFct_inputDimention(cValueFct) == 4
+    assert cc.BmValueFct_outputSize(cValueFct) == 8
+    cc.deleteBmValueFct(cValueFct)
+
+def test_ccFunction_init():
+    cFunction= cc.newBmFunctionBasic(4)
+    assert cc.BmFunction_inputDimention(cFunction) == 4
+    assert cc.BmFunction_outputSize(cFunction) == 0
+    cc.deleteBmFunction(cFunction)
 
 # ------------------------------------------------------------------------ #
 #   FUNCTION MODULE:
@@ -56,12 +71,6 @@ def test_ccInferer_init():
     cc.deleteBmInferer(cInf)
     cc.deleteBmCode( cCode )
 
-def test_ccCriterion_init():
-    cCrit= cc.newBmCriterionBasic(2, 2)
-    assert cc.BmTree_size( cc.BmCriterion_selector( cCrit ) ) == 1
-    assert cc.BmVectorDimention( cc.BmCriterion_outputs( cCrit ) ) == 2
-    cc.deleteBmCriterion(cCrit)
-
 def test_ccEvaluator_init():
     cEval= cc.newBmEvaluatorBasic(3, 2)
     assert cc.BmEvaluator_numberOfCriteria(cEval) == 2
@@ -70,3 +79,7 @@ def test_ccEvaluator_init():
 # ------------------------------------------------------------------------ #
 #   SOLVER MODULE:
 # ------------------------------------------------------------------------ #
+
+# Activate sprcific test :
+if __name__ == '__main__':
+    test_ccInferer_init()

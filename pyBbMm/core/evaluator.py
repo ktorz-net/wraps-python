@@ -6,7 +6,7 @@ from . import clib, clibBbMm as cc
 from .code import Code
 from .vector import Vector
 from .tree import Tree
-from .criterion import Criterion
+from .valuefct import Criterion
 
 class Evaluator:
     # Construction destruction:

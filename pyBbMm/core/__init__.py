@@ -9,10 +9,12 @@ Bench= bench.Bench
 Tree= tree.Tree
 
 ## LibBbMm :: FUNCTION MODULE :
-from . import condition, inferer, criterion, evaluator
+
+## LibBbMm :: COMPONENT MODULE :
+from . import condition, inferer, evaluator
+
 Condition= condition.Condition
 Inferer= inferer.Inferer
-Criterion= criterion.Criterion
 Evaluator= evaluator.Evaluator
 
 ## LibBbMm :: SOLVER MODULE :

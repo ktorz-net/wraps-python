@@ -42,7 +42,7 @@ class Code :
 
     # Accessor
     def dimention(self):
-        return (int)(cc.BmCodeDimention( self._ccode ) )
+        return (int)(cc.BmCode_dimention( self._ccode ) )
 
     def digit(self, i):
         assert( 0 < i and i <= self.dimention() )

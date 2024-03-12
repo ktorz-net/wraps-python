@@ -4,6 +4,7 @@ import os
 from numpy import empty
 from . import clib, clibBbMm as cc
 from .code import Code
+from .vector import Vector
 
 # BmBench wrap:
 class Bench :
@@ -12,8 +13,11 @@ class Bench :
         if cbench is None :
             capacity= max( capacity, len(aListOfTuples) )
             self._cbench= cc.newBmBench( c_uint(capacity) )
-            for codeList, value in aListOfTuples :
-                self.attachLast( Code( codeList ), value )
+            for codeList, v in aListOfTuples :
+                if type(v) is list :
+                    self.attachLast( Code( codeList ), Vector( v ) )
+                else :
+                    self.attachLast( Code( codeList ), Vector( [v] ) )
             self._cmaster= True
         else: 
             self._cbench= cbench
@@ -26,53 +30,61 @@ class Bench :
     def initialize( self, aListOfTuples=[], capacity= 16 ):
         capacity= max( capacity, len(aListOfTuples) )
         cc.BmBench_reinit( self._cbench, c_uint(capacity) )
-        for codeList, value in aListOfTuples :
-            self.attachLast( Code( codeList ), value )
+        for codeList, vectorList in aListOfTuples :
+            self.attachLast( Code( codeList ), Vector( vectorList ) )
         return self
             
     # Accessor
     def size( self ):
         return cc.BmBench_size( self._cbench )
     
-    def capacity( self ):
-        return cc.BmBench_capacity( self._cbench )
+    def codeAt(self, i):
+        return Code( ccode= cc.BmBench_codeAt( self._cbench, c_uint(i) ) )
     
-    def at(self, i):
-        return Code( ccode= cc.BmBench_at( self._cbench, c_uint(i) ) )
+    def vectorAt( self, i ):
+        return Vector( cvector=cc.BmBench_vectorAt( self._cbench, c_uint(i) ) )
+
+    def digitAt( self, i ):
+        return cc.BmBench_digitAt( self._cbench, c_uint(i) )
     
     def valueAt( self, i ):
         return cc.BmBench_valueAt( self._cbench, c_uint(i) )
-
+    
     def range(self):
         return range(1, self.size()+1)
     
+    def asCodeValueList( self ):
+        return [ (self.codeAt(i).asList(), self.valueAt(i)) for i in self.range() ]
+    
     def asList( self ):
-        return [ (self.at(i).asList(), self.valueAt(i)) for i in self.range() ]
+        return [ (self.codeAt(i).asList(), self.vectorAt(i).asList() ) for i in self.range() ]
     
     # Construction
-    def attachLast( self, newCode, value ):
+    def attachLast( self, newCode, newVector ):
         assert newCode._cmaster 
-        cc.BmBench_attachLast(
+        cc.BmBench_attachCode_vector(
             self._cbench,
             newCode._ccode,
-            c_double(value) )
+            newVector._cvector )
         newCode._cmaster= False
+        newVector._cmaster= False
     
     def detachLast( self ):
-        code= Code( ccode= cc.BmBench_detachLast( self._cbench ) )
+        code= Code( ccode= cc.BmBench_detach( self._cbench ) )
         code._cmaster= True
         return code
 
-    def attachFirst( self, newCode, value ):
+    def attachFirst( self, newCode, newVector ):
         assert newCode._cmaster 
-        cc.BmBench_attachFirst(
+        cc.BmBench_attachFrontCode_vector(
             self._cbench,
             newCode._ccode,
-            c_double(value) )
+            newVector._cvector )
         newCode._cmaster= False
+        newVector._cmaster= False
     
     def detachFirst( self ):
-        code= Code( ccode= cc.BmBench_detachFirst( self._cbench ) )
+        code= Code( ccode= cc.BmBench_detachFront( self._cbench ) )
         code._cmaster= True
         return code
 
@@ -97,7 +109,7 @@ class Bench :
         size= self.size()
         if size == 0 :
             return "bench[]"
-        s= "bench["+ str( self.at(1).asList() ) +":"+ str( self.valueAt(1) )
+        s= "bench["+ str( self.codeAt(1).asList() ) +":"+ str( self.vectorAt(1).asList() )
         for i in range(2, size+1) :
-            s+= ", "+ str( self.at(i).asList() ) +":"+ str( self.valueAt(i) )
+            s+= ", "+ str( self.codeAt(i).asList() ) +":"+ str( self.vectorAt(i).asList() )
         return s+"]"
