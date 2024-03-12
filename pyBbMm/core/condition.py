@@ -48,7 +48,7 @@ class Condition:
             configurationList= [1]
         bench= self.fromCode( Code( configurationList ) )
         distrib= [ (output[0], value)
-            for output, value in bench.asList() ]
+            for output, value in bench.asCodeValueList() ]
         return distrib
 
     def distributionSize( self ):
@@ -64,7 +64,7 @@ class Condition:
     def distributionAt( self, iDistribution ):
         bench= self.distributionBenchAt( iDistribution )
         distrib= [ (output[0], value)
-            for output, value in bench.asList() ]
+            for output, value in bench.asCodeValueList() ]
         return distrib
     
     # Construction

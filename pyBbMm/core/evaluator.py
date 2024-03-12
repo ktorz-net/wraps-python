@@ -43,7 +43,7 @@ class Evaluator:
         return cc.BmEvaluator_criterion_weight( self._cevaluator, c_uint(iCrit) )
     
     def criterion( self, iCrit ):
-        return ValueFct( ccriterion=cc.BmEvaluator_criterion(
+        return ValueFct( cvaluefct=cc.BmEvaluator_criterion(
             self._cevaluator,
             c_uint(iCrit)
         ) )
@@ -69,7 +69,7 @@ class Evaluator:
     # Construction
     def initialize( self, inputs, numberOfCriteria=1 ):
         inputsCode= Code( inputs )
-        cc.BmEvaluatordestroy( self._cevaluator )
+        cc.BmEvaluator_destroy( self._cevaluator )
         cc.BmEvaluator_createWith(
             self._cevaluator,
             inputsCode._ccode,
