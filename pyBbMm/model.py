@@ -215,13 +215,13 @@ class Model():
 
     # Process:
     def digitTransition( self, digitStates, digitActions ):
-        return self._trans.processFrom( digitStates+digitActions ).asList()
+        return self._trans.processFrom( digitStates+digitActions ).asCodeValueList()
     
     def transition( self, state, action=[] ):
         digitInpout= self.digits( state+action )
         distribution= [
             (self.values( code ), proba)
-            for code, proba in self._trans.processFrom( digitInpout ).asList()
+            for code, proba in self._trans.processFrom( digitInpout ).asCodeValueList()
         ]
         return distribution
     

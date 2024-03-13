@@ -78,7 +78,7 @@ class Inferer:
     # Construction :
     def initialize( self, inputs, outputs, shifts= [] ):
         spaceCode= Code( inputs+shifts+outputs )
-        cc.BmInfererdestroy( self._cinferer )
+        cc.BmInferer_destroy( self._cinferer )
         cc.BmInferer_create(
             self._cinferer,
             spaceCode._ccode,
@@ -89,20 +89,22 @@ class Inferer:
     def node_setDependancyBm( self, iVar, parents, defaultDistrib ):
         assert( parents._cmaster and defaultDistrib._cmaster )
         assert( parents.dimention() > 0 )
-        parents._cmaster= False
-        defaultDistrib._cmaster= False
-        return Condition( ccondition= cc.BmInferer_node_reinitWith(
+        ccond= cc.BmInferer_node_reinitWith_withDefault(
             self._cinferer,
             c_uint(iVar),
             parents._ccode,
-            defaultDistrib._cbench )
+            defaultDistrib._cbench
         )
+        parents._cmaster= False
+        defaultDistrib._cmaster= False
+        return Condition( ccondition= ccond )
+         
     
     def node_setDependancy( self, iVar, parentList, defaultDistribList ):
         return self.node_setDependancyBm(
             iVar,
             Code( parentList ),
-            Bench( [ ([o], v) for o, v in defaultDistribList ] )
+            Bench( [ ([o], [v]) for o, v in defaultDistribList ] )
         )
     
     # Processing

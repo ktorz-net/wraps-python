@@ -67,6 +67,12 @@ class Condition:
             for output, value in bench.asCodeValueList() ]
         return distrib
     
+    def distributionsList(self):
+        return [ 
+            self.distributionAt(i)
+            for i in range( 1, self.distributionSize()+1 )
+        ]
+    
     # Construction
     def initializeWith( self, domain, parentSpace, defaultDistrib ):
         assert( parentSpace._cmaster and defaultDistrib._cmaster )
@@ -111,10 +117,7 @@ class Condition:
         descriptor= {
             "range": self.range(),
             "selector": Tree( ctree= cc.BmCondition_selector( self._ccondition ) ).dump(),
-            "distributions": [
-                self.distributionAt(i)
-                for i in range( 1, self.distributionSize()+1 )
-            ]
+            "distributions": self.distributionsList()
         }
         return descriptor
     

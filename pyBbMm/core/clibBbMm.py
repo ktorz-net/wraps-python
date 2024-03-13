@@ -1131,20 +1131,20 @@ BmInferer_node_parents= core.BmInferer_node_parents
 BmInferer_node_parents.restype= c_void_p
 BmInferer_node_parents.argtypes= [c_void_p, c_uint]
 
-# BmCondition* BmInferer_node_reinitWith( BmInferer* self, uint index, BmCode* newParents );
-BmInferer_node_reinitWith= core.BmInferer_node_reinitWith
-BmInferer_node_reinitWith.restype= c_void_p
-BmInferer_node_reinitWith.argtypes= [c_void_p, c_uint, c_void_p]
-
 # BmCondition* BmInferer_reinitIndependantNode( BmInferer* self, uint index );
 BmInferer_reinitIndependantNode= core.BmInferer_reinitIndependantNode
 BmInferer_reinitIndependantNode.restype= c_void_p
 BmInferer_reinitIndependantNode.argtypes= [c_void_p, c_uint]
 
-# BmCondition* DEPRECIATED_BmInferer_node_reinitWith( BmInferer* self, uint index, BmCode* newDependenceList, BmBench* newDefaultDistrib );
-DEPRECIATED_BmInferer_node_reinitWith= core.DEPRECIATED_BmInferer_node_reinitWith
-DEPRECIATED_BmInferer_node_reinitWith.restype= c_void_p
-DEPRECIATED_BmInferer_node_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
+# BmCondition* BmInferer_node_reinitWith( BmInferer* self, uint index, BmCode* newParents );
+BmInferer_node_reinitWith= core.BmInferer_node_reinitWith
+BmInferer_node_reinitWith.restype= c_void_p
+BmInferer_node_reinitWith.argtypes= [c_void_p, c_uint, c_void_p]
+
+# BmCondition* BmInferer_node_reinitWith_withDefault( BmInferer* self, uint index, BmCode* newDependenceList, BmBench* newDefaultDistrib );
+BmInferer_node_reinitWith_withDefault= core.BmInferer_node_reinitWith_withDefault
+BmInferer_node_reinitWith_withDefault.restype= c_void_p
+BmInferer_node_reinitWith_withDefault.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
 
 # BmBench* BmInferer_process( BmInferer* self, BmBench* inputDistribution );
 BmInferer_process= core.BmInferer_process

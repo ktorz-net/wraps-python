@@ -32,9 +32,7 @@ def test_BbMmInferer_init2():
 
 def test_BbMmInferer_construction():
     trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
-    trans.node_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
-    trans.node_setDependancy( 4, [2, 3], [(1, 1.0)] )
-
+    
     assert( trans.node(1).range() == 6 )
     assert( trans.parents(1).asList() == [] )
     assert( trans.node(1).parentSpace().asList() == [1] )
@@ -43,14 +41,37 @@ def test_BbMmInferer_construction():
     assert( trans.parents(2).asList() == [] )
     assert( trans.node(2).parentSpace().asList() == [1] )
 
+    trans.node_setDependancy( 3, [1], [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] )
+
     assert( trans.node(3).range() == 4 )
     assert( trans.parents(3).asList() == [1] )
     assert( trans.node(3).parentSpace().asList() == [6] )
+    assert( trans.node(3).distributionsList() == [ [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)] ] )
+
+    trans.node_setDependancy( 4, [2, 3], [(1, 1.0)] )
 
     assert( trans.node(4).range() == 6 )
     assert( trans.parents(4).asList() == [2, 3] )
     assert( trans.node(4).parentSpace().asList() == [3, 4] )
+    assert( trans.node(4).distributionsList() == [ [(1, 1.0)] ] )
 
+    condition= trans.node(3)
+    condition.fromList_set( [1], [(1, 1.0)] )
+    condition.fromList_set( [2], [(2, 1.0)] )
+    condition.fromList_set( [3], [(3, 1.0)] )
+
+    assert( condition.distributionsList() == [
+        [(1, 0.25), (2, 0.25), (3, 0.25), (4, 0.25)],
+        [(1, 1.0)],
+        [(2, 1.0)],
+        [(3, 1.0)]
+    ] )
+
+    condition= trans.node(4)
+    condition.fromList_set( [1, 0], [(1, 1.0)] )
+    condition.fromList_set( [0, 2], [(2, 1.0)] )
+
+    assert( condition.distributionsList() == [ [(1, 1.0)], [(1, 1.0)], [(2, 1.0)] ] )
 
 def test_BbMmInferer_dump():
     trans= bbmm.Inferer( [6, 3, 4, 6], 2, 1 )
@@ -201,10 +222,10 @@ def test_BbMmInferer_process421():
     assert trans.shiftDimention() == 0 
     assert trans.overallDimention() == 5
 
-    assert trans.processFrom( [1, 1, 1] ).asList() == [([1, 1], 1.0)]
-    assert trans.processFrom( [2, 4, 1] ).asList() == [([1, 4], 1.0)]
-    pprint( trans.processFrom( [3, 2, 2] ).asList() )
-    assert trans.processFrom( [3, 2, 2] ).asList() == [
+    assert trans.processFrom( [1, 1, 1] ).asCodeValueList() == [([1, 1], 1.0)]
+    assert trans.processFrom( [2, 4, 1] ).asCodeValueList() == [([1, 4], 1.0)]
+    pprint( trans.processFrom( [3, 2, 2] ).asCodeValueList() )
+    assert trans.processFrom( [3, 2, 2] ).asCodeValueList() == [
         ([2, 1], 1/6), ([2, 2], 1/6), ([2, 3], 1/6),
         ([2, 4], 1/6), ([2, 5], 1/6), ([2, 6], 1/6)
     ]
