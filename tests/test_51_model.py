@@ -21,6 +21,11 @@ def test_BbMmModel_init2():
         { "A": ["keep", "roll"] }
     )
 
+    assert( model.digits( [1, 1, "roll"] ) == [2, 1, 2] )
+    assert( model.digits( [0, 6, "keep"] ) == [1, 6, 1] )
+    assert( model.digits( [None, 6, "keep"] ) == [0, 6, 1] )
+    assert( model.digits( [None, 6, "-"] ) == [0, 6, 0] )
+
     assert( model.nodes() == [ "H-0", "D-0", "A" , "H-1", "D-1" ] )
     for dModel, dRef in zip( model.domains(), [range(0, 3), range(1, 7), ["keep", "roll"], range(0, 3), range(1, 7)] ) :
         assert( dModel == dRef )

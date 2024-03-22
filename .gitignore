@@ -6,6 +6,7 @@
 
 # System
 #-----------------
+draft.py
 *.log
 .vscode
 build

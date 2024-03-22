@@ -160,7 +160,11 @@ class Model():
     
     # Node Accessor:
     def inode_index( self, iNode, value ):
-        return ( self._domains[ iNode-1 ].index(value) )+1
+        try :
+            i= self._domains[ iNode-1 ].index(value)
+            return i+1
+        except :
+            return 0
 
     def inode_value( self, iNode, index ):
         return self._domains[ iNode-1 ][index-1]

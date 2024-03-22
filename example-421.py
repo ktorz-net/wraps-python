@@ -3,8 +3,12 @@
 Simple 421 game with bbmm.
 """
 
+from timeit import default_timer as time
+
 import pyBbMm as bbmm
 import json
+
+start = time()
 
 # Initialize The Domains:
 diceDomain= range(1,7)
@@ -74,16 +78,18 @@ model.node( f"D3-1").create(
     lambda config: sortOutput(config, 0)
 )
 
-# reward
+# reward alwais 0
 crit= model.criterion().initialize( ['H-0', 'D1-1', 'D2-1', 'D3-1'], [0.0] )
+# exept at the end:
+crit.from_set( [1, None, None, None], 100.0 )
 crit.from_set( [1, 4, 2, 1], 800.0 )
-crit.from_set( [1, 1, 1, 1], 700.0 )
-crit.from_set( [1, 2, 1, 1], 502.0 )
-crit.from_set( [1, 3, 1, 1], 503.0 )
-crit.from_set( [1, 4, 1, 1], 504.0 )
-crit.from_set( [1, 5, 1, 1], 505.0 )
-crit.from_set( [1, 6, 1, 1], 506.0 )
-crit.from_set( [1, 2, 2, 1], -100.0 )
+crit.from_set( [1, 1, 1, 1], 600.0 )
+for v in range(2, 7):
+    crit.from_set( [1, v, 1, 1], 400.0 + v )
+    crit.from_set( [1, v, v, v], 300.0 + v )
+for v in range(3, 7):
+    crit.from_set( [1, v, v-1, v-2], 200.0 + v )
+crit.from_set( [1, 2, 2, 1], 0.0 )
 
 # Tests: 
 def printTransition( state, action ):
@@ -93,6 +99,9 @@ def printTransition( state, action ):
 
 printTransition( [2, 3, 3, 1], ['keep', 'keep', 'keep'] )
 printTransition( [1, 3, 3, 1], ['roll', 'roll', 'keep'] )
+
+end = time()
+print( f"Execution time:{end - start}" )
 
 # Solve: 
 #policy = Policy( model.stateSpace() )
