@@ -5,7 +5,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                 T E S T   p y B b M m  : :  B E N C H                    #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm.core as bm
+import src.pyBbMm.core as bm
 
 def test_BbMmBench_init():
     bench= bm.Bench()

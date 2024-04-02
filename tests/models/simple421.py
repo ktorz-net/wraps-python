@@ -3,7 +3,7 @@
 Simple 421 game with bbmm.
 """
 
-import pyBbMm as bbmm
+import src.pyBbMm as bbmm
 
 def generate():
     # InitialigenerateModelze The Domains:

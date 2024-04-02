@@ -6,7 +6,7 @@ from pprint import pprint
 #                T E S T   p y B b M m  : :  E V A L U A T O R            #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm.core as bm
+import src.pyBbMm.core as bm
 
 def test_BbMmEvaluator_init():
     instance= bm.Evaluator()

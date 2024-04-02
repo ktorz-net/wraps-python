@@ -3,7 +3,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 # ------------------------------------------------------------------------ #
 #                 T E S T   p y B b M m  : :  C O D E                      #
 # ------------------------------------------------------------------------ #
-import pyBbMm.core as bm
+import src.pyBbMm.core as bm
 
 def test_BbMmCode_init():
     code= bm.Code()

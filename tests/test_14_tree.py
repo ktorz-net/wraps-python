@@ -5,7 +5,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                 T E S T   p y B b M m  : :  T R E E                      #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm.core as bm
+import src.pyBbMm.core as bm
 
 def test_BbMmTree_init():
     tree= bm.Tree()

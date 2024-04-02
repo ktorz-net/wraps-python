@@ -6,7 +6,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 #                T E S T   p y B b M m  : :  M O D E L                     #
 # ------------------------------------------------------------------------ #
 
-from pyBbMm import Model, Node, Reward
+from src.pyBbMm import Model, Node, Reward
 import json
 
 def test_BbMmModel_init():

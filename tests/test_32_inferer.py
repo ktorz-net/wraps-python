@@ -6,7 +6,7 @@ from pprint import pprint
 #                T E S T   p y B b M m  : :  I N F E R E R                 #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm.core as bbmm
+import src.pyBbMm.core as bbmm
 
 def test_BbMmInferer_init():
     trans= bbmm.Inferer()

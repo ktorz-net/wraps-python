@@ -6,7 +6,7 @@ import pprint
 #                T E S T   p y B b M m  : :  C O N D I T I O N            #
 # ------------------------------------------------------------------------ #
 
-import pyBbMm.core as bm
+import src.pyBbMm.core as bm
 
 def test_BbMmCondition_init():
     cond= bm.Condition()
