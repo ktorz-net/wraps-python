@@ -656,15 +656,50 @@ BmTree_branchSize= core.BmTree_branchSize
 BmTree_branchSize.restype= c_uint
 BmTree_branchSize.argtypes= [c_void_p, c_uint]
 
+# uint BmTree_branch_stateIndex( BmTree* self, uint iBranch, uint state );
+BmTree_branch_stateIndex= core.BmTree_branch_stateIndex
+BmTree_branch_stateIndex.restype= c_uint
+BmTree_branch_stateIndex.argtypes= [c_void_p, c_uint, c_uint]
+
 # uint BmTree_branch_state( BmTree* self, uint iBranch, uint state );
 BmTree_branch_state= core.BmTree_branch_state
 BmTree_branch_state.restype= c_uint
 BmTree_branch_state.argtypes= [c_void_p, c_uint, c_uint]
 
+# uint BmTree_branch_stateIsLeaf( BmTree* self, uint iBranch, uint state );
+BmTree_branch_stateIsLeaf= core.BmTree_branch_stateIsLeaf
+BmTree_branch_stateIsLeaf.restype= c_uint
+BmTree_branch_stateIsLeaf.argtypes= [c_void_p, c_uint, c_uint]
+
+# uint BmTree_branch_stateOption( BmTree* self, uint iBranch, uint state );
+BmTree_branch_stateOption= core.BmTree_branch_stateOption
+BmTree_branch_stateOption.restype= c_uint
+BmTree_branch_stateOption.argtypes= [c_void_p, c_uint, c_uint]
+
+# uint BmTree_branch_stateLeaf( BmTree* self, uint iBranch, uint state );
+BmTree_branch_stateLeaf= core.BmTree_branch_stateLeaf
+BmTree_branch_stateLeaf.restype= c_uint
+BmTree_branch_stateLeaf.argtypes= [c_void_p, c_uint, c_uint]
+
 # uint BmTree_branchVariable( BmTree* self, uint iBranch );
 BmTree_branchVariable= core.BmTree_branchVariable
 BmTree_branchVariable.restype= c_uint
 BmTree_branchVariable.argtypes= [c_void_p, c_uint]
+
+# uint BmTree_branchStart( BmTree* self, uint iBranch );
+BmTree_branchStart= core.BmTree_branchStart
+BmTree_branchStart.restype= c_uint
+BmTree_branchStart.argtypes= [c_void_p, c_uint]
+
+# uint BmTree_branchBound( BmTree* self, uint iBranch );
+BmTree_branchBound= core.BmTree_branchBound
+BmTree_branchBound.restype= c_uint
+BmTree_branchBound.argtypes= [c_void_p, c_uint]
+
+# uint BmTree_branchStep( BmTree* self, uint iBranch );
+BmTree_branchStep= core.BmTree_branchStep
+BmTree_branchStep.restype= c_uint
+BmTree_branchStep.argtypes= [c_void_p, c_uint]
 
 # uint BmTree_branchNumberOfOutputs( BmTree* self, uint branch );
 BmTree_branchNumberOfOutputs= core.BmTree_branchNumberOfOutputs
@@ -676,20 +711,35 @@ BmTree_deepOf= core.BmTree_deepOf
 BmTree_deepOf.restype= c_uint
 BmTree_deepOf.argtypes= [c_void_p, c_void_p]
 
-# uint BmTree_newBranch_on( BmTree* self, uint iVariable, uint defaultOption );
-BmTree_newBranch_on= core.BmTree_newBranch_on
-BmTree_newBranch_on.restype= c_uint
-BmTree_newBranch_on.argtypes= [c_void_p, c_uint, c_uint]
+# uint BmTree_newBranch( BmTree* self, uint iVariable, uint start, uint bound, uint step );
+BmTree_newBranch= core.BmTree_newBranch
+BmTree_newBranch.restype= c_uint
+BmTree_newBranch.argtypes= [c_void_p, c_uint, c_uint, c_uint, c_uint]
+
+# uint BmTree_newBranch_full( BmTree* self, uint iVariable, uint defaultOption );
+BmTree_newBranch_full= core.BmTree_newBranch_full
+BmTree_newBranch_full.restype= c_uint
+BmTree_newBranch_full.argtypes= [c_void_p, c_uint, c_uint]
+
+# uint BmTree_newBranch_binary_options( BmTree* self, uint iVariable, uint  afterValue, uint option1, uint option2 );
+BmTree_newBranch_binary_options= core.BmTree_newBranch_binary_options
+BmTree_newBranch_binary_options.restype= c_uint
+BmTree_newBranch_binary_options.argtypes= [c_void_p, c_uint, c_void_p, c_uint, c_uint]
+
+# uint BmTree_newBranch_pivot_options( BmTree* self, uint iVariable, uint onValue, uint option1, uint optionOn, uint option2 );
+BmTree_newBranch_pivot_options= core.BmTree_newBranch_pivot_options
+BmTree_newBranch_pivot_options.restype= c_uint
+BmTree_newBranch_pivot_options.argtypes= [c_void_p, c_uint, c_uint, c_uint, c_uint, c_uint]
 
 # void BmTree_branch_state_connect( BmTree* self, uint branchA, uint stateA, uint branchB );
 BmTree_branch_state_connect= core.BmTree_branch_state_connect
 BmTree_branch_state_connect.restype= c_void_p
 BmTree_branch_state_connect.argtypes= [c_void_p, c_uint, c_uint, c_uint]
 
-# void BmTree_branch_state_set( BmTree* self, uint branchA, uint iState, uint outbut );
-BmTree_branch_state_set= core.BmTree_branch_state_set
-BmTree_branch_state_set.restype= c_void_p
-BmTree_branch_state_set.argtypes= [c_void_p, c_uint, c_uint, c_uint]
+# void BmTree_branch_state_setOption( BmTree* self, uint branchA, uint iState, uint outbut );
+BmTree_branch_state_setOption= core.BmTree_branch_state_setOption
+BmTree_branch_state_setOption.restype= c_void_p
+BmTree_branch_state_setOption.argtypes= [c_void_p, c_uint, c_uint, c_uint]
 
 # uint BmTree_cleanDeadBranches( BmTree* self );
 BmTree_cleanDeadBranches= core.BmTree_cleanDeadBranches

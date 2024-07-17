@@ -104,12 +104,12 @@ class Tree :
         self.initialize( descriptor["input"] )
         iBranch= 0
         for bDes in descriptor["branches"] :
-            r= cc.BmTree_newBranch_on( self._ctree, c_uint( bDes["iInput"] ), c_uint(1))
+            r= cc.BmTree_newBranch_full( self._ctree, c_uint( bDes["iInput"] ), c_uint(1))
             assert( int(r) == iBranch )
             index= 1
             for sType, sValue in bDes["states"] :
                 if sType == 'leaf' :
-                    cc.BmTree_branch_state_set( self._ctree, r, c_uint(index), c_uint(sValue) )
+                    cc.BmTree_branch_state_setOption( self._ctree, r, c_uint(index), c_uint(sValue) )
                 else :
                     cc.BmTree_branch_state_connect( self._ctree, r, c_uint(index), c_uint(sValue) )
                 index+= 1

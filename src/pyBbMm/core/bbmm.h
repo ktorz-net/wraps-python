@@ -51,12 +51,19 @@
 
 #include <stdarg.h>
 
+#ifndef uint
 #define uint unsigned int
-#define ulong unsigned long
+#endif
 
+#ifndef ulong
+#define ulong unsigned long
+#endif
+
+#ifndef bool
 typedef uint bool;
 #define true 1
 #define false 0
+#endif
 
 /* Clasical constructor/dextructor */
 #define newEmpty(Type) malloc(sizeof(Type))
@@ -317,7 +324,7 @@ char* BmBench_printNetwork(BmBench* self, char* output);
 typedef struct {
   BmCode* inputRanges;
   uint capacity, size;
-  uint** branches;
+  uint** branches;    // -> uint* branchvariable AND Reductor** // Funnel** branchSelector AND uint** branches ?
 } BmTree;
 
 /* Constructor */
@@ -355,15 +362,25 @@ uint BmTree_at_readOrder_set( BmTree* self, BmCode* code, BmCode* codeOrder, uin
 
 /* Branch Accessor */
 uint BmTree_branchSize( BmTree* self, uint iBranch );
+uint BmTree_branch_stateIndex( BmTree* self, uint iBranch, uint state );
 uint BmTree_branch_state( BmTree* self, uint iBranch, uint state );
+uint BmTree_branch_stateIsLeaf( BmTree* self, uint iBranch, uint state );
+uint BmTree_branch_stateOption( BmTree* self, uint iBranch, uint state );
+uint BmTree_branch_stateLeaf( BmTree* self, uint iBranch, uint state );
 uint BmTree_branchVariable( BmTree* self, uint iBranch ); // Return the variable index represented by the branch.
+uint BmTree_branchStart( BmTree* self, uint iBranch );
+uint BmTree_branchBound( BmTree* self, uint iBranch );
+uint BmTree_branchStep( BmTree* self, uint iBranch );
 uint BmTree_branchNumberOfOutputs( BmTree* self, uint branch ); // Return the number of differents output
 uint BmTree_deepOf( BmTree* self, BmCode* code); // Return the number of branch to cross before reaching the output.
 
 /* Branch Construction */
-uint BmTree_newBranch_on( BmTree* self, uint iVariable, uint defaultOption);
+uint BmTree_newBranch( BmTree* self, uint iVariable, uint start, uint bound, uint step );
+uint BmTree_newBranch_full( BmTree* self, uint iVariable, uint defaultOption);
+uint BmTree_newBranch_binary_options( BmTree* self, uint iVariable, uint  afterValue, uint option1, uint option2);
+uint BmTree_newBranch_pivot_options( BmTree* self, uint iVariable, uint onValue, uint option1, uint optionOn, uint option2);
 void BmTree_branch_state_connect( BmTree* self, uint branchA, uint stateA, uint branchB );
-void BmTree_branch_state_set( BmTree* self, uint branchA, uint iState, uint outbut );
+void BmTree_branch_state_setOption( BmTree* self, uint branchA, uint iState, uint outbut );
 
 /* Cleanning */
 uint BmTree_cleanDeadBranches( BmTree* self); // Detect and remove detached branches (or BmTree_update, BmTree_regenerate : rebuild the tree without dead branches)
@@ -484,9 +501,6 @@ void BmFunction_switch(BmFunction* self, BmFunction* doppelganger);
 /* Printing */
 char* BmFunction_print(BmFunction* self, char* output);
 char* BmFunction_printSep(BmFunction* self, char* output, char* separator);
-
-#endif // BBMM_H
-
 
 /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- *
  *   B b M m   F U N C T I O N  :  D I S T B U T O R                       *
@@ -668,4 +682,7 @@ void BmEvaluator_criterion_setWeight( BmEvaluator* self, uint iCritirion, double
 
 
 /* Printing */
+
+
+#endif // BBMM_H
 
