@@ -1,8 +1,5 @@
-from ctypes import c_uint, c_double, c_void_p, c_ulong
-import os
-
-from numpy import empty
-from . import clib, clibBbMm as cc
+from .clibBbMm import c_digit, c_double
+from . import clibBbMm as cc
 from .code import Code
 from .bench import Bench
 
@@ -54,10 +51,10 @@ class Tree :
         return self
     
     def clear( self, defaultOutput=1, iInput=1 ):
-        cc.BmTree_clearWhith_on( self._ctree, c_uint(iInput), c_uint(defaultOutput) )
+        cc.BmTree_clearWhith_on( self._ctree, c_digit(iInput), c_digit(defaultOutput) )
 
     def atCode_set( self, code, option ):
-        cc.BmTree_at_set( self._ctree, code._ccode, c_uint(option) )
+        cc.BmTree_at_set( self._ctree, code._ccode, c_digit(option) )
 
     def at_set( self, codeList, option ):
         return self.atCode_set( Code( codeList ), option )
@@ -65,19 +62,19 @@ class Tree :
     def option_setValue( self, iOption, value ):
         cc.BmTree_option_setValue(
             self._ctree,
-            c_uint(iOption),
+            c_digit(iOption),
             c_double(value)
         )
     
     # branch manipulation
     def iBranch_variable(self, iBranch):
-        return cc.BmTree_branchVariable( self._ctree, c_uint(iBranch) )
+        return cc.BmTree_branchVariable( self._ctree, c_digit(iBranch) )
 
     def iBranch_size(self, iBranch):
-        return cc.BmTree_branchSize( self._ctree, c_uint(iBranch) )
+        return cc.BmTree_branchSize( self._ctree, c_digit(iBranch) )
 
     def iBranch_state(self, iBranch, index):
-        key= cc.BmTree_branch_state( self._ctree, c_uint(iBranch), c_uint(index) )
+        key= cc.BmTree_branch_state( self._ctree, c_digit(iBranch), c_digit(index) )
         leaf= cc.BmTreeLeaf(key)
         if leaf > 0 :
             return ( "leaf", leaf )
@@ -104,14 +101,14 @@ class Tree :
         self.initialize( descriptor["input"] )
         iBranch= 0
         for bDes in descriptor["branches"] :
-            r= cc.BmTree_newBranch_full( self._ctree, c_uint( bDes["iInput"] ), c_uint(1))
+            r= cc.BmTree_newBranch_full( self._ctree, c_digit( bDes["iInput"] ), c_digit(1))
             assert( int(r) == iBranch )
             index= 1
             for sType, sValue in bDes["states"] :
                 if sType == 'leaf' :
-                    cc.BmTree_branch_state_setOption( self._ctree, r, c_uint(index), c_uint(sValue) )
+                    cc.BmTree_branch_state_setOption( self._ctree, r, c_digit(index), c_digit(sValue) )
                 else :
-                    cc.BmTree_branch_state_connect( self._ctree, r, c_uint(index), c_uint(sValue) )
+                    cc.BmTree_branch_state_connect( self._ctree, r, c_digit(index), c_digit(sValue) )
                 index+= 1
             iBranch+= 1
         return self

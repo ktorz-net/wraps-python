@@ -12,16 +12,20 @@ import sys, re
 reVoidLine= re.compile(r"^[ \t\n]*$")
 reParameter= re.compile(r"([a-zA-Z-09_]+ *\**) ([a-zA-Z0-9_]+)")
 typeDico= {
+    "short": "c_short",
     "int": "c_int",
     "long": "c_long",
+    "ushort": "c_ushort",
     "uint": "c_uint",
     "ulong": "c_ulong",
+    "float": "c_float",
     "double": "c_double",
-    "bool": "c_int",
+    "digit": "c_digit",
+    "bool": "c_digit",
+    "hash": "c_hash",
 }
 
-header= r"""from .clib import core
-from ctypes import c_int, c_uint, c_ulong, c_double, c_void_p
+header= r"""import os, ctypes
 
 # ------------------------------------------------------------------------ #
 #             P Y T H O N   W R A P E R   O F   l i b B b M m
@@ -31,6 +35,42 @@ from ctypes import c_int, c_uint, c_ulong, c_double, c_void_p
 # 
 #        /!\ ANY MODIFICATION IN THIS FILE WILL BE ERASED /!\
 # ------------------------------------------------------------------------ #
+
+# Usefull ctype types:
+
+c_ushort, c_ulong, c_double, c_void_p=  ctypes.c_ushort, ctypes.c_ulong, ctypes.c_double, ctypes.c_void_p
+
+# Usefull BbMm basis types:
+
+c_digit, c_hash= c_ushort, c_ulong
+
+# CArray tools :
+
+def makeCArray( c_type, size, value ):
+    Array= c_type * size
+    cArray= Array()
+    for i in range(size) :
+        cArray[i]= (c_type)( value )
+    return cArray
+
+def makeCArrayAs( c_type, size, pythonLst ):
+    Array= c_type * size
+    cArray= Array()
+    for i in range(size) :
+        cArray[i]= (c_type)( pythonLst[i] )
+    return cArray
+
+def readCArray( py_type, c_type, size, arrayPointer ):
+    pLst= ctypes.cast(arrayPointer, ctypes.POINTER(c_type))
+    return [ (py_type)(pLst[i]) for i in range(size) ]
+
+# Load c-core BbMm librairy : 
+
+bbmmDir= os.path.dirname(os.path.realpath(__file__))
+print( f">>>> LOAD LIB: {bbmmDir} <<<" )
+core = ctypes.cdll.LoadLibrary( bbmmDir+"/libbbmm.so" )
+
+# bbmm.h wraps :
 
 """
 

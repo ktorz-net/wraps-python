@@ -1,8 +1,5 @@
-from ctypes import c_uint, c_double, c_void_p, c_ulong
-import os
-
-from numpy import empty
-from . import clib, clibBbMm as cc
+from . import clibBbMm as cc
+from .clibBbMm import c_digit, c_double
 from .code import Code
 from .vector import Vector
 
@@ -12,7 +9,7 @@ class Bench :
     def __init__(self, aListOfTuples=[], capacity= 16, cbench= None):
         if cbench is None :
             capacity= max( capacity, len(aListOfTuples) )
-            self._cbench= cc.newBmBench( c_uint(capacity) )
+            self._cbench= cc.newBmBench( c_digit(capacity) )
             for codeList, v in aListOfTuples :
                 if type(v) is list :
                     self.attachLast( Code( codeList ), Vector( v ) )
@@ -29,7 +26,7 @@ class Bench :
     
     def initialize( self, aListOfTuples=[], capacity= 16 ):
         capacity= max( capacity, len(aListOfTuples) )
-        cc.BmBench_reinit( self._cbench, c_uint(capacity) )
+        cc.BmBench_reinit( self._cbench, c_digit(capacity) )
         for codeList, vectorList in aListOfTuples :
             self.attachLast( Code( codeList ), Vector( vectorList ) )
         return self
@@ -39,16 +36,16 @@ class Bench :
         return cc.BmBench_size( self._cbench )
     
     def codeAt(self, i):
-        return Code( ccode= cc.BmBench_codeAt( self._cbench, c_uint(i) ) )
+        return Code( ccode= cc.BmBench_codeAt( self._cbench, c_digit(i) ) )
     
     def vectorAt( self, i ):
-        return Vector( cvector=cc.BmBench_vectorAt( self._cbench, c_uint(i) ) )
+        return Vector( cvector=cc.BmBench_vectorAt( self._cbench, c_digit(i) ) )
 
     def digitAt( self, i ):
-        return cc.BmBench_digitAt( self._cbench, c_uint(i) )
+        return cc.BmBench_digitAt( self._cbench, c_digit(i) )
     
     def valueAt( self, i ):
-        return cc.BmBench_valueAt( self._cbench, c_uint(i) )
+        return cc.BmBench_valueAt( self._cbench, c_digit(i) )
     
     def range(self):
         return range(1, self.size()+1)
@@ -91,7 +88,7 @@ class Bench :
     def at_setValue(self, i, value):
         cpointer= cc.BmBench_at_setValue(
                         self._cbench,
-                        c_uint(i),
+                        c_digit(i),
                         c_double(value)
         )
         return Code( ccode= cpointer )

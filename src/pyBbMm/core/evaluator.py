@@ -1,11 +1,7 @@
-from ctypes import c_uint, c_double, c_void_p, c_ulong
-import os
-
-from numpy import empty
-from . import clib, clibBbMm as cc
+from .clibBbMm import c_digit, c_double
+from . import clibBbMm as cc
 from .code import Code
 from .vector import Vector
-from .tree import Tree
 from .valuefct import ValueFct
 
 class Evaluator:
@@ -15,7 +11,7 @@ class Evaluator:
             inputCode= Code( inputSpace )
             self._cevaluator= cc.newBmEvaluatorWith(
                 inputCode._ccode,
-                c_uint( numberOfCriteria )
+                c_digit( numberOfCriteria )
             )
             inputCode._cmaster= False
             self._cmaster= True
@@ -40,12 +36,12 @@ class Evaluator:
         ).asList()
     
     def weight( self, iCrit ):
-        return cc.BmEvaluator_criterion_weight( self._cevaluator, c_uint(iCrit) )
+        return cc.BmEvaluator_criterion_weight( self._cevaluator, c_digit(iCrit) )
     
     def criterion( self, iCrit ):
         return ValueFct( cvaluefct=cc.BmEvaluator_criterion(
             self._cevaluator,
-            c_uint(iCrit)
+            c_digit(iCrit)
         ) )
 
     def criterionValues( self, iCrit ):
@@ -57,13 +53,13 @@ class Evaluator:
     def criterionWeight( self, iCrit ):
         return cc.BmEvaluator_criterion_weight(
             self._cevaluator,
-            c_uint(iCrit)
+            c_digit(iCrit)
         )
 
     def criterionParents( self, iCrit ):
         return Code( ccode=cc.BmEvaluator_criterion_mask(
             self._cevaluator,
-            c_uint(iCrit) )
+            c_digit(iCrit) )
         ).asList()
    
     # Construction
@@ -73,7 +69,7 @@ class Evaluator:
         cc.BmEvaluator_createWith(
             self._cevaluator,
             inputsCode._ccode,
-            c_uint( numberOfCriteria)
+            c_digit( numberOfCriteria)
         )
         inputsCode._cmaster= False
         return self
@@ -83,7 +79,7 @@ class Evaluator:
         assert( vectorValues._cmaster ) # free to attach...
         cc.BmEvaluator_criterion_reinitWith(
             self._cevaluator,
-            c_uint( iCrit ),
+            c_digit( iCrit ),
             codeDependence._ccode,
             vectorValues._cvector
         )
@@ -100,7 +96,7 @@ class Evaluator:
 
     def criterion_setWeight( self, iCrit, weight ):
         cc.BmEvaluator_criterion_setWeight(
-            self._cevaluator, c_uint(iCrit), c_double(weight)
+            self._cevaluator, c_digit(iCrit), c_double(weight)
         )
         return self
     
@@ -109,7 +105,7 @@ class Evaluator:
         inputCode= Code( input )
         values= []
         for iCrit in range( 1, self.numberOfCriteria()+1 ) :
-            values.append( cc.BmEvaluator_criterion_process( self._cevaluator, c_uint(iCrit), inputCode._ccode ) )
+            values.append( cc.BmEvaluator_criterion_process( self._cevaluator, c_digit(iCrit), inputCode._ccode ) )
         return values
 
     def processCode( self, input ):

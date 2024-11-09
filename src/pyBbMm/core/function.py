@@ -2,7 +2,7 @@ from ctypes import c_uint, c_double, c_void_p, c_ulong
 import os
 
 from numpy import empty
-from . import clib, clibBbMm as cc
+from . import clibBbMm as cc
 from .code import Code
 from .bench import Bench
 from .bench import Bench

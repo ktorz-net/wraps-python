@@ -1,8 +1,5 @@
-from ctypes import c_uint, c_double, c_void_p, c_ulong
-import os
-
-from numpy import empty
-from . import clib, clibBbMm as cc
+from .clibBbMm import c_digit
+from . import clibBbMm as cc
 from .code import Code
 from .bench import Bench
 from .tree import Tree
@@ -15,7 +12,7 @@ class Condition:
             defaultDistrib= [ ([int(output)], value) for output, value in defaultDistrib ]
             benchDefaultDistrib= Bench( defaultDistrib )
             self._ccondition= cc.newBmConditionWith(
-                c_uint(domainSize),
+                c_digit(domainSize),
                 codeParentSpace._ccode,
                 benchDefaultDistrib._cbench
             )
@@ -58,7 +55,7 @@ class Condition:
         return Bench(
             cbench= cc.BmCondition_distributionAt(
                 self._ccondition,
-                c_uint(iDistribution)
+                c_digit(iDistribution)
             )
         )
     def distributionAt( self, iDistribution ):
@@ -80,7 +77,7 @@ class Condition:
         defaultDistrib._cmaster= False
         return cc.BmCondition_reinitWith(
             self._ccondition,
-            c_uint(domain),
+            c_digit(domain),
             parentSpace._ccode,
             defaultDistrib._cbench
         )

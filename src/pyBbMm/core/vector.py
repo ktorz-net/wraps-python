@@ -1,8 +1,5 @@
-from ctypes import c_uint, c_double, c_void_p, c_ulong
-import os
-
-from numpy import empty
-from . import clib, clibBbMm as cc
+from .clibBbMm import c_digit, c_double
+from . import clibBbMm as cc
 
 # BmVector wrap:
 class Vector :
@@ -12,11 +9,11 @@ class Vector :
         if cvector is None :
             size= len(aList)
             if size == 0 :
-                self._cvector= cc.newBmVector( c_uint(0) )
+                self._cvector= cc.newBmVector( c_digit(0) )
             else :
                 self._cvector= cc.newBmVector_values(
-                    c_uint(size),
-                    clib.doubleArrayAs( size, aList )
+                    c_digit(size),
+                    cc.makeCArrayAs( c_double, size, aList )
                 )
             self._cmaster= True
         else : 
@@ -31,8 +28,8 @@ class Vector :
     # initialize:
     def initialize(self, aList):
         size= len(aList)
-        cc.BmVector_reinit( self._cvector, c_uint(size) )
-        cc.BmVector_setValues( self._cvector, clib.doubleArrayAs( size, aList ) )
+        cc.BmVector_reinit( self._cvector, c_digit(size) )
+        cc.BmVector_setValues( self._cvector, cc.makeCArrayAs( c_double, size, aList ) )
         return self
     
     def copy(self):
@@ -46,7 +43,7 @@ class Vector :
 
     def value(self, i):
         assert( 0 < i and i <= self.dimention() )
-        return (float)(cc.BmVector_value( self._cvector, (c_uint)(i) ) )    
+        return (float)(cc.BmVector_value( self._cvector, (c_digit)(i) ) )    
 
     def asList(self):
         return [ self.value(i) for i in range(1, self.dimention()+1) ]
@@ -67,11 +64,11 @@ class Vector :
 
     # Modification
     def resize(self, size):
-        cc.BmVector_redimention(self._cvector, c_uint(size))
+        cc.BmVector_redimention(self._cvector, c_digit(size))
     
     def at_set(self, i, value):
         assert( 0 < i and i <= self.dimention() )
-        cc.BmVector_at_set(self._cvector, c_uint(i), c_double(value) )
+        cc.BmVector_at_set(self._cvector, c_digit(i), c_double(value) )
 
     # dump and load:
     def dump(self):

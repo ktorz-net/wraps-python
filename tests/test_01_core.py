@@ -4,10 +4,7 @@ sys.path.insert( 1, __file__.split('tests')[0] )
 # ------------------------------------------------------------------------ #
 #               T E S T   p y B b M m  C l i b C o r e                     #
 # ------------------------------------------------------------------------ #
-
-from ctypes import c_uint, c_void_p, c_ulong
-from numpy import empty
-from src.pyBbMm.core import clib, clibBbMm as cc
+from src.pyBbMm.core import clibBbMm as cc
 
 # ------------------------------------------------------------------------ #
 #   STRUCTURE MODULE:

@@ -1,8 +1,5 @@
-from ctypes import c_uint, c_double, c_void_p, c_ulong
-import os
-
-from numpy import empty
-from . import clib, clibBbMm as cc
+from .clibBbMm import c_digit
+from . import clibBbMm as cc
 from .code import Code
 from .bench import Bench
 from .tree import Tree
@@ -15,8 +12,8 @@ class Inferer:
             codeSpace= Code( space )
             self._cinferer= cc.newBmInferer(
                      codeSpace._ccode,
-                     c_uint(inputDimention),
-                     c_uint(outputDimention)
+                     c_digit(inputDimention),
+                     c_digit(outputDimention)
             )
             self._cmaster= True
         else: 
@@ -51,29 +48,29 @@ class Inferer:
 
     def node(self, iVar):
         return Condition( ccondition= cc.BmInferer_node(
-            self._cinferer, c_uint(iVar) )
+            self._cinferer, c_digit(iVar) )
         )
     
     def parents( self, iVar ):
         return Code( ccode=cc.BmInferer_node_parents(
-            self._cinferer, c_uint(iVar) )
+            self._cinferer, c_digit(iVar) )
         )
     def space( self ):
-        return [ cc.BmInferer_node_size( self._cinferer, c_uint(i) ) for i in range( 1, self.inputDimention()+1 ) ]
+        return [ cc.BmInferer_node_size( self._cinferer, c_digit(i) ) for i in range( 1, self.inputDimention()+1 ) ]
     
     def inputs( self ):
         inputBound= self.inputDimention()+1
-        return [ cc.BmInferer_node_size( self._cinferer, c_uint(i) ) for i in range( 1, inputBound ) ]
+        return [ cc.BmInferer_node_size( self._cinferer, c_digit(i) ) for i in range( 1, inputBound ) ]
     
     def outputs( self ):
         overBound= self.overallDimention()+1
         outputStart= overBound - self.outputDimention()
-        return [ cc.BmInferer_node_size( self._cinferer, c_uint(i) ) for i in range( outputStart, overBound ) ]
+        return [ cc.BmInferer_node_size( self._cinferer, c_digit(i) ) for i in range( outputStart, overBound ) ]
     
     def shifts( self ):
         inputBound= self.inputDimention()+1
         shiftBound= inputBound + self.shiftDimention()
-        return [ cc.BmInferer_node_size( self._cinferer, c_uint(i) ) for i in range( inputBound, shiftBound ) ]
+        return [ cc.BmInferer_node_size( self._cinferer, c_digit(i) ) for i in range( inputBound, shiftBound ) ]
     
     # Construction :
     def initialize( self, inputs, outputs, shifts= [] ):
@@ -82,7 +79,7 @@ class Inferer:
         cc.BmInferer_create(
             self._cinferer,
             spaceCode._ccode,
-            c_uint( len(inputs) ), c_uint( len(outputs) )
+            c_digit( len(inputs) ), c_digit( len(outputs) )
         )
         return self
     
@@ -91,7 +88,7 @@ class Inferer:
         assert( parents.dimention() > 0 )
         ccond= cc.BmInferer_node_reinitWith_withDefault(
             self._cinferer,
-            c_uint(iVar),
+            c_digit(iVar),
             parents._ccode,
             defaultDistrib._cbench
         )
@@ -127,7 +124,7 @@ class Inferer:
             condDump= self.node(i).dump()
             dumpNodes.append({
                 'nodeId': i,
-                'parents': Code( ccode= cc.BmInferer_node_parents( self._cinferer, c_uint(i) ) ).asList(),
+                'parents': Code( ccode= cc.BmInferer_node_parents( self._cinferer, c_digit(i) ) ).asList(),
                 'distributions': condDump['distributions'],
                 'selector': condDump['selector']
             })

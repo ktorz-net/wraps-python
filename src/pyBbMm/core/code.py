@@ -1,8 +1,5 @@
-from ctypes import c_uint, c_void_p, c_ulong
-import os
-
-from numpy import empty
-from . import clib, clibBbMm as cc
+from . import clibBbMm as cc
+from .clibBbMm import c_digit
 
 # BmCode wrap:
 class Code :
@@ -13,11 +10,11 @@ class Code :
         if ccode is None :
             size= len(aList)
             if size == 0 :
-                self._ccode= cc.newBmCode( c_uint(0) )
+                self._ccode= cc.newBmCode( c_digit(0) )
             else :
                 self._ccode= cc.newBmCode_numbers(
-                    c_uint(size),
-                    clib.uintArrayAs( size, aList )
+                    c_digit(size),
+                    cc.makeCArrayAs( c_digit, size, aList )
                 )
             self._cmaster= True
         else : 
@@ -31,8 +28,8 @@ class Code :
     # initialize:
     def initialize(self, aList):
         size= len(aList)
-        cc.BmCode_reinit( self._ccode, c_uint(size) )
-        cc.BmCode_setNumbers( self._ccode, clib.uintArrayAs( size, aList ) )
+        cc.BmCode_reinit( self._ccode, c_digit(size) )
+        cc.BmCode_setNumbers( self._ccode, cc.makeCArrayAs( c_digit, size, aList ) )
         return self
     
     def copy(self):
@@ -46,7 +43,7 @@ class Code :
 
     def digit(self, i):
         assert( 0 < i and i <= self.dimention() )
-        return (int)(cc.BmCode_digit( self._ccode, (c_uint)(i) ) )    
+        return (int)(cc.BmCode_digit( self._ccode, (c_digit)(i) ) )    
 
     def asList(self):
         return [ self.digit(i) for i in range(1, self.dimention()+1) ]
@@ -67,11 +64,11 @@ class Code :
 
     # Modification
     def resize(self, size):
-        cc.BmCode_redimention(self._ccode, c_uint(size))
+        cc.BmCode_redimention(self._ccode, c_digit(size))
     
     def at_set(self, i, value):
         assert( 0 < i and i <= self.dimention() )
-        cc.BmCode_at_set(self._ccode, c_uint(i), c_uint(value) )
+        cc.BmCode_at_set(self._ccode, c_digit(i), c_digit(value) )
 
     # Iterate
     def __iter__(self):

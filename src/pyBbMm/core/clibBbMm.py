@@ -1,5 +1,4 @@
-from .clib import core
-from ctypes import c_int, c_uint, c_ulong, c_double, c_void_p
+import os, ctypes
 
 # ------------------------------------------------------------------------ #
 #             P Y T H O N   W R A P E R   O F   l i b B b M m
@@ -10,51 +9,86 @@ from ctypes import c_int, c_uint, c_ulong, c_double, c_void_p
 #        /!\ ANY MODIFICATION IN THIS FILE WILL BE ERASED /!\
 # ------------------------------------------------------------------------ #
 
+# Usefull ctype types:
 
-# BmCode* newBmCode( uint size );
+c_ushort, c_ulong, c_double, c_void_p=  ctypes.c_ushort, ctypes.c_ulong, ctypes.c_double, ctypes.c_void_p
+
+# Usefull BbMm basis types:
+
+c_digit, c_hash= c_ushort, c_ulong
+
+# CArray tools :
+
+def makeCArray( c_type, size, value ):
+    Array= c_type * size
+    cArray= Array()
+    for i in range(size) :
+        cArray[i]= (c_type)( value )
+    return cArray
+
+def makeCArrayAs( c_type, size, pythonLst ):
+    Array= c_type * size
+    cArray= Array()
+    for i in range(size) :
+        cArray[i]= (c_type)( pythonLst[i] )
+    return cArray
+
+def readCArray( py_type, c_type, size, arrayPointer ):
+    pLst= ctypes.cast(arrayPointer, ctypes.POINTER(c_type))
+    return [ (py_type)(pLst[i]) for i in range(size) ]
+
+# Load c-core BbMm librairy : 
+
+bbmmDir= os.path.dirname(os.path.realpath(__file__))
+print( f">>>> LOAD LIB: {bbmmDir} <<<" )
+core = ctypes.cdll.LoadLibrary( bbmmDir+"/libbbmm.so" )
+
+# bbmm.h wraps :
+
+# BmCode* newBmCode( digit dimention );
 newBmCode= core.newBmCode
 newBmCode.restype= c_void_p
-newBmCode.argtypes= [c_uint]
+newBmCode.argtypes= [c_digit]
 
-# BmCode* newBmCode_numbers( uint size, uint* numbers );
+# BmCode* newBmCode_numbers( digit dimention, digit* numbers );
 newBmCode_numbers= core.newBmCode_numbers
 newBmCode_numbers.restype= c_void_p
-newBmCode_numbers.argtypes= [c_uint, c_void_p]
+newBmCode_numbers.argtypes= [c_digit, c_void_p]
 
-# BmCode* newBmCode_all( uint size, uint defaultValue );
+# BmCode* newBmCode_all( digit dimention, digit defaultValue );
 newBmCode_all= core.newBmCode_all
 newBmCode_all.restype= c_void_p
-newBmCode_all.argtypes= [c_uint, c_uint]
+newBmCode_all.argtypes= [c_digit, c_digit]
 
 # BmCode* newBmCodeAs( BmCode* model );
 newBmCodeAs= core.newBmCodeAs
 newBmCodeAs.restype= c_void_p
 newBmCodeAs.argtypes= [c_void_p]
 
-# BmCode* BmCode_create( BmCode* self, uint size );
+# BmCode* BmCode_create( BmCode* self, digit dimention );
 BmCode_create= core.BmCode_create
 BmCode_create.restype= c_void_p
-BmCode_create.argtypes= [c_void_p, c_uint]
+BmCode_create.argtypes= [c_void_p, c_digit]
 
-# BmCode* BmCode_create_numbers( BmCode* self, uint size, uint* numbers );
+# BmCode* BmCode_create_numbers( BmCode* self, digit dimention, digit* numbers );
 BmCode_create_numbers= core.BmCode_create_numbers
 BmCode_create_numbers.restype= c_void_p
-BmCode_create_numbers.argtypes= [c_void_p, c_uint, c_void_p]
+BmCode_create_numbers.argtypes= [c_void_p, c_digit, c_void_p]
 
-# BmCode* BmCode_create_all( BmCode* self, uint size, uint defaultValue );
+# BmCode* BmCode_create_all( BmCode* self, digit dimention, digit defaultValue );
 BmCode_create_all= core.BmCode_create_all
 BmCode_create_all.restype= c_void_p
-BmCode_create_all.argtypes= [c_void_p, c_uint, c_uint]
+BmCode_create_all.argtypes= [c_void_p, c_digit, c_digit]
 
 # BmCode* BmCode_createAs( BmCode* self, BmCode* model );
 BmCode_createAs= core.BmCode_createAs
 BmCode_createAs.restype= c_void_p
 BmCode_createAs.argtypes= [c_void_p, c_void_p]
 
-# BmCode* BmCode_createMerge( BmCode* self, uint numberOfCodes, BmCode ** codes );
+# BmCode* BmCode_createMerge( BmCode* self, digit numberOfCodes, BmCode ** codes );
 BmCode_createMerge= core.BmCode_createMerge
 BmCode_createMerge.restype= c_void_p
-BmCode_createMerge.argtypes= [c_void_p, c_uint, c_void_p]
+BmCode_createMerge.argtypes= [c_void_p, c_digit, c_void_p]
 
 # void deleteBmCode( BmCode* instance );
 deleteBmCode= core.deleteBmCode
@@ -66,35 +100,35 @@ BmCode_destroy= core.BmCode_destroy
 BmCode_destroy.restype= c_void_p
 BmCode_destroy.argtypes= [c_void_p]
 
-# uint BmCode_dimention( BmCode* self );
+# digit BmCode_dimention( BmCode* self );
 BmCode_dimention= core.BmCode_dimention
-BmCode_dimention.restype= c_uint
+BmCode_dimention.restype= c_digit
 BmCode_dimention.argtypes= [c_void_p]
 
-# uint BmCode_digit( BmCode* self, uint index );
+# digit BmCode_digit( BmCode* self, digit index );
 BmCode_digit= core.BmCode_digit
-BmCode_digit.restype= c_uint
-BmCode_digit.argtypes= [c_void_p, c_uint]
+BmCode_digit.restype= c_digit
+BmCode_digit.argtypes= [c_void_p, c_digit]
 
-# uint BmCode_count( BmCode* self, uint value );
+# digit BmCode_count( BmCode* self, digit value );
 BmCode_count= core.BmCode_count
-BmCode_count.restype= c_uint
-BmCode_count.argtypes= [c_void_p, c_uint]
+BmCode_count.restype= c_digit
+BmCode_count.argtypes= [c_void_p, c_digit]
 
-# ulong BmCode_sum( BmCode* self );
+# hash BmCode_sum( BmCode* self );
 BmCode_sum= core.BmCode_sum
-BmCode_sum.restype= c_ulong
+BmCode_sum.restype= c_hash
 BmCode_sum.argtypes= [c_void_p]
 
-# ulong BmCode_product( BmCode* self );
+# hash BmCode_product( BmCode* self );
 BmCode_product= core.BmCode_product
-BmCode_product.restype= c_ulong
+BmCode_product.restype= c_hash
 BmCode_product.argtypes= [c_void_p]
 
-# BmCode* BmCode_reinit( BmCode* self, uint newSize );
+# BmCode* BmCode_reinit( BmCode* self, digit newDimention );
 BmCode_reinit= core.BmCode_reinit
 BmCode_reinit.restype= c_void_p
-BmCode_reinit.argtypes= [c_void_p, c_uint]
+BmCode_reinit.argtypes= [c_void_p, c_digit]
 
 # BmCode* BmCode_copy( BmCode* self, BmCode* model );
 BmCode_copy= core.BmCode_copy
@@ -106,32 +140,32 @@ BmCode_copyNumbers= core.BmCode_copyNumbers
 BmCode_copyNumbers.restype= c_void_p
 BmCode_copyNumbers.argtypes= [c_void_p, c_void_p]
 
-# BmCode* BmCode_redimention( BmCode* self, uint newSize );
+# BmCode* BmCode_redimention( BmCode* self, digit newDimention );
 BmCode_redimention= core.BmCode_redimention
 BmCode_redimention.restype= c_void_p
-BmCode_redimention.argtypes= [c_void_p, c_uint]
+BmCode_redimention.argtypes= [c_void_p, c_digit]
 
-# BmCode* BmCode_setAll( BmCode* self, uint value );
+# BmCode* BmCode_setAll( BmCode* self, digit value );
 BmCode_setAll= core.BmCode_setAll
 BmCode_setAll.restype= c_void_p
-BmCode_setAll.argtypes= [c_void_p, c_uint]
+BmCode_setAll.argtypes= [c_void_p, c_digit]
 
-# BmCode* BmCode_at_set( BmCode* self, uint index, uint value );
+# BmCode* BmCode_at_set( BmCode* self, digit index, digit value );
 BmCode_at_set= core.BmCode_at_set
 BmCode_at_set.restype= c_void_p
-BmCode_at_set.argtypes= [c_void_p, c_uint, c_uint]
+BmCode_at_set.argtypes= [c_void_p, c_digit, c_digit]
 
-# BmCode* BmCode_at_increment( BmCode* self, uint index, uint value );
+# BmCode* BmCode_at_increment( BmCode* self, digit index, digit value );
 BmCode_at_increment= core.BmCode_at_increment
 BmCode_at_increment.restype= c_void_p
-BmCode_at_increment.argtypes= [c_void_p, c_uint, c_uint]
+BmCode_at_increment.argtypes= [c_void_p, c_digit, c_digit]
 
-# BmCode* BmCode_at_decrement( BmCode* self, uint index, uint value );
+# BmCode* BmCode_at_decrement( BmCode* self, digit index, digit value );
 BmCode_at_decrement= core.BmCode_at_decrement
 BmCode_at_decrement.restype= c_void_p
-BmCode_at_decrement.argtypes= [c_void_p, c_uint, c_uint]
+BmCode_at_decrement.argtypes= [c_void_p, c_digit, c_digit]
 
-# BmCode* BmCode_setNumbers( BmCode* self, uint* numbers );
+# BmCode* BmCode_setNumbers( BmCode* self, digit* numbers );
 BmCode_setNumbers= core.BmCode_setNumbers
 BmCode_setNumbers.restype= c_void_p
 BmCode_setNumbers.argtypes= [c_void_p, c_void_p]
@@ -146,35 +180,35 @@ BmCode_switch= core.BmCode_switch
 BmCode_switch.restype= c_void_p
 BmCode_switch.argtypes= [c_void_p, c_void_p]
 
-# uint BmCode_search( BmCode* self, uint value );
+# digit BmCode_search( BmCode* self, digit value );
 BmCode_search= core.BmCode_search
-BmCode_search.restype= c_uint
-BmCode_search.argtypes= [c_void_p, c_uint]
+BmCode_search.restype= c_digit
+BmCode_search.argtypes= [c_void_p, c_digit]
 
 # bool BmCode_isEqualTo( BmCode* self, BmCode* another );
 BmCode_isEqualTo= core.BmCode_isEqualTo
-BmCode_isEqualTo.restype= c_int
+BmCode_isEqualTo.restype= c_digit
 BmCode_isEqualTo.argtypes= [c_void_p, c_void_p]
 
 # bool BmCode_isGreaterThan( BmCode* self, BmCode* another );
 BmCode_isGreaterThan= core.BmCode_isGreaterThan
-BmCode_isGreaterThan.restype= c_int
+BmCode_isGreaterThan.restype= c_digit
 BmCode_isGreaterThan.argtypes= [c_void_p, c_void_p]
 
 # bool BmCode_isSmallerThan( BmCode* self, BmCode* another );
 BmCode_isSmallerThan= core.BmCode_isSmallerThan
-BmCode_isSmallerThan.restype= c_int
+BmCode_isSmallerThan.restype= c_digit
 BmCode_isSmallerThan.argtypes= [c_void_p, c_void_p]
 
-# ulong BmCode_keyOf( BmCode* self, BmCode* code );
+# hash BmCode_keyOf( BmCode* self, BmCode* code );
 BmCode_keyOf= core.BmCode_keyOf
-BmCode_keyOf.restype= c_ulong
+BmCode_keyOf.restype= c_hash
 BmCode_keyOf.argtypes= [c_void_p, c_void_p]
 
-# BmCode* BmCode_setCode_onKey( BmCode* self, BmCode* configuration, ulong key );
+# BmCode* BmCode_setCode_onKey( BmCode* self, BmCode* configuration, hash key );
 BmCode_setCode_onKey= core.BmCode_setCode_onKey
 BmCode_setCode_onKey.restype= c_void_p
-BmCode_setCode_onKey.argtypes= [c_void_p, c_void_p, c_ulong]
+BmCode_setCode_onKey.argtypes= [c_void_p, c_void_p, c_hash]
 
 # BmCode* BmCode_setCodeFirst( BmCode* self, BmCode* configuration );
 BmCode_setCodeFirst= core.BmCode_setCodeFirst
@@ -186,10 +220,10 @@ BmCode_setCodeLast= core.BmCode_setCodeLast
 BmCode_setCodeLast.restype= c_void_p
 BmCode_setCodeLast.argtypes= [c_void_p, c_void_p]
 
-# BmCode* BmCode_newBmCodeOnKey( BmCode* self, ulong key );
+# BmCode* BmCode_newBmCodeOnKey( BmCode* self, hash key );
 BmCode_newBmCodeOnKey= core.BmCode_newBmCodeOnKey
 BmCode_newBmCodeOnKey.restype= c_void_p
-BmCode_newBmCodeOnKey.argtypes= [c_void_p, c_ulong]
+BmCode_newBmCodeOnKey.argtypes= [c_void_p, c_hash]
 
 # BmCode* BmCode_newBmCodeFirst( BmCode* self );
 BmCode_newBmCodeFirst= core.BmCode_newBmCodeFirst
@@ -213,7 +247,7 @@ BmCode_previousCode.argtypes= [c_void_p, c_void_p]
 
 # bool BmCode_isIncluding( BmCode* self, BmCode* configuration );
 BmCode_isIncluding= core.BmCode_isIncluding
-BmCode_isIncluding.restype= c_int
+BmCode_isIncluding.restype= c_digit
 BmCode_isIncluding.argtypes= [c_void_p, c_void_p]
 
 # BmCode* BmCode_newBmCodeMask( BmCode* self, BmCode* mask );
@@ -226,40 +260,40 @@ BmCode_print= core.BmCode_print
 BmCode_print.restype= c_void_p
 BmCode_print.argtypes= [c_void_p, c_void_p]
 
-# BmVector* newBmVector( uint size );
+# BmVector* newBmVector( digit dimention );
 newBmVector= core.newBmVector
 newBmVector.restype= c_void_p
-newBmVector.argtypes= [c_uint]
+newBmVector.argtypes= [c_digit]
 
-# BmVector* newBmVector_values( uint size, double* values );
+# BmVector* newBmVector_values( digit dimention, double* values );
 newBmVector_values= core.newBmVector_values
 newBmVector_values.restype= c_void_p
-newBmVector_values.argtypes= [c_uint, c_void_p]
+newBmVector_values.argtypes= [c_digit, c_void_p]
 
-# BmVector* newBmVector_all( uint size, double value );
+# BmVector* newBmVector_all( digit dimention, double value );
 newBmVector_all= core.newBmVector_all
 newBmVector_all.restype= c_void_p
-newBmVector_all.argtypes= [c_uint, c_double]
+newBmVector_all.argtypes= [c_digit, c_double]
 
 # BmVector* newBmVectorAs( BmVector* model );
 newBmVectorAs= core.newBmVectorAs
 newBmVectorAs.restype= c_void_p
 newBmVectorAs.argtypes= [c_void_p]
 
-# BmVector* BmVector_create( BmVector* self, uint size );
+# BmVector* BmVector_create( BmVector* self, digit dimention );
 BmVector_create= core.BmVector_create
 BmVector_create.restype= c_void_p
-BmVector_create.argtypes= [c_void_p, c_uint]
+BmVector_create.argtypes= [c_void_p, c_digit]
 
-# BmVector* BmVector_create_values( BmVector* self, uint size, double* values );
+# BmVector* BmVector_create_values( BmVector* self, digit dimention, double* values );
 BmVector_create_values= core.BmVector_create_values
 BmVector_create_values.restype= c_void_p
-BmVector_create_values.argtypes= [c_void_p, c_uint, c_void_p]
+BmVector_create_values.argtypes= [c_void_p, c_digit, c_void_p]
 
-# BmVector* BmVector_create_all( BmVector* self, uint size, double value );
+# BmVector* BmVector_create_all( BmVector* self, digit dimention, double value );
 BmVector_create_all= core.BmVector_create_all
 BmVector_create_all.restype= c_void_p
-BmVector_create_all.argtypes= [c_void_p, c_uint, c_double]
+BmVector_create_all.argtypes= [c_void_p, c_digit, c_double]
 
 # BmVector* BmVector_createAs( BmVector* self, BmVector* model );
 BmVector_createAs= core.BmVector_createAs
@@ -276,35 +310,35 @@ deleteBmVector= core.deleteBmVector
 deleteBmVector.restype= c_void_p
 deleteBmVector.argtypes= [c_void_p]
 
-# BmVector* BmVector_reinit( BmVector* self, uint newSize );
+# BmVector* BmVector_reinit( BmVector* self, digit newDimention );
 BmVector_reinit= core.BmVector_reinit
 BmVector_reinit.restype= c_void_p
-BmVector_reinit.argtypes= [c_void_p, c_uint]
+BmVector_reinit.argtypes= [c_void_p, c_digit]
 
 # BmVector* BmVector_copy( BmVector* self, BmVector* model );
 BmVector_copy= core.BmVector_copy
 BmVector_copy.restype= c_void_p
 BmVector_copy.argtypes= [c_void_p, c_void_p]
 
-# uint BmVector_dimention( BmVector* self );
+# digit BmVector_dimention( BmVector* self );
 BmVector_dimention= core.BmVector_dimention
-BmVector_dimention.restype= c_uint
+BmVector_dimention.restype= c_digit
 BmVector_dimention.argtypes= [c_void_p]
 
-# double BmVector_value( BmVector* self, uint i );
+# double BmVector_value( BmVector* self, digit i );
 BmVector_value= core.BmVector_value
 BmVector_value.restype= c_double
-BmVector_value.argtypes= [c_void_p, c_uint]
+BmVector_value.argtypes= [c_void_p, c_digit]
 
-# BmVector* BmVector_redimention( BmVector* self, uint size );
+# BmVector* BmVector_redimention( BmVector* self, digit newDimention );
 BmVector_redimention= core.BmVector_redimention
 BmVector_redimention.restype= c_void_p
-BmVector_redimention.argtypes= [c_void_p, c_uint]
+BmVector_redimention.argtypes= [c_void_p, c_digit]
 
-# double BmVector_at_set( BmVector* self, uint i, double value );
+# double BmVector_at_set( BmVector* self, digit i, double value );
 BmVector_at_set= core.BmVector_at_set
 BmVector_at_set.restype= c_double
-BmVector_at_set.argtypes= [c_void_p, c_uint, c_double]
+BmVector_at_set.argtypes= [c_void_p, c_digit, c_double]
 
 # BmVector* BmVector_setValues( BmVector* self, double* values );
 BmVector_setValues= core.BmVector_setValues
@@ -323,17 +357,17 @@ BmVector_product.argtypes= [c_void_p]
 
 # bool BmVector_isEqualTo( BmVector* self, BmVector* another );
 BmVector_isEqualTo= core.BmVector_isEqualTo
-BmVector_isEqualTo.restype= c_int
+BmVector_isEqualTo.restype= c_digit
 BmVector_isEqualTo.argtypes= [c_void_p, c_void_p]
 
 # bool BmVector_isGreaterThan( BmVector* self, BmVector* another );
 BmVector_isGreaterThan= core.BmVector_isGreaterThan
-BmVector_isGreaterThan.restype= c_int
+BmVector_isGreaterThan.restype= c_digit
 BmVector_isGreaterThan.argtypes= [c_void_p, c_void_p]
 
 # bool BmVector_isSmallerThan( BmVector* self, BmVector* another );
 BmVector_isSmallerThan= core.BmVector_isSmallerThan
-BmVector_isSmallerThan.restype= c_int
+BmVector_isSmallerThan.restype= c_digit
 BmVector_isSmallerThan.argtypes= [c_void_p, c_void_p]
 
 # char* BmVector_print( BmVector* self, char* output );
@@ -346,40 +380,40 @@ BmVector_format_print= core.BmVector_format_print
 BmVector_format_print.restype= c_void_p
 BmVector_format_print.argtypes= [c_void_p, c_void_p, c_void_p]
 
-# BmBench* newBmBench( uint capacity );
+# BmBench* newBmBench( digit capacity );
 newBmBench= core.newBmBench
 newBmBench.restype= c_void_p
-newBmBench.argtypes= [c_uint]
+newBmBench.argtypes= [c_digit]
 
-# BmBench* newBmBench_codeDim_vectorDim( uint capacity, uint codeDim, uint vectorDim );
+# BmBench* newBmBench_codeDim_vectorDim( digit capacity, digit codeDim, digit vectorDim );
 newBmBench_codeDim_vectorDim= core.newBmBench_codeDim_vectorDim
 newBmBench_codeDim_vectorDim.restype= c_void_p
-newBmBench_codeDim_vectorDim.argtypes= [c_uint, c_uint, c_uint]
+newBmBench_codeDim_vectorDim.argtypes= [c_digit, c_digit, c_digit]
 
-# BmBench* newBmBench_startDigit_value( uint capacity, uint digit, double value );
+# BmBench* newBmBench_startDigit_value( digit capacity, digit aDigit, double value );
 newBmBench_startDigit_value= core.newBmBench_startDigit_value
 newBmBench_startDigit_value.restype= c_void_p
-newBmBench_startDigit_value.argtypes= [c_uint, c_uint, c_double]
+newBmBench_startDigit_value.argtypes= [c_digit, c_digit, c_double]
 
-# BmBench* newBmBench_startWithCode_vector( uint capacity, BmCode* newCode, BmVector* newVector );
+# BmBench* newBmBench_startWithCode_vector( digit capacity, BmCode* newCode, BmVector* newVector );
 newBmBench_startWithCode_vector= core.newBmBench_startWithCode_vector
 newBmBench_startWithCode_vector.restype= c_void_p
-newBmBench_startWithCode_vector.argtypes= [c_uint, c_void_p, c_void_p]
+newBmBench_startWithCode_vector.argtypes= [c_digit, c_void_p, c_void_p]
 
 # BmBench* newBmBenchAs( BmBench* model );
 newBmBenchAs= core.newBmBenchAs
 newBmBenchAs.restype= c_void_p
 newBmBenchAs.argtypes= [c_void_p]
 
-# BmBench* BmBench_create( BmBench* self, uint capacity );
+# BmBench* BmBench_create( BmBench* self, digit capacity );
 BmBench_create= core.BmBench_create
 BmBench_create.restype= c_void_p
-BmBench_create.argtypes= [c_void_p, c_uint]
+BmBench_create.argtypes= [c_void_p, c_digit]
 
-# BmBench* BmBench_create_codeDim_vectorDim( BmBench* self, uint capacity, uint codeDim, uint vectorDim );
+# BmBench* BmBench_create_codeDim_vectorDim( BmBench* self, digit capacity, digit codeDim, digit vectorDim );
 BmBench_create_codeDim_vectorDim= core.BmBench_create_codeDim_vectorDim
 BmBench_create_codeDim_vectorDim.restype= c_void_p
-BmBench_create_codeDim_vectorDim.argtypes= [c_void_p, c_uint, c_uint, c_uint]
+BmBench_create_codeDim_vectorDim.argtypes= [c_void_p, c_digit, c_digit, c_digit]
 
 # BmBench* BmBench_createAs( BmBench* self, BmBench* model );
 BmBench_createAs= core.BmBench_createAs
@@ -396,69 +430,69 @@ deleteBmBench= core.deleteBmBench
 deleteBmBench.restype= c_void_p
 deleteBmBench.argtypes= [c_void_p]
 
-# BmBench* BmBench_reinit( BmBench* self, uint capacity );
+# BmBench* BmBench_reinit( BmBench* self, digit capacity );
 BmBench_reinit= core.BmBench_reinit
 BmBench_reinit.restype= c_void_p
-BmBench_reinit.argtypes= [c_void_p, c_uint]
+BmBench_reinit.argtypes= [c_void_p, c_digit]
 
-# uint BmBench_size( BmBench* self );
+# digit BmBench_size( BmBench* self );
 BmBench_size= core.BmBench_size
-BmBench_size.restype= c_uint
+BmBench_size.restype= c_digit
 BmBench_size.argtypes= [c_void_p]
 
-# uint BmBench_codeDimention( BmBench* self );
+# digit BmBench_codeDimention( BmBench* self );
 BmBench_codeDimention= core.BmBench_codeDimention
-BmBench_codeDimention.restype= c_uint
+BmBench_codeDimention.restype= c_digit
 BmBench_codeDimention.argtypes= [c_void_p]
 
-# uint BmBench_vectorDimention( BmBench* self );
+# digit BmBench_vectorDimention( BmBench* self );
 BmBench_vectorDimention= core.BmBench_vectorDimention
-BmBench_vectorDimention.restype= c_uint
+BmBench_vectorDimention.restype= c_digit
 BmBench_vectorDimention.argtypes= [c_void_p]
 
-# BmCode* BmBench_codeAt( BmBench* self, uint i );
+# BmCode* BmBench_codeAt( BmBench* self, digit i );
 BmBench_codeAt= core.BmBench_codeAt
 BmBench_codeAt.restype= c_void_p
-BmBench_codeAt.argtypes= [c_void_p, c_uint]
+BmBench_codeAt.argtypes= [c_void_p, c_digit]
 
-# BmVector* BmBench_vectorAt( BmBench* self, uint i );
+# BmVector* BmBench_vectorAt( BmBench* self, digit i );
 BmBench_vectorAt= core.BmBench_vectorAt
 BmBench_vectorAt.restype= c_void_p
-BmBench_vectorAt.argtypes= [c_void_p, c_uint]
+BmBench_vectorAt.argtypes= [c_void_p, c_digit]
 
-# uint BmBench_digitAt( BmBench* self, uint i );
+# digit BmBench_digitAt( BmBench* self, digit i );
 BmBench_digitAt= core.BmBench_digitAt
-BmBench_digitAt.restype= c_uint
-BmBench_digitAt.argtypes= [c_void_p, c_uint]
+BmBench_digitAt.restype= c_digit
+BmBench_digitAt.argtypes= [c_void_p, c_digit]
 
-# double BmBench_valueAt( BmBench* self, uint i );
+# double BmBench_valueAt( BmBench* self, digit i );
 BmBench_valueAt= core.BmBench_valueAt
 BmBench_valueAt.restype= c_double
-BmBench_valueAt.argtypes= [c_void_p, c_uint]
+BmBench_valueAt.argtypes= [c_void_p, c_digit]
 
-# uint BmBench_at_digit( BmBench* self, uint i, uint j );
+# digit BmBench_at_digit( BmBench* self, digit i, digit j );
 BmBench_at_digit= core.BmBench_at_digit
-BmBench_at_digit.restype= c_uint
-BmBench_at_digit.argtypes= [c_void_p, c_uint, c_uint]
+BmBench_at_digit.restype= c_digit
+BmBench_at_digit.argtypes= [c_void_p, c_digit, c_digit]
 
-# double BmBench_at_value( BmBench* self, uint i, uint j );
+# double BmBench_at_value( BmBench* self, digit i, digit j );
 BmBench_at_value= core.BmBench_at_value
 BmBench_at_value.restype= c_double
-BmBench_at_value.argtypes= [c_void_p, c_uint, c_uint]
+BmBench_at_value.argtypes= [c_void_p, c_digit, c_digit]
 
-# void BmBench_resizeCapacity( BmBench* self, uint newCapacity );
+# void BmBench_resizeCapacity( BmBench* self, digit newCapacity );
 BmBench_resizeCapacity= core.BmBench_resizeCapacity
 BmBench_resizeCapacity.restype= c_void_p
-BmBench_resizeCapacity.argtypes= [c_void_p, c_uint]
+BmBench_resizeCapacity.argtypes= [c_void_p, c_digit]
 
-# uint BmBench_attachCode_vector( BmBench* self, BmCode* newCode, BmVector* newVector );
+# digit BmBench_attachCode_vector( BmBench* self, BmCode* newCode, BmVector* newVector );
 BmBench_attachCode_vector= core.BmBench_attachCode_vector
-BmBench_attachCode_vector.restype= c_uint
+BmBench_attachCode_vector.restype= c_digit
 BmBench_attachCode_vector.argtypes= [c_void_p, c_void_p, c_void_p]
 
-# uint BmBench_attachFrontCode_vector( BmBench* self, BmCode* newCode, BmVector* newVector );
+# digit BmBench_attachFrontCode_vector( BmBench* self, BmCode* newCode, BmVector* newVector );
 BmBench_attachFrontCode_vector= core.BmBench_attachFrontCode_vector
-BmBench_attachFrontCode_vector.restype= c_uint
+BmBench_attachFrontCode_vector.restype= c_digit
 BmBench_attachFrontCode_vector.argtypes= [c_void_p, c_void_p, c_void_p]
 
 # BmCode* BmBench_detach( BmBench* self );
@@ -471,24 +505,24 @@ BmBench_detachFront= core.BmBench_detachFront
 BmBench_detachFront.restype= c_void_p
 BmBench_detachFront.argtypes= [c_void_p]
 
-# BmBench* BmBench_increase( BmBench* self, uint number );
+# BmBench* BmBench_increase( BmBench* self, digit number );
 BmBench_increase= core.BmBench_increase
 BmBench_increase.restype= c_void_p
-BmBench_increase.argtypes= [c_void_p, c_uint]
+BmBench_increase.argtypes= [c_void_p, c_digit]
 
-# BmBench* BmBench_increaseFront( BmBench* self, uint number );
+# BmBench* BmBench_increaseFront( BmBench* self, digit number );
 BmBench_increaseFront= core.BmBench_increaseFront
 BmBench_increaseFront.restype= c_void_p
-BmBench_increaseFront.argtypes= [c_void_p, c_uint]
+BmBench_increaseFront.argtypes= [c_void_p, c_digit]
 
-# uint BmBench_attachCode( BmBench* self, BmCode* newItem );
+# digit BmBench_attachCode( BmBench* self, BmCode* newItem );
 BmBench_attachCode= core.BmBench_attachCode
-BmBench_attachCode.restype= c_uint
+BmBench_attachCode.restype= c_digit
 BmBench_attachCode.argtypes= [c_void_p, c_void_p]
 
-# uint BmBench_attachVector( BmBench* self, BmVector* newItem );
+# digit BmBench_attachVector( BmBench* self, BmVector* newItem );
 BmBench_attachVector= core.BmBench_attachVector
-BmBench_attachVector.restype= c_uint
+BmBench_attachVector.restype= c_digit
 BmBench_attachVector.argtypes= [c_void_p, c_void_p]
 
 # void BmBench_switch( BmBench* self, BmBench* doppleganger );
@@ -496,55 +530,55 @@ BmBench_switch= core.BmBench_switch
 BmBench_switch.restype= c_void_p
 BmBench_switch.argtypes= [c_void_p, c_void_p]
 
-# uint BmBench_addDigit_value( BmBench* self, uint d, double v );
+# digit BmBench_addDigit_value( BmBench* self, digit d, double v );
 BmBench_addDigit_value= core.BmBench_addDigit_value
-BmBench_addDigit_value.restype= c_uint
-BmBench_addDigit_value.argtypes= [c_void_p, c_uint, c_double]
+BmBench_addDigit_value.restype= c_digit
+BmBench_addDigit_value.argtypes= [c_void_p, c_digit, c_double]
 
-# BmBench* BmBench_at_setDigit( BmBench* self, uint i, uint digit );
+# BmBench* BmBench_at_setDigit( BmBench* self, digit i, digit aDigit );
 BmBench_at_setDigit= core.BmBench_at_setDigit
 BmBench_at_setDigit.restype= c_void_p
-BmBench_at_setDigit.argtypes= [c_void_p, c_uint, c_uint]
+BmBench_at_setDigit.argtypes= [c_void_p, c_digit, c_digit]
 
-# BmBench* BmBench_at_setValue( BmBench* self, uint i, double value );
+# BmBench* BmBench_at_setValue( BmBench* self, digit i, double value );
 BmBench_at_setValue= core.BmBench_at_setValue
 BmBench_at_setValue.restype= c_void_p
-BmBench_at_setValue.argtypes= [c_void_p, c_uint, c_double]
+BmBench_at_setValue.argtypes= [c_void_p, c_digit, c_double]
 
 # void BmBench_add_reducted( BmBench* self, BmBench* another, BmCode* mask );
 BmBench_add_reducted= core.BmBench_add_reducted
 BmBench_add_reducted.restype= c_void_p
 BmBench_add_reducted.argtypes= [c_void_p, c_void_p, c_void_p]
 
-# uint BmBench_sort( BmBench* self, fctptr_BmBench_compare compare );
+# digit BmBench_sort( BmBench* self, fctptr_BmBench_compare compare );
 BmBench_sort= core.BmBench_sort
-BmBench_sort.restype= c_uint
+BmBench_sort.restype= c_digit
 BmBench_sort.argtypes= [c_void_p, c_void_p]
 
-# uint BmBench_switchAt_at( BmBench* self, uint id1, uint id2 );
+# digit BmBench_switchAt_at( BmBench* self, digit id1, digit id2 );
 BmBench_switchAt_at= core.BmBench_switchAt_at
-BmBench_switchAt_at.restype= c_uint
-BmBench_switchAt_at.argtypes= [c_void_p, c_uint, c_uint]
+BmBench_switchAt_at.restype= c_digit
+BmBench_switchAt_at.argtypes= [c_void_p, c_digit, c_digit]
 
-# bool BmBench_is_codeGreater( BmBench* self, uint i1, uint i2 );
+# bool BmBench_is_codeGreater( BmBench* self, digit i1, digit i2 );
 BmBench_is_codeGreater= core.BmBench_is_codeGreater
-BmBench_is_codeGreater.restype= c_int
-BmBench_is_codeGreater.argtypes= [c_void_p, c_uint, c_uint]
+BmBench_is_codeGreater.restype= c_digit
+BmBench_is_codeGreater.argtypes= [c_void_p, c_digit, c_digit]
 
-# bool BmBench_is_codeSmaller( BmBench* self, uint i1, uint i2 );
+# bool BmBench_is_codeSmaller( BmBench* self, digit i1, digit i2 );
 BmBench_is_codeSmaller= core.BmBench_is_codeSmaller
-BmBench_is_codeSmaller.restype= c_int
-BmBench_is_codeSmaller.argtypes= [c_void_p, c_uint, c_uint]
+BmBench_is_codeSmaller.restype= c_digit
+BmBench_is_codeSmaller.argtypes= [c_void_p, c_digit, c_digit]
 
-# bool BmBench_is_vectorGreater( BmBench* self, uint i1, uint i2 );
+# bool BmBench_is_vectorGreater( BmBench* self, digit i1, digit i2 );
 BmBench_is_vectorGreater= core.BmBench_is_vectorGreater
-BmBench_is_vectorGreater.restype= c_int
-BmBench_is_vectorGreater.argtypes= [c_void_p, c_uint, c_uint]
+BmBench_is_vectorGreater.restype= c_digit
+BmBench_is_vectorGreater.argtypes= [c_void_p, c_digit, c_digit]
 
-# bool BmBench_is_vectorSmaller( BmBench* self, uint i1, uint i2 );
+# bool BmBench_is_vectorSmaller( BmBench* self, digit i1, digit i2 );
 BmBench_is_vectorSmaller= core.BmBench_is_vectorSmaller
-BmBench_is_vectorSmaller.restype= c_int
-BmBench_is_vectorSmaller.argtypes= [c_void_p, c_uint, c_uint]
+BmBench_is_vectorSmaller.restype= c_digit
+BmBench_is_vectorSmaller.argtypes= [c_void_p, c_digit, c_digit]
 
 # char* BmBench_print( BmBench* self, char* output );
 BmBench_print= core.BmBench_print
@@ -561,10 +595,10 @@ BmBench_printNetwork= core.BmBench_printNetwork
 BmBench_printNetwork.restype= c_void_p
 BmBench_printNetwork.argtypes= [c_void_p, c_void_p]
 
-# BmTree* newBmTree( uint binarySpaceSize );
+# BmTree* newBmTree( digit binarySpaceSize );
 newBmTree= core.newBmTree
 newBmTree.restype= c_void_p
-newBmTree.argtypes= [c_uint]
+newBmTree.argtypes= [c_digit]
 
 # BmTree* newBmTreeWith( BmCode* newSpace );
 newBmTreeWith= core.newBmTreeWith
@@ -591,24 +625,24 @@ BmTree_reinitWith= core.BmTree_reinitWith
 BmTree_reinitWith.restype= c_void_p
 BmTree_reinitWith.argtypes= [c_void_p, c_void_p]
 
-# BmTree* BmTree_clearWhith_on( BmTree* self, uint index, uint defaultOption );
+# BmTree* BmTree_clearWhith_on( BmTree* self, digit index, digit defaultOption );
 BmTree_clearWhith_on= core.BmTree_clearWhith_on
 BmTree_clearWhith_on.restype= c_void_p
-BmTree_clearWhith_on.argtypes= [c_void_p, c_uint, c_uint]
+BmTree_clearWhith_on.argtypes= [c_void_p, c_digit, c_digit]
 
-# BmTree* BmTree_clearOn( BmTree* self, uint defaultOption );
+# BmTree* BmTree_clearOn( BmTree* self, digit defaultOption );
 BmTree_clearOn= core.BmTree_clearOn
 BmTree_clearOn.restype= c_void_p
-BmTree_clearOn.argtypes= [c_void_p, c_uint]
+BmTree_clearOn.argtypes= [c_void_p, c_digit]
 
-# uint BmTree_dimention( BmTree* self );
+# digit BmTree_dimention( BmTree* self );
 BmTree_dimention= core.BmTree_dimention
-BmTree_dimention.restype= c_uint
+BmTree_dimention.restype= c_digit
 BmTree_dimention.argtypes= [c_void_p]
 
-# uint BmTree_size( BmTree* self );
+# digit BmTree_size( BmTree* self );
 BmTree_size= core.BmTree_size
-BmTree_size.restype= c_uint
+BmTree_size.restype= c_digit
 BmTree_size.argtypes= [c_void_p]
 
 # BmCode* BmTree_inputRanges( BmTree* self );
@@ -616,140 +650,140 @@ BmTree_inputRanges= core.BmTree_inputRanges
 BmTree_inputRanges.restype= c_void_p
 BmTree_inputRanges.argtypes= [c_void_p]
 
-# uint BmTree_at( BmTree* self, BmCode* code );
+# digit BmTree_at( BmTree* self, BmCode* code );
 BmTree_at= core.BmTree_at
-BmTree_at.restype= c_uint
+BmTree_at.restype= c_digit
 BmTree_at.argtypes= [c_void_p, c_void_p]
 
-# uint BmTreeChild( uint key );
+# digit BmTreeChild( digit key );
 BmTreeChild= core.BmTreeChild
-BmTreeChild.restype= c_uint
-BmTreeChild.argtypes= [c_uint]
+BmTreeChild.restype= c_digit
+BmTreeChild.argtypes= [c_digit]
 
-# uint BmTreeLeaf( uint key );
+# digit BmTreeLeaf( digit key );
 BmTreeLeaf= core.BmTreeLeaf
-BmTreeLeaf.restype= c_uint
-BmTreeLeaf.argtypes= [c_uint]
+BmTreeLeaf.restype= c_digit
+BmTreeLeaf.argtypes= [c_digit]
 
-# void BmTree_reziseCapacity( BmTree* self, uint newCapacity );
+# void BmTree_reziseCapacity( BmTree* self, digit newCapacity );
 BmTree_reziseCapacity= core.BmTree_reziseCapacity
 BmTree_reziseCapacity.restype= c_void_p
-BmTree_reziseCapacity.argtypes= [c_void_p, c_uint]
+BmTree_reziseCapacity.argtypes= [c_void_p, c_digit]
 
 # void BmTree_reziseCompleteCapacity( BmTree* self );
 BmTree_reziseCompleteCapacity= core.BmTree_reziseCompleteCapacity
 BmTree_reziseCompleteCapacity.restype= c_void_p
 BmTree_reziseCompleteCapacity.argtypes= [c_void_p]
 
-# uint BmTree_at_set( BmTree* self, BmCode* code, uint output );
+# digit BmTree_at_set( BmTree* self, BmCode* code, digit output );
 BmTree_at_set= core.BmTree_at_set
-BmTree_at_set.restype= c_uint
-BmTree_at_set.argtypes= [c_void_p, c_void_p, c_uint]
+BmTree_at_set.restype= c_digit
+BmTree_at_set.argtypes= [c_void_p, c_void_p, c_digit]
 
-# uint BmTree_at_readOrder_set( BmTree* self, BmCode* code, BmCode* codeOrder, uint output );
+# digit BmTree_at_readOrder_set( BmTree* self, BmCode* code, BmCode* codeOrder, digit output );
 BmTree_at_readOrder_set= core.BmTree_at_readOrder_set
-BmTree_at_readOrder_set.restype= c_uint
-BmTree_at_readOrder_set.argtypes= [c_void_p, c_void_p, c_void_p, c_uint]
+BmTree_at_readOrder_set.restype= c_digit
+BmTree_at_readOrder_set.argtypes= [c_void_p, c_void_p, c_void_p, c_digit]
 
-# uint BmTree_branchSize( BmTree* self, uint iBranch );
+# digit BmTree_branchSize( BmTree* self, digit iBranch );
 BmTree_branchSize= core.BmTree_branchSize
-BmTree_branchSize.restype= c_uint
-BmTree_branchSize.argtypes= [c_void_p, c_uint]
+BmTree_branchSize.restype= c_digit
+BmTree_branchSize.argtypes= [c_void_p, c_digit]
 
-# uint BmTree_branch_stateIndex( BmTree* self, uint iBranch, uint state );
+# digit BmTree_branch_stateIndex( BmTree* self, digit iBranch, digit state );
 BmTree_branch_stateIndex= core.BmTree_branch_stateIndex
-BmTree_branch_stateIndex.restype= c_uint
-BmTree_branch_stateIndex.argtypes= [c_void_p, c_uint, c_uint]
+BmTree_branch_stateIndex.restype= c_digit
+BmTree_branch_stateIndex.argtypes= [c_void_p, c_digit, c_digit]
 
-# uint BmTree_branch_state( BmTree* self, uint iBranch, uint state );
+# digit BmTree_branch_state( BmTree* self, digit iBranch, digit state );
 BmTree_branch_state= core.BmTree_branch_state
-BmTree_branch_state.restype= c_uint
-BmTree_branch_state.argtypes= [c_void_p, c_uint, c_uint]
+BmTree_branch_state.restype= c_digit
+BmTree_branch_state.argtypes= [c_void_p, c_digit, c_digit]
 
-# uint BmTree_branch_stateIsLeaf( BmTree* self, uint iBranch, uint state );
+# digit BmTree_branch_stateIsLeaf( BmTree* self, digit iBranch, digit state );
 BmTree_branch_stateIsLeaf= core.BmTree_branch_stateIsLeaf
-BmTree_branch_stateIsLeaf.restype= c_uint
-BmTree_branch_stateIsLeaf.argtypes= [c_void_p, c_uint, c_uint]
+BmTree_branch_stateIsLeaf.restype= c_digit
+BmTree_branch_stateIsLeaf.argtypes= [c_void_p, c_digit, c_digit]
 
-# uint BmTree_branch_stateOption( BmTree* self, uint iBranch, uint state );
+# digit BmTree_branch_stateOption( BmTree* self, digit iBranch, digit state );
 BmTree_branch_stateOption= core.BmTree_branch_stateOption
-BmTree_branch_stateOption.restype= c_uint
-BmTree_branch_stateOption.argtypes= [c_void_p, c_uint, c_uint]
+BmTree_branch_stateOption.restype= c_digit
+BmTree_branch_stateOption.argtypes= [c_void_p, c_digit, c_digit]
 
-# uint BmTree_branch_stateLeaf( BmTree* self, uint iBranch, uint state );
+# digit BmTree_branch_stateLeaf( BmTree* self, digit iBranch, digit state );
 BmTree_branch_stateLeaf= core.BmTree_branch_stateLeaf
-BmTree_branch_stateLeaf.restype= c_uint
-BmTree_branch_stateLeaf.argtypes= [c_void_p, c_uint, c_uint]
+BmTree_branch_stateLeaf.restype= c_digit
+BmTree_branch_stateLeaf.argtypes= [c_void_p, c_digit, c_digit]
 
-# uint BmTree_branchVariable( BmTree* self, uint iBranch );
+# digit BmTree_branchVariable( BmTree* self, digit iBranch );
 BmTree_branchVariable= core.BmTree_branchVariable
-BmTree_branchVariable.restype= c_uint
-BmTree_branchVariable.argtypes= [c_void_p, c_uint]
+BmTree_branchVariable.restype= c_digit
+BmTree_branchVariable.argtypes= [c_void_p, c_digit]
 
-# uint BmTree_branchStart( BmTree* self, uint iBranch );
+# digit BmTree_branchStart( BmTree* self, digit iBranch );
 BmTree_branchStart= core.BmTree_branchStart
-BmTree_branchStart.restype= c_uint
-BmTree_branchStart.argtypes= [c_void_p, c_uint]
+BmTree_branchStart.restype= c_digit
+BmTree_branchStart.argtypes= [c_void_p, c_digit]
 
-# uint BmTree_branchBound( BmTree* self, uint iBranch );
+# digit BmTree_branchBound( BmTree* self, digit iBranch );
 BmTree_branchBound= core.BmTree_branchBound
-BmTree_branchBound.restype= c_uint
-BmTree_branchBound.argtypes= [c_void_p, c_uint]
+BmTree_branchBound.restype= c_digit
+BmTree_branchBound.argtypes= [c_void_p, c_digit]
 
-# uint BmTree_branchStep( BmTree* self, uint iBranch );
+# digit BmTree_branchStep( BmTree* self, digit iBranch );
 BmTree_branchStep= core.BmTree_branchStep
-BmTree_branchStep.restype= c_uint
-BmTree_branchStep.argtypes= [c_void_p, c_uint]
+BmTree_branchStep.restype= c_digit
+BmTree_branchStep.argtypes= [c_void_p, c_digit]
 
-# uint BmTree_branchNumberOfOutputs( BmTree* self, uint branch );
+# digit BmTree_branchNumberOfOutputs( BmTree* self, digit branch );
 BmTree_branchNumberOfOutputs= core.BmTree_branchNumberOfOutputs
-BmTree_branchNumberOfOutputs.restype= c_uint
-BmTree_branchNumberOfOutputs.argtypes= [c_void_p, c_uint]
+BmTree_branchNumberOfOutputs.restype= c_digit
+BmTree_branchNumberOfOutputs.argtypes= [c_void_p, c_digit]
 
-# uint BmTree_deepOf( BmTree* self, BmCode* code );
+# digit BmTree_deepOf( BmTree* self, BmCode* code );
 BmTree_deepOf= core.BmTree_deepOf
-BmTree_deepOf.restype= c_uint
+BmTree_deepOf.restype= c_digit
 BmTree_deepOf.argtypes= [c_void_p, c_void_p]
 
-# uint BmTree_newBranch( BmTree* self, uint iVariable, uint start, uint bound, uint step );
+# digit BmTree_newBranch( BmTree* self, digit iVariable, digit start, digit bound, digit step );
 BmTree_newBranch= core.BmTree_newBranch
-BmTree_newBranch.restype= c_uint
-BmTree_newBranch.argtypes= [c_void_p, c_uint, c_uint, c_uint, c_uint]
+BmTree_newBranch.restype= c_digit
+BmTree_newBranch.argtypes= [c_void_p, c_digit, c_digit, c_digit, c_digit]
 
-# uint BmTree_newBranch_full( BmTree* self, uint iVariable, uint defaultOption );
+# digit BmTree_newBranch_full( BmTree* self, digit iVariable, digit defaultOption );
 BmTree_newBranch_full= core.BmTree_newBranch_full
-BmTree_newBranch_full.restype= c_uint
-BmTree_newBranch_full.argtypes= [c_void_p, c_uint, c_uint]
+BmTree_newBranch_full.restype= c_digit
+BmTree_newBranch_full.argtypes= [c_void_p, c_digit, c_digit]
 
-# uint BmTree_newBranch_binary_options( BmTree* self, uint iVariable, uint  afterValue, uint option1, uint option2 );
+# digit BmTree_newBranch_binary_options( BmTree* self, digit iVariable, digit  afterValue, digit option1, digit option2 );
 BmTree_newBranch_binary_options= core.BmTree_newBranch_binary_options
-BmTree_newBranch_binary_options.restype= c_uint
-BmTree_newBranch_binary_options.argtypes= [c_void_p, c_uint, c_void_p, c_uint, c_uint]
+BmTree_newBranch_binary_options.restype= c_digit
+BmTree_newBranch_binary_options.argtypes= [c_void_p, c_digit, c_void_p, c_digit, c_digit]
 
-# uint BmTree_newBranch_pivot_options( BmTree* self, uint iVariable, uint onValue, uint option1, uint optionOn, uint option2 );
+# digit BmTree_newBranch_pivot_options( BmTree* self, digit iVariable, digit onValue, digit option1, digit optionOn, digit option2 );
 BmTree_newBranch_pivot_options= core.BmTree_newBranch_pivot_options
-BmTree_newBranch_pivot_options.restype= c_uint
-BmTree_newBranch_pivot_options.argtypes= [c_void_p, c_uint, c_uint, c_uint, c_uint, c_uint]
+BmTree_newBranch_pivot_options.restype= c_digit
+BmTree_newBranch_pivot_options.argtypes= [c_void_p, c_digit, c_digit, c_digit, c_digit, c_digit]
 
-# void BmTree_branch_state_connect( BmTree* self, uint branchA, uint stateA, uint branchB );
+# void BmTree_branch_state_connect( BmTree* self, digit branchA, digit stateA, digit branchB );
 BmTree_branch_state_connect= core.BmTree_branch_state_connect
 BmTree_branch_state_connect.restype= c_void_p
-BmTree_branch_state_connect.argtypes= [c_void_p, c_uint, c_uint, c_uint]
+BmTree_branch_state_connect.argtypes= [c_void_p, c_digit, c_digit, c_digit]
 
-# void BmTree_branch_state_setOption( BmTree* self, uint branchA, uint iState, uint outbut );
+# void BmTree_branch_state_setOption( BmTree* self, digit branchA, digit iState, digit outbut );
 BmTree_branch_state_setOption= core.BmTree_branch_state_setOption
 BmTree_branch_state_setOption.restype= c_void_p
-BmTree_branch_state_setOption.argtypes= [c_void_p, c_uint, c_uint, c_uint]
+BmTree_branch_state_setOption.argtypes= [c_void_p, c_digit, c_digit, c_digit]
 
-# uint BmTree_cleanDeadBranches( BmTree* self );
+# digit BmTree_cleanDeadBranches( BmTree* self );
 BmTree_cleanDeadBranches= core.BmTree_cleanDeadBranches
-BmTree_cleanDeadBranches.restype= c_uint
+BmTree_cleanDeadBranches.restype= c_digit
 BmTree_cleanDeadBranches.argtypes= [c_void_p]
 
-# uint BmTree_removeBranch( BmTree* self, uint iBranch );
+# digit BmTree_removeBranch( BmTree* self, digit iBranch );
 BmTree_removeBranch= core.BmTree_removeBranch
-BmTree_removeBranch.restype= c_uint
-BmTree_removeBranch.argtypes= [c_void_p, c_uint]
+BmTree_removeBranch.restype= c_digit
+BmTree_removeBranch.argtypes= [c_void_p, c_digit]
 
 # BmBench* BmTree_asNewBench( BmTree* self );
 BmTree_asNewBench= core.BmTree_asNewBench
@@ -761,10 +795,10 @@ BmTree_fromBench= core.BmTree_fromBench
 BmTree_fromBench.restype= c_void_p
 BmTree_fromBench.argtypes= [c_void_p, c_void_p]
 
-# char* BmTree_branch_print( BmTree* self, uint iBranch, char* output );
+# char* BmTree_branch_print( BmTree* self, digit iBranch, char* output );
 BmTree_branch_print= core.BmTree_branch_print
 BmTree_branch_print.restype= c_void_p
-BmTree_branch_print.argtypes= [c_void_p, c_uint, c_void_p]
+BmTree_branch_print.argtypes= [c_void_p, c_digit, c_void_p]
 
 # char* BmTree_print( BmTree* self, char* output );
 BmTree_print= core.BmTree_print
@@ -786,10 +820,10 @@ BmTree_printInside= core.BmTree_printInside
 BmTree_printInside.restype= c_void_p
 BmTree_printInside.argtypes= [c_void_p, c_void_p]
 
-# BmValueFct* newBmValueFctBasic( uint inputSize, uint outputSize );
+# BmValueFct* newBmValueFctBasic( digit inputSize, digit outputSize );
 newBmValueFctBasic= core.newBmValueFctBasic
 newBmValueFctBasic.restype= c_void_p
-newBmValueFctBasic.argtypes= [c_uint, c_uint]
+newBmValueFctBasic.argtypes= [c_digit, c_digit]
 
 # BmValueFct* newBmValueFctWith( BmCode* newInputRanges, BmVector* newOutputs );
 newBmValueFctWith= core.newBmValueFctWith
@@ -811,9 +845,9 @@ deleteBmValueFct= core.deleteBmValueFct
 deleteBmValueFct.restype= c_void_p
 deleteBmValueFct.argtypes= [c_void_p]
 
-# uint BmValueFct_reinitWith( BmValueFct* self, BmCode* newInputRanges, BmVector* newOutputs );
+# digit BmValueFct_reinitWith( BmValueFct* self, BmCode* newInputRanges, BmVector* newOutputs );
 BmValueFct_reinitWith= core.BmValueFct_reinitWith
-BmValueFct_reinitWith.restype= c_uint
+BmValueFct_reinitWith.restype= c_digit
 BmValueFct_reinitWith.argtypes= [c_void_p, c_void_p, c_void_p]
 
 # BmTree* BmValueFct_selector( BmValueFct* self );
@@ -821,14 +855,14 @@ BmValueFct_selector= core.BmValueFct_selector
 BmValueFct_selector.restype= c_void_p
 BmValueFct_selector.argtypes= [c_void_p]
 
-# uint BmValueFct_inputDimention( BmValueFct* self );
+# digit BmValueFct_inputDimention( BmValueFct* self );
 BmValueFct_inputDimention= core.BmValueFct_inputDimention
-BmValueFct_inputDimention.restype= c_uint
+BmValueFct_inputDimention.restype= c_digit
 BmValueFct_inputDimention.argtypes= [c_void_p]
 
-# uint BmValueFct_outputSize( BmValueFct* self );
+# digit BmValueFct_outputSize( BmValueFct* self );
 BmValueFct_outputSize= core.BmValueFct_outputSize
-BmValueFct_outputSize.restype= c_uint
+BmValueFct_outputSize.restype= c_digit
 BmValueFct_outputSize.argtypes= [c_void_p]
 
 # BmCode* BmValueFct_inputRanges( BmValueFct* self );
@@ -846,20 +880,20 @@ BmValueFct_from= core.BmValueFct_from
 BmValueFct_from.restype= c_double
 BmValueFct_from.argtypes= [c_void_p, c_void_p]
 
-# uint BmValueFct_addValue( BmValueFct* self, double ouputValue );
+# digit BmValueFct_addValue( BmValueFct* self, double ouputValue );
 BmValueFct_addValue= core.BmValueFct_addValue
-BmValueFct_addValue.restype= c_uint
+BmValueFct_addValue.restype= c_digit
 BmValueFct_addValue.argtypes= [c_void_p, c_double]
 
-# uint BmValueFct_ouputId_setValue( BmValueFct* self, uint ouputId, double ouputValue );
+# digit BmValueFct_ouputId_setValue( BmValueFct* self, digit ouputId, double ouputValue );
 BmValueFct_ouputId_setValue= core.BmValueFct_ouputId_setValue
-BmValueFct_ouputId_setValue.restype= c_uint
-BmValueFct_ouputId_setValue.argtypes= [c_void_p, c_uint, c_double]
+BmValueFct_ouputId_setValue.restype= c_digit
+BmValueFct_ouputId_setValue.argtypes= [c_void_p, c_digit, c_double]
 
-# uint BmValueFct_from_set( BmValueFct* self, BmCode* input, uint ouputId );
+# digit BmValueFct_from_set( BmValueFct* self, BmCode* input, digit ouputId );
 BmValueFct_from_set= core.BmValueFct_from_set
-BmValueFct_from_set.restype= c_uint
-BmValueFct_from_set.argtypes= [c_void_p, c_void_p, c_uint]
+BmValueFct_from_set.restype= c_digit
+BmValueFct_from_set.argtypes= [c_void_p, c_void_p, c_digit]
 
 # void BmValueFct_switch( BmValueFct* self, BmValueFct* doppelganger );
 BmValueFct_switch= core.BmValueFct_switch
@@ -881,10 +915,10 @@ BmValueFct_printSep= core.BmValueFct_printSep
 BmValueFct_printSep.restype= c_void_p
 BmValueFct_printSep.argtypes= [c_void_p, c_void_p, c_void_p]
 
-# BmFunction* newBmFunctionBasic( uint inputSize );
+# BmFunction* newBmFunctionBasic( digit inputSize );
 newBmFunctionBasic= core.newBmFunctionBasic
 newBmFunctionBasic.restype= c_void_p
-newBmFunctionBasic.argtypes= [c_uint]
+newBmFunctionBasic.argtypes= [c_digit]
 
 # BmFunction* newBmFunctionWith( BmCode* newInputRanges, BmBench* newOutputs );
 newBmFunctionWith= core.newBmFunctionWith
@@ -921,9 +955,9 @@ BmFunction_selector= core.BmFunction_selector
 BmFunction_selector.restype= c_void_p
 BmFunction_selector.argtypes= [c_void_p]
 
-# uint BmFunction_inputDimention( BmFunction* self );
+# digit BmFunction_inputDimention( BmFunction* self );
 BmFunction_inputDimention= core.BmFunction_inputDimention
-BmFunction_inputDimention.restype= c_uint
+BmFunction_inputDimention.restype= c_digit
 BmFunction_inputDimention.argtypes= [c_void_p]
 
 # BmCode* BmFunction_inputRanges( BmFunction* self );
@@ -931,9 +965,9 @@ BmFunction_inputRanges= core.BmFunction_inputRanges
 BmFunction_inputRanges.restype= c_void_p
 BmFunction_inputRanges.argtypes= [c_void_p]
 
-# uint BmFunction_outputSize( BmFunction* self );
+# digit BmFunction_outputSize( BmFunction* self );
 BmFunction_outputSize= core.BmFunction_outputSize
-BmFunction_outputSize.restype= c_uint
+BmFunction_outputSize.restype= c_digit
 BmFunction_outputSize.argtypes= [c_void_p]
 
 # BmBench* BmFunction_outputs( BmFunction* self );
@@ -941,9 +975,9 @@ BmFunction_outputs= core.BmFunction_outputs
 BmFunction_outputs.restype= c_void_p
 BmFunction_outputs.argtypes= [c_void_p]
 
-# uint BmFunction_from( BmFunction* self, BmCode* input );
+# digit BmFunction_from( BmFunction* self, BmCode* input );
 BmFunction_from= core.BmFunction_from
-BmFunction_from.restype= c_uint
+BmFunction_from.restype= c_digit
 BmFunction_from.argtypes= [c_void_p, c_void_p]
 
 # BmCode* BmFunction_codeFrom( BmFunction* self, BmCode* input );
@@ -956,15 +990,15 @@ BmFunction_valueFrom= core.BmFunction_valueFrom
 BmFunction_valueFrom.restype= c_double
 BmFunction_valueFrom.argtypes= [c_void_p, c_void_p]
 
-# uint BmFunction_attachOuput( BmFunction* self, BmCode* newOuputCode, double ouputValue );
+# digit BmFunction_attachOuput( BmFunction* self, BmCode* newOuputCode, double ouputValue );
 BmFunction_attachOuput= core.BmFunction_attachOuput
-BmFunction_attachOuput.restype= c_uint
+BmFunction_attachOuput.restype= c_digit
 BmFunction_attachOuput.argtypes= [c_void_p, c_void_p, c_double]
 
-# uint BmFunction_from_set( BmFunction* self, BmCode* input, uint ouputId );
+# digit BmFunction_from_set( BmFunction* self, BmCode* input, digit ouputId );
 BmFunction_from_set= core.BmFunction_from_set
-BmFunction_from_set.restype= c_uint
-BmFunction_from_set.argtypes= [c_void_p, c_void_p, c_uint]
+BmFunction_from_set.restype= c_digit
+BmFunction_from_set.argtypes= [c_void_p, c_void_p, c_digit]
 
 # void BmFunction_switch( BmFunction* self, BmFunction* doppelganger );
 BmFunction_switch= core.BmFunction_switch
@@ -981,25 +1015,25 @@ BmFunction_printSep= core.BmFunction_printSep
 BmFunction_printSep.restype= c_void_p
 BmFunction_printSep.argtypes= [c_void_p, c_void_p, c_void_p]
 
-# BmCondition* newBmConditionBasic( uint domain );
+# BmCondition* newBmConditionBasic( digit domain );
 newBmConditionBasic= core.newBmConditionBasic
 newBmConditionBasic.restype= c_void_p
-newBmConditionBasic.argtypes= [c_uint]
+newBmConditionBasic.argtypes= [c_digit]
 
-# BmCondition* newBmConditionWith( uint domain, BmCode* newInputRanges, BmBench* newDefaultDistrib );
+# BmCondition* newBmConditionWith( digit domain, BmCode* newInputRanges, BmBench* newDefaultDistrib );
 newBmConditionWith= core.newBmConditionWith
 newBmConditionWith.restype= c_void_p
-newBmConditionWith.argtypes= [c_uint, c_void_p, c_void_p]
+newBmConditionWith.argtypes= [c_digit, c_void_p, c_void_p]
 
-# BmCondition* BmCondition_createBasic( BmCondition* self, uint domain );
+# BmCondition* BmCondition_createBasic( BmCondition* self, digit domain );
 BmCondition_createBasic= core.BmCondition_createBasic
 BmCondition_createBasic.restype= c_void_p
-BmCondition_createBasic.argtypes= [c_void_p, c_uint]
+BmCondition_createBasic.argtypes= [c_void_p, c_digit]
 
-# BmCondition* BmCondition_createWith( BmCondition* self, uint domain, BmCode* newInputRanges, BmBench* newDefaultDistrib );
+# BmCondition* BmCondition_createWith( BmCondition* self, digit domain, BmCode* newInputRanges, BmBench* newDefaultDistrib );
 BmCondition_createWith= core.BmCondition_createWith
 BmCondition_createWith.restype= c_void_p
-BmCondition_createWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
+BmCondition_createWith.argtypes= [c_void_p, c_digit, c_void_p, c_void_p]
 
 # BmCondition* BmCondition_destroy( BmCondition* self );
 BmCondition_destroy= core.BmCondition_destroy
@@ -1011,19 +1045,19 @@ deleteBmCondition= core.deleteBmCondition
 deleteBmCondition.restype= c_void_p
 deleteBmCondition.argtypes= [c_void_p]
 
-# uint BmCondition_reinitWith( BmCondition* self, uint domain, BmCode* newInputRanges, BmBench* newDistrib );
+# digit BmCondition_reinitWith( BmCondition* self, digit domain, BmCode* newInputRanges, BmBench* newDistrib );
 BmCondition_reinitWith= core.BmCondition_reinitWith
-BmCondition_reinitWith.restype= c_uint
-BmCondition_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
+BmCondition_reinitWith.restype= c_digit
+BmCondition_reinitWith.argtypes= [c_void_p, c_digit, c_void_p, c_void_p]
 
-# uint BmCondition_reinitDistributionsWith( BmCondition* self, BmBench* newDistrib );
+# digit BmCondition_reinitDistributionsWith( BmCondition* self, BmBench* newDistrib );
 BmCondition_reinitDistributionsWith= core.BmCondition_reinitDistributionsWith
-BmCondition_reinitDistributionsWith.restype= c_uint
+BmCondition_reinitDistributionsWith.restype= c_digit
 BmCondition_reinitDistributionsWith.argtypes= [c_void_p, c_void_p]
 
-# uint BmCondition_range( BmCondition* self );
+# digit BmCondition_range( BmCondition* self );
 BmCondition_range= core.BmCondition_range
-BmCondition_range.restype= c_uint
+BmCondition_range.restype= c_digit
 BmCondition_range.argtypes= [c_void_p]
 
 # BmTree* BmCondition_selector( BmCondition* self );
@@ -1041,29 +1075,29 @@ BmCondition_from= core.BmCondition_from
 BmCondition_from.restype= c_void_p
 BmCondition_from.argtypes= [c_void_p, c_void_p]
 
-# BmBench* BmCondition_fromKey( BmCondition* self, uint configKey );
+# BmBench* BmCondition_fromKey( BmCondition* self, digit configKey );
 BmCondition_fromKey= core.BmCondition_fromKey
 BmCondition_fromKey.restype= c_void_p
-BmCondition_fromKey.argtypes= [c_void_p, c_uint]
+BmCondition_fromKey.argtypes= [c_void_p, c_digit]
 
-# uint BmCondition_distributionSize( BmCondition* self );
+# digit BmCondition_distributionSize( BmCondition* self );
 BmCondition_distributionSize= core.BmCondition_distributionSize
-BmCondition_distributionSize.restype= c_uint
+BmCondition_distributionSize.restype= c_digit
 BmCondition_distributionSize.argtypes= [c_void_p]
 
-# BmBench* BmCondition_distributionAt( BmCondition* self, uint iDistrib );
+# BmBench* BmCondition_distributionAt( BmCondition* self, digit iDistrib );
 BmCondition_distributionAt= core.BmCondition_distributionAt
 BmCondition_distributionAt.restype= c_void_p
-BmCondition_distributionAt.argtypes= [c_void_p, c_uint]
+BmCondition_distributionAt.argtypes= [c_void_p, c_digit]
 
-# uint BmCondition_attach( BmCondition* self, BmBench* distribution );
+# digit BmCondition_attach( BmCondition* self, BmBench* distribution );
 BmCondition_attach= core.BmCondition_attach
-BmCondition_attach.restype= c_uint
+BmCondition_attach.restype= c_digit
 BmCondition_attach.argtypes= [c_void_p, c_void_p]
 
-# uint BmCondition_from_attach( BmCondition* self, BmCode* configuration, BmBench* distribution );
+# digit BmCondition_from_attach( BmCondition* self, BmCode* configuration, BmBench* distribution );
 BmCondition_from_attach= core.BmCondition_from_attach
-BmCondition_from_attach.restype= c_uint
+BmCondition_from_attach.restype= c_digit
 BmCondition_from_attach.argtypes= [c_void_p, c_void_p, c_void_p]
 
 # void BmCondition_switch( BmCondition* self, BmCondition* doppelganger );
@@ -1111,10 +1145,10 @@ BmCondition_printIdentity= core.BmCondition_printIdentity
 BmCondition_printIdentity.restype= c_void_p
 BmCondition_printIdentity.argtypes= [c_void_p, c_void_p]
 
-# BmInferer* newBmInferer( BmCode* variableSpace, uint inputDimention, uint outputDimention );
+# BmInferer* newBmInferer( BmCode* variableSpace, digit inputDimention, digit outputDimention );
 newBmInferer= core.newBmInferer
 newBmInferer.restype= c_void_p
-newBmInferer.argtypes= [c_void_p, c_uint, c_uint]
+newBmInferer.argtypes= [c_void_p, c_digit, c_digit]
 
 # BmInferer* newBmInfererStateAction( BmCode* stateSpace, BmCode* actionSpace );
 newBmInfererStateAction= core.newBmInfererStateAction
@@ -1126,10 +1160,10 @@ newBmInfererStateActionShift= core.newBmInfererStateActionShift
 newBmInfererStateActionShift.restype= c_void_p
 newBmInfererStateActionShift.argtypes= [c_void_p, c_void_p, c_void_p]
 
-# BmInferer* BmInferer_create( BmInferer* self, BmCode* varDomains, uint inputDimention, uint outputDimention );
+# BmInferer* BmInferer_create( BmInferer* self, BmCode* varDomains, digit inputDimention, digit outputDimention );
 BmInferer_create= core.BmInferer_create
 BmInferer_create.restype= c_void_p
-BmInferer_create.argtypes= [c_void_p, c_void_p, c_uint, c_uint]
+BmInferer_create.argtypes= [c_void_p, c_void_p, c_digit, c_digit]
 
 # BmInferer* BmInferer_destroy( BmInferer* self );
 BmInferer_destroy= core.BmInferer_destroy
@@ -1146,55 +1180,55 @@ BmInferer_distribution= core.BmInferer_distribution
 BmInferer_distribution.restype= c_void_p
 BmInferer_distribution.argtypes= [c_void_p]
 
-# uint BmInferer_inputDimention( BmInferer* self );
+# digit BmInferer_inputDimention( BmInferer* self );
 BmInferer_inputDimention= core.BmInferer_inputDimention
-BmInferer_inputDimention.restype= c_uint
+BmInferer_inputDimention.restype= c_digit
 BmInferer_inputDimention.argtypes= [c_void_p]
 
-# uint BmInferer_outputDimention( BmInferer* self );
+# digit BmInferer_outputDimention( BmInferer* self );
 BmInferer_outputDimention= core.BmInferer_outputDimention
-BmInferer_outputDimention.restype= c_uint
+BmInferer_outputDimention.restype= c_digit
 BmInferer_outputDimention.argtypes= [c_void_p]
 
-# uint BmInferer_shiftDimention( BmInferer* self );
+# digit BmInferer_shiftDimention( BmInferer* self );
 BmInferer_shiftDimention= core.BmInferer_shiftDimention
-BmInferer_shiftDimention.restype= c_uint
+BmInferer_shiftDimention.restype= c_digit
 BmInferer_shiftDimention.argtypes= [c_void_p]
 
-# uint BmInferer_overallDimention( BmInferer* self );
+# digit BmInferer_overallDimention( BmInferer* self );
 BmInferer_overallDimention= core.BmInferer_overallDimention
-BmInferer_overallDimention.restype= c_uint
+BmInferer_overallDimention.restype= c_digit
 BmInferer_overallDimention.argtypes= [c_void_p]
 
-# BmCondition* BmInferer_node( BmInferer* self, uint iNode );
+# BmCondition* BmInferer_node( BmInferer* self, digit iNode );
 BmInferer_node= core.BmInferer_node
 BmInferer_node.restype= c_void_p
-BmInferer_node.argtypes= [c_void_p, c_uint]
+BmInferer_node.argtypes= [c_void_p, c_digit]
 
-# uint BmInferer_node_size( BmInferer* self, uint iVar );
+# digit BmInferer_node_size( BmInferer* self, digit iVar );
 BmInferer_node_size= core.BmInferer_node_size
-BmInferer_node_size.restype= c_uint
-BmInferer_node_size.argtypes= [c_void_p, c_uint]
+BmInferer_node_size.restype= c_digit
+BmInferer_node_size.argtypes= [c_void_p, c_digit]
 
-# BmCode* BmInferer_node_parents( BmInferer* self, uint iVar );
+# BmCode* BmInferer_node_parents( BmInferer* self, digit iVar );
 BmInferer_node_parents= core.BmInferer_node_parents
 BmInferer_node_parents.restype= c_void_p
-BmInferer_node_parents.argtypes= [c_void_p, c_uint]
+BmInferer_node_parents.argtypes= [c_void_p, c_digit]
 
-# BmCondition* BmInferer_reinitIndependantNode( BmInferer* self, uint index );
+# BmCondition* BmInferer_reinitIndependantNode( BmInferer* self, digit index );
 BmInferer_reinitIndependantNode= core.BmInferer_reinitIndependantNode
 BmInferer_reinitIndependantNode.restype= c_void_p
-BmInferer_reinitIndependantNode.argtypes= [c_void_p, c_uint]
+BmInferer_reinitIndependantNode.argtypes= [c_void_p, c_digit]
 
-# BmCondition* BmInferer_node_reinitWith( BmInferer* self, uint index, BmCode* newParents );
+# BmCondition* BmInferer_node_reinitWith( BmInferer* self, digit index, BmCode* newParents );
 BmInferer_node_reinitWith= core.BmInferer_node_reinitWith
 BmInferer_node_reinitWith.restype= c_void_p
-BmInferer_node_reinitWith.argtypes= [c_void_p, c_uint, c_void_p]
+BmInferer_node_reinitWith.argtypes= [c_void_p, c_digit, c_void_p]
 
-# BmCondition* BmInferer_node_reinitWith_withDefault( BmInferer* self, uint index, BmCode* newDependenceList, BmBench* newDefaultDistrib );
+# BmCondition* BmInferer_node_reinitWith_withDefault( BmInferer* self, digit index, BmCode* newDependenceList, BmBench* newDefaultDistrib );
 BmInferer_node_reinitWith_withDefault= core.BmInferer_node_reinitWith_withDefault
 BmInferer_node_reinitWith_withDefault.restype= c_void_p
-BmInferer_node_reinitWith_withDefault.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
+BmInferer_node_reinitWith_withDefault.argtypes= [c_void_p, c_digit, c_void_p, c_void_p]
 
 # BmBench* BmInferer_process( BmInferer* self, BmBench* inputDistribution );
 BmInferer_process= core.BmInferer_process
@@ -1226,20 +1260,20 @@ BmInferer_printDependency= core.BmInferer_printDependency
 BmInferer_printDependency.restype= c_void_p
 BmInferer_printDependency.argtypes= [c_void_p, c_void_p]
 
-# BmEvaluator* newBmEvaluatorBasic( uint spaceDimention, uint numberOfCriteria );
+# BmEvaluator* newBmEvaluatorBasic( digit spaceDimention, digit numberOfCriteria );
 newBmEvaluatorBasic= core.newBmEvaluatorBasic
 newBmEvaluatorBasic.restype= c_void_p
-newBmEvaluatorBasic.argtypes= [c_uint, c_uint]
+newBmEvaluatorBasic.argtypes= [c_digit, c_digit]
 
-# BmEvaluator* newBmEvaluatorWith( BmCode* newSpace, uint numberOfCriteria );
+# BmEvaluator* newBmEvaluatorWith( BmCode* newSpace, digit numberOfCriteria );
 newBmEvaluatorWith= core.newBmEvaluatorWith
 newBmEvaluatorWith.restype= c_void_p
-newBmEvaluatorWith.argtypes= [c_void_p, c_uint]
+newBmEvaluatorWith.argtypes= [c_void_p, c_digit]
 
-# BmEvaluator* BmEvaluator_createWith( BmEvaluator* self, BmCode* newSpace, uint numberOfCriteria );
+# BmEvaluator* BmEvaluator_createWith( BmEvaluator* self, BmCode* newSpace, digit numberOfCriteria );
 BmEvaluator_createWith= core.BmEvaluator_createWith
 BmEvaluator_createWith.restype= c_void_p
-BmEvaluator_createWith.argtypes= [c_void_p, c_void_p, c_uint]
+BmEvaluator_createWith.argtypes= [c_void_p, c_void_p, c_digit]
 
 # void deleteBmEvaluator( BmEvaluator* self );
 deleteBmEvaluator= core.deleteBmEvaluator
@@ -1256,40 +1290,40 @@ BmEvaluator_space= core.BmEvaluator_space
 BmEvaluator_space.restype= c_void_p
 BmEvaluator_space.argtypes= [c_void_p]
 
-# uint BmEvaluator_numberOfCriteria( BmEvaluator* self );
+# digit BmEvaluator_numberOfCriteria( BmEvaluator* self );
 BmEvaluator_numberOfCriteria= core.BmEvaluator_numberOfCriteria
-BmEvaluator_numberOfCriteria.restype= c_uint
+BmEvaluator_numberOfCriteria.restype= c_digit
 BmEvaluator_numberOfCriteria.argtypes= [c_void_p]
 
-# BmValueFct* BmEvaluator_criterion( BmEvaluator* self, uint iCritirion );
+# BmValueFct* BmEvaluator_criterion( BmEvaluator* self, digit iCritirion );
 BmEvaluator_criterion= core.BmEvaluator_criterion
 BmEvaluator_criterion.restype= c_void_p
-BmEvaluator_criterion.argtypes= [c_void_p, c_uint]
+BmEvaluator_criterion.argtypes= [c_void_p, c_digit]
 
 # BmVector* BmEvaluator_weights( BmEvaluator* self );
 BmEvaluator_weights= core.BmEvaluator_weights
 BmEvaluator_weights.restype= c_void_p
 BmEvaluator_weights.argtypes= [c_void_p]
 
-# double BmEvaluator_criterion_weight( BmEvaluator* self, uint iCritirion );
+# double BmEvaluator_criterion_weight( BmEvaluator* self, digit iCritirion );
 BmEvaluator_criterion_weight= core.BmEvaluator_criterion_weight
 BmEvaluator_criterion_weight.restype= c_double
-BmEvaluator_criterion_weight.argtypes= [c_void_p, c_uint]
+BmEvaluator_criterion_weight.argtypes= [c_void_p, c_digit]
 
-# BmCode* BmEvaluator_criterion_mask( BmEvaluator* self, uint iCritirion );
+# BmCode* BmEvaluator_criterion_mask( BmEvaluator* self, digit iCritirion );
 BmEvaluator_criterion_mask= core.BmEvaluator_criterion_mask
 BmEvaluator_criterion_mask.restype= c_void_p
-BmEvaluator_criterion_mask.argtypes= [c_void_p, c_uint]
+BmEvaluator_criterion_mask.argtypes= [c_void_p, c_digit]
 
 # double BmEvaluator_process( BmEvaluator* self, BmCode* input );
 BmEvaluator_process= core.BmEvaluator_process
 BmEvaluator_process.restype= c_double
 BmEvaluator_process.argtypes= [c_void_p, c_void_p]
 
-# double BmEvaluator_criterion_process( BmEvaluator* self, uint iCriterion, BmCode* input );
+# double BmEvaluator_criterion_process( BmEvaluator* self, digit iCriterion, BmCode* input );
 BmEvaluator_criterion_process= core.BmEvaluator_criterion_process
 BmEvaluator_criterion_process.restype= c_double
-BmEvaluator_criterion_process.argtypes= [c_void_p, c_uint, c_void_p]
+BmEvaluator_criterion_process.argtypes= [c_void_p, c_digit, c_void_p]
 
 # double BmEvaluator_processState_action( BmEvaluator* self, BmCode* state, BmCode* action );
 BmEvaluator_processState_action= core.BmEvaluator_processState_action
@@ -1301,22 +1335,22 @@ BmEvaluator_processState_action_state= core.BmEvaluator_processState_action_stat
 BmEvaluator_processState_action_state.restype= c_double
 BmEvaluator_processState_action_state.argtypes= [c_void_p, c_void_p, c_void_p, c_void_p]
 
-# BmEvaluator* BmEvaluator_reinitCriterion( BmEvaluator* self, uint numberOfCriterion );
+# BmEvaluator* BmEvaluator_reinitCriterion( BmEvaluator* self, digit numberOfCriterion );
 BmEvaluator_reinitCriterion= core.BmEvaluator_reinitCriterion
 BmEvaluator_reinitCriterion.restype= c_void_p
-BmEvaluator_reinitCriterion.argtypes= [c_void_p, c_uint]
+BmEvaluator_reinitCriterion.argtypes= [c_void_p, c_digit]
 
-# BmValueFct* BmEvaluator_criterion_reinitWith( BmEvaluator* self, uint iCrit, BmCode* newDependenceMask, BmVector* newValues );
+# BmValueFct* BmEvaluator_criterion_reinitWith( BmEvaluator* self, digit iCrit, BmCode* newDependenceMask, BmVector* newValues );
 BmEvaluator_criterion_reinitWith= core.BmEvaluator_criterion_reinitWith
 BmEvaluator_criterion_reinitWith.restype= c_void_p
-BmEvaluator_criterion_reinitWith.argtypes= [c_void_p, c_uint, c_void_p, c_void_p]
+BmEvaluator_criterion_reinitWith.argtypes= [c_void_p, c_digit, c_void_p, c_void_p]
 
-# void BmEvaluator_criterion_from_set( BmEvaluator* self, uint index, BmCode* option, uint output );
+# void BmEvaluator_criterion_from_set( BmEvaluator* self, digit index, BmCode* option, digit output );
 BmEvaluator_criterion_from_set= core.BmEvaluator_criterion_from_set
 BmEvaluator_criterion_from_set.restype= c_void_p
-BmEvaluator_criterion_from_set.argtypes= [c_void_p, c_uint, c_void_p, c_uint]
+BmEvaluator_criterion_from_set.argtypes= [c_void_p, c_digit, c_void_p, c_digit]
 
-# void BmEvaluator_criterion_setWeight( BmEvaluator* self, uint iCritirion, double weight );
+# void BmEvaluator_criterion_setWeight( BmEvaluator* self, digit iCritirion, double weight );
 BmEvaluator_criterion_setWeight= core.BmEvaluator_criterion_setWeight
 BmEvaluator_criterion_setWeight.restype= c_void_p
-BmEvaluator_criterion_setWeight.argtypes= [c_void_p, c_uint, c_double]
+BmEvaluator_criterion_setWeight.argtypes= [c_void_p, c_digit, c_double]

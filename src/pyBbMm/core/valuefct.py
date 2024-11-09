@@ -1,8 +1,5 @@
-from ctypes import c_uint, c_double, c_void_p, c_ulong
-import os
-
-from numpy import empty
-from . import clib, clibBbMm as cc
+from .clibBbMm import c_digit, c_double
+from . import clibBbMm as cc
 from .code import Code
 from .vector import Vector
 from .bench import Bench
@@ -74,7 +71,7 @@ class ValueFct:
         cc.BmValueFct_from_set(
             self._cvaluefct,
             inputCode._ccode,
-            c_uint(outputId)
+            c_digit(outputId)
         )
         inputCode._cmaster= False
         return self
